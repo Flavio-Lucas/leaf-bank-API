@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  mysqls:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "dev"
+      MYSQL_USER: "root"
+      MYSQL_HOST: "localhost"
+    ports:
+      - "3306:3306"
