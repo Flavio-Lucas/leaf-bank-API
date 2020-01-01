@@ -7,8 +7,8 @@ import { IsDefined, IsEmail, IsOptional, IsString, ValidationOptions } from 'cla
 
 import { Column, Entity } from 'typeorm';
 
-import { BaseEntity } from '../../shared/models/base/base-entity';
-import { DefaultValidationMessages } from '../../shared/models/enums/default-validation-messages';
+import { BaseEntity } from '../../models/base/base-entity';
+import { DefaultValidationMessages } from '../../models/enums/default-validation-messages';
 
 import { CrudValidationGroups } from '@nestjsx/crud';
 const { CREATE, UPDATE } = CrudValidationGroups;

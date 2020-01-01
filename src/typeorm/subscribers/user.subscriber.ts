@@ -3,12 +3,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/typeorm';
 
-const md5 = require('md5');
+import * as bcryptjs from 'bcryptjs';
 
 import { Connection, EntitySubscriberInterface, InsertEvent } from 'typeorm';
 
 import { UserEntity } from '../entities/user.entity';
-import { UserService } from '../../users/services/user.service';
+import { UserService } from '../../modules/users/services/user.service';
 
 //#endregion
 
@@ -50,7 +50,8 @@ export class UserSubscriber implements EntitySubscriberInterface<UserEntity> {
     if (alreadyHasUser)
       throw new BadRequestException('Já existe um usuário cadastrado com esse e-mail.');
 
-    event.entity.password = md5(event.entity.password);
+    const salt = bcryptjs.genSaltSync();
+    event.entity.password = await bcryptjs.hash(event.entity.password, salt);
     event.entity.roles = 'user';
   }
 
