@@ -48,6 +48,7 @@
       "dotenv": "^8.2.0",
       "envalid": "^6.0.0",
       "express-rate-limit": "^5.0.0",
+      "google-auth-library": "^5.8.0",
       "helmet": "^3.21.2",
       "ms": "^2.1.2",
       "mysql": "^2.17.1",
