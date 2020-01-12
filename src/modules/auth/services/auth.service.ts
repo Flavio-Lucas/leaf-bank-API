@@ -49,7 +49,7 @@ export class AuthService {
     const now = +new Date();
     const expiresAt = now + ms(this.config.JWT_EXPIRES_IN);
 
-    return new TokenProxy({ token, expiresAt });
+    return new TokenProxy({ token: `Bearer ${ token }`, expiresAt });
   }
 
   /**

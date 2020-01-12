@@ -2,13 +2,16 @@
 
 import { ClassSerializerInterceptor, Controller, Get, Request, UnauthorizedException, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiUseTags } from '@nestjs/swagger';
-import { CreateManyDto, Crud, CrudRequest, Override, ParsedBody, ParsedRequest } from '@nestjsx/crud';
+import { Crud, CrudRequest, Override, ParsedBody, ParsedRequest } from '@nestjsx/crud';
+import { isNullOrUndefined } from 'util';
 
 import { BaseCrudController } from '../../../common/base-crud.controller';
 import { ProtectTo } from '../../../decorators/protect/protect.decorator';
 import { UserEntity } from '../../../typeorm/entities/user.entity';
 import { CrudProxy, mapCrud } from '../../../utils/crud';
 import { NestJSRequest } from '../../../utils/type.shared';
+import { UserCreatePayload } from '../models/user-create.payload';
+import { UserUpdatePayload } from '../models/user-update.payload';
 import { UserProxy } from '../models/user.proxy';
 import { UserService } from '../services/user.service';
 
@@ -28,6 +31,7 @@ import { UserService } from '../services/user.service';
   routes: {
     exclude: [
       'updateOneBase',
+      'createManyBase',
     ],
   },
 })
@@ -93,30 +97,22 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
   }
 
   /**
-   * Método que cria várias entidades de uma vez só
-   *
-   * @param nestRequest As informações da requisição do NestJS
-   * @param crudRequest As informações da requisição do CRUD
-   * @param payload As informações para realizar a operação
-   */
-  @ProtectTo('admin')
-  @Override()
-  @ApiOkResponse({ type: UserProxy, isArray: true })
-  public createMany(@Request() nestRequest: NestJSRequest, @ParsedRequest() crudRequest: CrudRequest, @ParsedBody() payload: CreateManyDto<UserEntity>): Promise<CrudProxy<UserProxy>> {
-    return this.base.createManyBase(crudRequest, payload).then(response => mapCrud(UserProxy, response));
-  }
-
-  /**
    * Método que cria uma nova entidade
    *
    * @param nestRequest As informações da requisição do NestJS
    * @param crudRequest As informações da requisição do CRUD
-   * @param dto As informações para a criação da entidade
+   * @param payload As informações para a criação da entidade
    */
   @Override()
   @ApiOkResponse({ type: UserProxy })
-  public createOne(@Request() nestRequest: NestJSRequest, @ParsedRequest() crudRequest: CrudRequest, @ParsedBody() dto: UserEntity): Promise<CrudProxy<UserProxy>> {
-    return this.base.createOneBase(crudRequest, dto).then(response => mapCrud(UserProxy, response));
+  public createOne(@Request() nestRequest: NestJSRequest, @ParsedRequest() crudRequest: CrudRequest, @ParsedBody() payload: UserCreatePayload): Promise<CrudProxy<UserProxy>> {
+    const entity = new UserEntity({
+      email: payload.email,
+      password: payload.password,
+      ...nestRequest.user && nestRequest.user.roles && nestRequest.user.roles.includes('admin') && { roles: payload.roles },
+    });
+
+    return this.base.createOneBase(crudRequest, entity).then(response => mapCrud(UserProxy, response));
   }
 
   /**
@@ -124,16 +120,22 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
    *
    * @param nestRequest As informações da requisição do NestJS
    * @param crudRequest As informações da requisição do CRUD
-   * @param dto As informações para a atualização da entidade
+   * @param payload As informações para a atualização da entidade
    */
   @ProtectTo('user', 'admin')
   @Override()
   @ApiOkResponse({ type: UserProxy })
-  public replaceOne(@Request() nestRequest: NestJSRequest, @ParsedRequest() crudRequest: CrudRequest, @ParsedBody() dto: UserEntity): Promise<CrudProxy<UserProxy>> {
+  public replaceOne(@Request() nestRequest: NestJSRequest, @ParsedRequest() crudRequest: CrudRequest, @ParsedBody() payload: UserUpdatePayload): Promise<CrudProxy<UserProxy>> {
     if ((+nestRequest.params.id) !== nestRequest.user.id && !nestRequest.user.roles.includes('admin'))
       throw new UnauthorizedException('Você não tem permissão para realizar essa operação.');
 
-    return this.base.replaceOneBase(crudRequest, dto).then(response => mapCrud(UserProxy, response));
+    const entity = new UserEntity({
+      email: payload.email,
+      password: payload.password,
+      ...nestRequest.user && nestRequest.user.roles && nestRequest.user.roles.includes('admin') && { roles: payload.roles },
+    });
+
+    return this.base.replaceOneBase(crudRequest, entity).then(response => mapCrud(UserProxy, response));
   }
 
   /**

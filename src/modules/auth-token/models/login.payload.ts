@@ -4,8 +4,7 @@ import { ApiModelProperty } from '@nestjs/swagger';
 
 import { IsDefined, IsEmail, IsString } from 'class-validator';
 
-import { removeCrudOptions } from '../../../utils/entity.utils';
-import { UserEntity } from '../../../typeorm/entities/user.entity';
+import { DefaultValidationMessages } from '../../../models/enums/default-validation-messages';
 
 //#endregion
 
@@ -18,17 +17,17 @@ export class LoginPayload {
    * O e-mail do usuário
    */
   @ApiModelProperty()
-  @IsDefined(removeCrudOptions(UserEntity.EmailIsDefinedValidationOptions))
-  @IsString(removeCrudOptions(UserEntity.EmailIsStringValidationOptions))
-  @IsEmail({}, removeCrudOptions(UserEntity.EmailIsEmailValidationOptions))
+  @IsDefined({ message: 'É necessário enviar o e-mail do usuário.' })
+  @IsString({ message: DefaultValidationMessages.IsString })
+  @IsEmail({}, { message: DefaultValidationMessages.IsEmail })
   username: string;
 
   /**
    * A senha do usuário
    */
   @ApiModelProperty()
-  @IsDefined(removeCrudOptions(UserEntity.PasswordIsDefinedValidationOptions))
-  @IsString(removeCrudOptions(UserEntity.PasswordIsStringValidationOptions))
+  @IsDefined({ message: 'É necessário enviar a senha do usuário.' })
+  @IsString({ message: DefaultValidationMessages.IsString })
   password: string;
 
 }

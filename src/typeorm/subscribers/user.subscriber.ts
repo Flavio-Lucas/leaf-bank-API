@@ -51,8 +51,9 @@ export class UserSubscriber implements EntitySubscriberInterface<UserEntity> {
       throw new BadRequestException('Já existe um usuário cadastrado com esse e-mail.');
 
     const salt = bcryptjs.genSaltSync();
+
     event.entity.password = await bcryptjs.hash(event.entity.password, salt);
-    event.entity.roles = 'user';
+    event.entity.roles = event.entity.roles || 'user';
   }
 
   //#endregion
