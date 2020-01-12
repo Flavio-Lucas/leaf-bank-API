@@ -5,6 +5,8 @@ import { InjectConnection } from '@nestjs/typeorm';
 
 import * as bcryptjs from 'bcryptjs';
 
+import { v4 } from 'uuid';
+
 import { Connection, EntitySubscriberInterface, InsertEvent } from 'typeorm';
 
 import { UserEntity } from '../entities/user.entity';
@@ -50,9 +52,10 @@ export class UserSubscriber implements EntitySubscriberInterface<UserEntity> {
     if (alreadyHasUser)
       throw new BadRequestException('Já existe um usuário cadastrado com esse e-mail.');
 
-    const salt = bcryptjs.genSaltSync();
+    const salt = await bcryptjs.genSalt();
+    const passwordToEncrypt = event.entity.googleIdToken || event.entity.facebookIdToken ? v4() : event.entity.password;
 
-    event.entity.password = await bcryptjs.hash(event.entity.password, salt);
+    event.entity.password = await bcryptjs.hash(passwordToEncrypt, salt);
     event.entity.roles = event.entity.roles || 'user';
   }
 

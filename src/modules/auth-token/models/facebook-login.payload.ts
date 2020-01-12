@@ -1,17 +1,11 @@
-//#region Imports
-
 import { ApiModelProperty } from '@nestjs/swagger';
-
-import { IsDefined, IsEmail, IsString, MinLength } from 'class-validator';
-
+import { IsDefined, IsEmail, IsString } from 'class-validator';
 import { DefaultValidationMessages } from '../../../models/enums/default-validation-messages';
 
-//#endregion
-
 /**
- * A classe que representa o payload enviado para realizar login
+ * A classe que representa as informações necessárias para realizar o login pelo facebook
  */
-export class LoginPayload {
+export class FacebookLoginPayload {
 
   /**
    * O e-mail do usuário
@@ -23,12 +17,11 @@ export class LoginPayload {
   username: string;
 
   /**
-   * A senha do usuário
+   * O token de autenticação do Facebook
    */
   @ApiModelProperty()
-  @IsDefined({ message: 'É necessário enviar a senha do usuário.' })
+  @IsDefined({ message: 'É necessário enviar o token de autenticação do facebook.' })
   @IsString({ message: DefaultValidationMessages.IsString })
-  @MinLength(6, { message: 'A senha precisa ter no mínimo 6 caracteres.' })
-  password: string;
+  facebookIdToken: string;
 
 }

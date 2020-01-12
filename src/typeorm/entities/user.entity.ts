@@ -1,6 +1,6 @@
 //#region Imports
 
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
 
 import { Exclude } from 'class-transformer';
 
@@ -45,6 +45,27 @@ export class UserEntity extends BaseEntity {
   @ApiModelProperty()
   @Column({ nullable: false })
   public password: string;
+
+  /**
+   * O número de telefone do usuário
+   */
+  @ApiModelPropertyOptional()
+  @Column({ nullable: true })
+  public phone: string;
+
+  /**
+   * O token de identificação do Google
+   */
+  @ApiModelPropertyOptional()
+  @Column({ nullable: true, unique: true })
+  public googleIdToken: string;
+
+  /**
+   * O token de identificação do Facebook
+   */
+  @ApiModelPropertyOptional()
+  @Column({ nullable: true, unique: true })
+  public facebookIdToken: string;
 
   /**
    * As permissões desse usuário

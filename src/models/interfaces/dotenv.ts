@@ -97,4 +97,24 @@ export interface IDotEnv {
    */
   SWAGGER_TAG: string;
 
+  /**
+   * O client id para autenticar com o Google
+   */
+  GOOGLE_CLIENT_ID: string;
+
+  /**
+   * O client secret para autenticar com o Google
+   */
+  GOOGLE_CLIENT_SECRET: string;
+
+  /**
+   * O client id para autenticar com o Facebook
+   */
+  FACEBOOK_CLIENT_ID: string;
+
+  /**
+   * O client secret para autenticar com o Facebook
+   */
+  FACEBOOK_CLIENT_SECRET: string;
+
 }

@@ -7,8 +7,8 @@ import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import * as xss from 'xss';
 
 import { Repository } from 'typeorm';
-import { TypeOrmValueTypes } from '../../../models/enums/type-orm-value.types';
 
+import { TypeOrmValueTypes } from '../../../models/enums/type-orm-value.types';
 import { UserEntity } from '../../../typeorm/entities/user.entity';
 
 //#endregion
@@ -40,9 +40,8 @@ export class UserService extends TypeOrmCrudService<UserEntity> {
    * @param email O e-mail do usuário
    */
   public async findByEmail(email: string): Promise<UserEntity> {
-    const cleanedEmail = xss.filterXSS(email.trim().toLocaleLowerCase());
-    const fields: Array<Exclude<keyof UserEntity, 'password'>> = ['id', 'email', 'roles', 'createdAt', 'updatedAt', 'isActive'];
-    const user = await this.userRepository.findOne({ select: fields, where: { email: cleanedEmail, isActive: TypeOrmValueTypes.TRUE } });
+    const cleanedEmail = this.getCleanedEmail(email);
+    const user = await this.userRepository.findOne({ where: { email: cleanedEmail, isActive: TypeOrmValueTypes.TRUE } });
 
     if (!user)
       throw new NotFoundException('O usuário não existe ou foi deletado.');
@@ -56,10 +55,8 @@ export class UserService extends TypeOrmCrudService<UserEntity> {
    * @param email O e-mail do usuário
    */
   public async findByEmailForAuth(email: string): Promise<Partial<UserEntity>> {
-    const cleanedEmail = xss.filterXSS(email.trim().toLocaleLowerCase());
-    const fields: Partial<Array<keyof UserEntity>> = ['id', 'email', 'password', 'roles', 'updatedAt', 'isActive'];
-
-    const user = await this.userRepository.findOne({ select: fields, where: { email: cleanedEmail, isActive: TypeOrmValueTypes.TRUE } });
+    const cleanedEmail = this.getCleanedEmail(email);
+    const user = await this.userRepository.findOne({ where: { email: cleanedEmail, isActive: TypeOrmValueTypes.TRUE } });
 
     if (!user)
       throw new NotFoundException('O usuário não existe ou foi deletado.');
@@ -73,13 +70,61 @@ export class UserService extends TypeOrmCrudService<UserEntity> {
    * @param id A identificação do usuário
    */
   public async findById(id: number): Promise<UserEntity> {
-    const fields: Array<Exclude<keyof UserEntity, 'password'>> = ['id', 'email', 'roles', 'createdAt', 'updatedAt', 'isActive'];
-    const user = await this.userRepository.findOne({ select: fields, where: { id, isActive: TypeOrmValueTypes.TRUE } });
+    const user = await this.userRepository.findOne({ where: { id, isActive: TypeOrmValueTypes.TRUE } });
 
     if (!user)
       throw new NotFoundException('O usuário não existe ou foi deletado.');
 
     return user;
+  }
+
+  /**
+   * Método que retorna as informações do usuário pelo e-mail e ID Token do Facebook
+   *
+   * @param email O endereço de e-mail do usuário
+   * @param facebookIdToken O token de autenticação
+   */
+  public async findByEmailAndFacebookIdToken(email: string, facebookIdToken: string): Promise<UserEntity | undefined> {
+    const cleanedEmail = this.getCleanedEmail(email);
+
+    return await this.userRepository.findOne({
+      where: {
+        email: cleanedEmail,
+        facebookIdToken,
+        isActive: TypeOrmValueTypes.TRUE,
+      },
+    });
+  }
+
+  /**
+   * Método que retorna as informações do usuário pelo e-mail e ID Token do Google
+   *
+   * @param email O endereço de e-mail do usuário
+   * @param googleIdToken O token de autenticação
+   */
+  public async findByEmailAndGoogleIdToken(email: string, googleIdToken: string): Promise<UserEntity | undefined> {
+    const cleanedEmail = this.getCleanedEmail(email);
+
+    return await this.userRepository.findOne({
+      where: {
+        email: cleanedEmail,
+        googleIdToken,
+        isActive: TypeOrmValueTypes.TRUE,
+      },
+    });
+  }
+
+  //#endregion
+
+  //#region Private Methods
+
+  /**
+   * Método que limpa o e-mail de qualquer ataque ou problema
+   *
+   * @param email O endereço de e-mail
+   */
+  private getCleanedEmail(email: string): string {
+    return xss.filterXSS(email.trim().toLocaleLowerCase());
   }
 
   //#endregion

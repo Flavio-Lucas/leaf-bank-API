@@ -61,9 +61,13 @@ export class ConfigService extends implementOptionalInterface<Partial<Readonly<I
       SWAGGER_TAG: envalid.str({ default: 'Base' }),
       SWAGGER_TITLE: envalid.str({ default: 'Base' }),
       SWAGGER_VERSION: envalid.str({ default: '1.0' }),
+      GOOGLE_CLIENT_ID: envalid.str({ default: '' }),
+      GOOGLE_CLIENT_SECRET: envalid.str({ default: '' }),
+      FACEBOOK_CLIENT_ID: envalid.str({ default: '' }),
+      FACEBOOK_CLIENT_SECRET: envalid.str({ default: '' }),
     };
 
-    const env = envalid.cleanEnv<IDotEnv>(process.env, rule, { dotEnvPath: dotEnvName });
+    const env = envalid.cleanEnv<IDotEnv>(process.env, rule, { dotEnvPath: dotEnvName, strict: true });
 
     if (env.isProduction && env.DB_SYNCHRONIZE)
       throw new InternalServerErrorException('Por questões de segurança, não será inicializado a API em modo produção com a configuração DB_SYNCHRONIZE sendo verdadeira. Veja: https://github.com/typeorm/typeorm/blob/master/docs/faq.md#how-do-i-update-a-database-schema');
