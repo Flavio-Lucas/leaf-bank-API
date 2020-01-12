@@ -1,8 +1,8 @@
 //#region Imports
 
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
 
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsMobilePhone, IsOptional, IsString } from 'class-validator';
 import { Column } from 'typeorm';
 
 import { DefaultValidationMessages } from '../../../models/enums/default-validation-messages';
@@ -22,6 +22,14 @@ export class UserUpdatePayload {
   @IsString({ message: DefaultValidationMessages.IsString })
   @IsEmail({}, { message: DefaultValidationMessages.IsEmail })
   public email?: string;
+
+  /**
+   * O número de telefone do usuário
+   */
+  @ApiModelPropertyOptional()
+  @IsOptional()
+  @IsMobilePhone('pt-BR', { message: DefaultValidationMessages.IsMobilePhone })
+  public phone?: string;
 
   /**
    * A senha do usuário

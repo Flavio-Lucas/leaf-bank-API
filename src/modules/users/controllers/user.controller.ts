@@ -109,6 +109,7 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
     const entity = new UserEntity({
       email: payload.email,
       password: payload.password,
+      ...!isNullOrUndefined(payload.phone) && { phone: payload.phone },
       ...nestRequest.user && nestRequest.user.roles && nestRequest.user.roles.includes('admin') && { roles: payload.roles },
     });
 
@@ -132,6 +133,7 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
     const entity = new UserEntity({
       email: payload.email,
       password: payload.password,
+      ...!isNullOrUndefined(payload.phone) && { phone: payload.phone },
       ...nestRequest.user && nestRequest.user.roles && nestRequest.user.roles.includes('admin') && { roles: payload.roles },
     });
 
