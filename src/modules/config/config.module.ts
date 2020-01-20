@@ -2,8 +2,7 @@ import { Module, Global } from '@nestjs/common';
 
 import { ConfigService } from './services/config.service';
 
-const dev = process.env.NODE_ENV !== 'production';
-const envFieldName = dev ? '.env' : '.env.production';
+const envFieldName = '.env';
 
 export const envConfig = new ConfigService(envFieldName);
 
