@@ -34,10 +34,6 @@ export class TypeOrmService implements TypeOrmOptionsFactory {
    */
   public createTypeOrmOptions(): TypeOrmModuleOptions {
     let options: TypeOrmModuleOptions = {
-      host: this.config.DB_HOST,
-      port: this.config.DB_PORT,
-      username: this.config.DB_USER,
-      password: this.config.DB_PASSWORD,
       database: this.config.DB_DATABASE,
       synchronize: this.config.DB_SYNCHRONIZE,
       migrationsRun: this.config.DB_MIGRATIONS_RUN,
@@ -54,7 +50,15 @@ export class TypeOrmService implements TypeOrmOptionsFactory {
         collation: 'utf8mb4_unicode_ci',
         // https://stackoverflow.com/questions/35553432/error-handshake-inactivity-timeout-in-node-js-mysql-module
         keepConnectionAlive: true,
+        host: this.config.DB_HOST,
+        port: this.config.DB_PORT,
+        username: this.config.DB_USER,
+        password: this.config.DB_PASSWORD,
         acquireTimeout: this.config.DB_TIMEOUT,
+      });
+    } else if (this.config.DB_TYPE === 'sqlite') {
+      options = Object.assign(options, {
+        type: 'sqlite',
       });
     } else {
       throw new InternalServerErrorException('Não há um outro tipo de banco de dados suportado, por favor, altere para MySQL o valor de DB_TYPE.');

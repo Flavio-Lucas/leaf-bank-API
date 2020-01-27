@@ -6,3 +6,4 @@ tmp/
 temp/
 swagger/*
 .env
+dist
