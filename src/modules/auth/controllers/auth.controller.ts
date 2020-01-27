@@ -3,8 +3,8 @@
 import { Body, ClassSerializerInterceptor, Controller, Post, Request, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBadRequestResponse, ApiImplicitQuery, ApiNotFoundResponse, ApiOkResponse, ApiUnauthorizedResponse, ApiUseTags } from '@nestjs/swagger';
+import { ApplyDecoratorsIfEnvExists } from '../../../decorators/apply-if-env-exists/apply-if-env-exists.decorator';
 
-import { ApplyDecoratorsIfEnvExists } from '../../../decorators/protect/protect.decorator';
 import { TokenProxy } from '../../../models/proxys/token.proxy';
 import { NestJSRequest } from '../../../utils/type.shared';
 import { GoogleLoginPayload } from '../../auth-token/models/google-login.payload';

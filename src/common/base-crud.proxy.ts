@@ -2,7 +2,7 @@
 
 import { ApiModelPropertyOptional } from '@nestjs/swagger';
 
-import { BaseEntity } from '../models/base/base-entity';
+import { BaseEntity } from './base-entity';
 
 //#endregion
 

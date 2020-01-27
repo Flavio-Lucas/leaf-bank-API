@@ -3,6 +3,11 @@
  */
 export enum DefaultValidationMessages {
   /**
+   * A mensagem padrõa para o IsBoolean
+   */
+  IsBoolean = 'É necessário enviar um valor booleano válido.',
+
+  /**
    * A mensagem padrão para o IsArray
    */
   IsArray = 'É necessário enviar um array válido!',

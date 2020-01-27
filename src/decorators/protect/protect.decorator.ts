@@ -1,7 +1,6 @@
-import { BadRequestException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { R } from '@nestjsx/crud/lib/crud';
 
 import { RolesGuard } from '../../guards/roles/roles.guard';
 import { applyDecorators, NestCustomDecorator } from '../../utils/apply-decorator';
@@ -10,17 +9,15 @@ import { Roles } from '../roles/roles.decorator';
 export function ProtectTo(...roles: string[]): NestCustomDecorator {
   return applyDecorators(
     Roles(...roles),
-    UseGuards(AuthGuard(), RolesGuard),
+    UseGuards(AuthGuard('jwt'), RolesGuard),
     ApiBearerAuth(),
-    ApiUnauthorizedResponse({ description: 'When user don\'t have access to resource' }),
+    ApiUnauthorizedResponse({ description: 'Você não tem permissão para acessar esse recurso. ' }),
   );
 }
 
-export const ApplyDecoratorsIfEnvExists = (envName: string | string[], ...guards) => {
-  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-    const envs = Array.isArray(envName) ? envName : [envName];
-
-    if (envs.every(env => !!process.env[env]))
-      R.setDecorators(guards, descriptor, 'value');
-  };
-};
+export function UnprotectedRoute(): NestCustomDecorator {
+  return applyDecorators(
+    Roles('anonymous'),
+    UseGuards(AuthGuard('anonymous'), RolesGuard),
+  );
+}

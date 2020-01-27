@@ -6,7 +6,7 @@ import { Exclude } from 'class-transformer';
 
 import { Column, Entity } from 'typeorm';
 
-import { BaseEntity } from '../../models/base/base-entity';
+import { BaseEntity } from '../../common/base-entity';
 
 
 //#endregion

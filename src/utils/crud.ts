@@ -3,7 +3,7 @@
 import { GetManyDefaultResponse } from '@nestjsx/crud';
 
 import { BaseCrudProxy } from '../common/base-crud.proxy';
-import { BaseEntity } from '../models/base/base-entity';
+import { BaseEntity } from '../common/base-entity';
 
 //#endregion
 
