@@ -143,8 +143,8 @@ export class AuthService {
     if (!jwtPayload.iat || !jwtPayload.exp || !jwtPayload.id)
       throw new UnauthorizedException('Os detalhes para a autenticação não foram encontrados.');
 
-    const now = new Date();
-    const jwtExpiresIn = new Date(jwtPayload.exp);
+    const now = Date.now().valueOf() / 1000;
+    const jwtExpiresIn = jwtPayload.exp;
 
     if (now > jwtExpiresIn)
       throw new UnauthorizedException({
