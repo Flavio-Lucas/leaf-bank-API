@@ -6,7 +6,7 @@ import { Profile } from 'passport-facebook-token';
 import * as FacebookTokenStrategy from 'passport-facebook-token';
 import { use } from 'passport';
 
-import { ConfigService } from '../../config/services/config.service';
+import { EnvService } from '../../env/services/env.service';
 import { AuthService } from './auth.service';
 
 //#endregion
@@ -24,7 +24,7 @@ export class FacebookStrategy {
    */
   constructor(
     private readonly auth: AuthService,
-    private readonly config: ConfigService,
+    private readonly env: EnvService,
   ) {
     this.init();
   }
@@ -44,7 +44,7 @@ export class FacebookStrategy {
    * Método que inicializa a estratégia
    */
   public init(): void {
-    const hasConfigForFacebookAuth = !!this.config.FACEBOOK_CLIENT_ID && !!this.config.FACEBOOK_CLIENT_SECRET;
+    const hasConfigForFacebookAuth = !!this.env.FACEBOOK_CLIENT_ID && !!this.env.FACEBOOK_CLIENT_SECRET;
 
     if (!hasConfigForFacebookAuth)
       return this.logger.warn('Login com o Facebook desativado. Não foram encontradas as configurações para a autenticação com Facebook.');
@@ -54,8 +54,8 @@ export class FacebookStrategy {
     use(
       new FacebookTokenStrategy(
         {
-          clientID: this.config.FACEBOOK_CLIENT_ID,
-          clientSecret: this.config.FACEBOOK_CLIENT_SECRET,
+          clientID: this.env.FACEBOOK_CLIENT_ID,
+          clientSecret: this.env.FACEBOOK_CLIENT_SECRET,
           fbGraphVersion: 'v3.0',
         },
         async (accessToken: string, refreshToken: string, profile: Profile, done: (error: any, user?: any, info?: any) => void) => {

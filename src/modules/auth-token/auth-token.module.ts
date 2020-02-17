@@ -2,22 +2,22 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
-import { ConfigModule } from '../config/config.module';
-import { ConfigService } from '../config/services/config.service';
+import { EnvModule } from '../env/env.module';
+import { EnvService } from '../env/services/env.service';
 
 @Module({
   imports: [
     PassportModule.registerAsync({
-      inject: [ConfigService],
-      imports: [ConfigModule],
-      useFactory: async (config: ConfigService) => ({
+      inject: [EnvService],
+      imports: [EnvModule],
+      useFactory: async (config: EnvService) => ({
         defaultStrategy: config.API_DEFAULT_STRATEGY,
       }),
     }),
     JwtModule.registerAsync({
-      inject: [ConfigService],
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      inject: [EnvService],
+      imports: [EnvModule],
+      useFactory: async (configService: EnvService) => ({
         privateKey: configService.JWT_SECRET_KEY,
       }),
     }),

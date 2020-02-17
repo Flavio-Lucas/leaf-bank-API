@@ -5,7 +5,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { UserEntity } from '../../../typeorm/entities/user.entity';
-import { ConfigService } from '../../config/services/config.service';
+import { EnvService } from '../../env/services/env.service';
 import { IJwtPayload } from '../models/jwt.payload';
 import { AuthService } from './auth.service';
 
@@ -24,14 +24,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    */
   constructor(
     private auth: AuthService,
-    private config: ConfigService,
+    private env: EnvService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: config.JWT_SECRET_KEY,
+      secretOrKey: env.JWT_SECRET_KEY,
       jsonWebTokenOptions: {
-        expiresIn: config.JWT_EXPIRES_IN,
+        expiresIn: env.JWT_EXPIRES_IN,
       },
     });
   }

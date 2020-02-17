@@ -64,7 +64,7 @@ export interface IDotEnv {
   /**
    * O número da porta que será executado a API
    */
-  API_PORT: number;
+  PORT: number;
 
   /**
    * A chave secreta do JWT
@@ -96,6 +96,11 @@ export interface IDotEnv {
    * Uma simples tag para o Swagger, pode ser o mesmo do titulo
    */
   SWAGGER_TAG: string;
+
+  /**
+   * Diz se o Swagger está ativado
+   */
+  SWAGGER_ENABLED: boolean;
 
   /**
    * O client id para autenticar com o Google

@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthTokenModule } from './modules/auth-token/auth-token.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { ConfigModule } from './modules/config/config.module';
+import { EnvModule } from './modules/env/env.module';
 import { TypeOrmService } from './modules/typeorm/services/type-orm.service';
 import { UserModule } from './modules/users/users.module';
 
@@ -12,13 +12,13 @@ import { UserModule } from './modules/users/users.module';
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmService,
     }),
-    ConfigModule,
+    EnvModule,
     AuthModule,
     AuthTokenModule,
     UserModule,
   ],
   providers: [
-    ConfigModule,
+    EnvModule,
     UserModule,
     AuthModule,
   ],

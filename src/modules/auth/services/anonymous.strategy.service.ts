@@ -6,7 +6,7 @@ import { ExtractJwt } from 'passport-jwt';
 
 import { AnonymousStrategy } from '../../../common/anonymous.strategy';
 import { UserEntity } from '../../../typeorm/entities/user.entity';
-import { ConfigService } from '../../config/services/config.service';
+import { EnvService } from '../../env/services/env.service';
 
 //#endregion
 
@@ -22,12 +22,12 @@ export class AnonymousStrategyService extends PassportStrategy(AnonymousStrategy
    * Construtor padrão
    */
   constructor(
-    private readonly config: ConfigService,
+    private readonly env: EnvService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: config.JWT_SECRET_KEY,
+      secretOrKey: env.JWT_SECRET_KEY,
     });
   }
 

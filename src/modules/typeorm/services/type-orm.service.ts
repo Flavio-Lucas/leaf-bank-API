@@ -4,7 +4,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 
 import { TypeOrmEntities } from '../../../utils/type-orm';
-import { ConfigService } from '../../config/services/config.service';
+import { EnvService } from '../../env/services/env.service';
 
 //#endregion
 
@@ -19,10 +19,10 @@ export class TypeOrmService implements TypeOrmOptionsFactory {
   /**
    * Construtor padrão
    *
-   * @param config O serviço que contém as configurações de ambiente
+   * @param env O serviço que contém as configurações de ambiente
    */
   constructor(
-    private readonly config: ConfigService,
+    private readonly env: EnvService,
   ) { }
 
   //#endregion
@@ -34,29 +34,48 @@ export class TypeOrmService implements TypeOrmOptionsFactory {
    */
   public createTypeOrmOptions(): TypeOrmModuleOptions {
     let options: TypeOrmModuleOptions = {
-      database: this.config.DB_DATABASE,
-      synchronize: this.config.DB_SYNCHRONIZE,
-      migrationsRun: this.config.DB_MIGRATIONS_RUN,
-      logging: !this.config.isProduction,
+      database: this.env.DB_DATABASE,
+      synchronize: this.env.DB_SYNCHRONIZE,
+      migrationsRun: this.env.DB_MIGRATIONS_RUN,
+      logging: !this.env.isProduction,
       entities: [
         ...TypeOrmEntities,
       ],
+      migrations: [
+        __dirname + '/../../../typeorm/migrations/**/*{.ts,.js}',
+      ],
     };
 
-    if (this.config.DB_TYPE === 'mysql') {
+    if (this.env.DB_TYPE === 'mysql') {
       options = Object.assign(options, {
         type: 'mysql',
         charset: 'utf8mb4',
         collation: 'utf8mb4_unicode_ci',
         // https://stackoverflow.com/questions/35553432/error-handshake-inactivity-timeout-in-node-js-mysql-module
         keepConnectionAlive: true,
-        host: this.config.DB_HOST,
-        port: this.config.DB_PORT,
-        username: this.config.DB_USER,
-        password: this.config.DB_PASSWORD,
-        acquireTimeout: this.config.DB_TIMEOUT,
+        host: this.env.DB_HOST,
+        port: this.env.DB_PORT,
+        username: this.env.DB_USER,
+        password: this.env.DB_PASSWORD,
+        acquireTimeout: this.env.DB_TIMEOUT,
       });
-    } else if (this.config.DB_TYPE === 'sqlite') {
+    } else if (this.env.DB_TYPE === 'postgres') {
+      options = Object.assign(options, {
+        type: 'postgres',
+        charset: 'utf8mb4',
+        collation: 'utf8mb4_unicode_ci',
+        // https://stackoverflow.com/questions/35553432/error-handshake-inactivity-timeout-in-node-js-mysql-module
+        keepConnectionAlive: true,
+        host: this.env.DB_HOST,
+        port: this.env.DB_PORT,
+        username: this.env.DB_USER,
+        password: this.env.DB_PASSWORD,
+        acquireTimeout: this.env.DB_TIMEOUT,
+        extra: {
+          ssl: true,
+        },
+      });
+    } else if (this.env.DB_TYPE === 'sqlite') {
       options = Object.assign(options, {
         type: 'sqlite',
       });

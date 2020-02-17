@@ -14,7 +14,7 @@ import { BaseEntity } from '../../common/base-entity';
 /**
  * A classe que representa a entidade que lida com os usuários
  */
-@Entity()
+@Entity('users')
 export class UserEntity extends BaseEntity {
 
   //#region Constructor
@@ -45,13 +45,6 @@ export class UserEntity extends BaseEntity {
   @ApiModelProperty()
   @Column({ nullable: false })
   public password: string;
-
-  /**
-   * O número de telefone do usuário
-   */
-  @ApiModelPropertyOptional()
-  @Column({ nullable: true })
-  public phone: string;
 
   /**
    * O token de identificação do Google

@@ -9,7 +9,7 @@ import * as timeout from 'connect-timeout';
 import * as rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
 import { AppModule } from './app.module';
-import { ConfigService } from './modules/config/services/config.service';
+import { EnvService } from './modules/env/services/env.service';
 
 const bodyParser = require('body-parser');
 
@@ -49,7 +49,10 @@ CrudConfigService.load({
  * @param app A instância da aplicação
  * @param config As configurações da aplicação
  */
-function setupSwagger(app: INestApplication, config: ConfigService): void {
+function setupSwagger(app: INestApplication, config: EnvService): void {
+  if (!config.SWAGGER_ENABLED)
+    return;
+
   const swaggerOptions = new DocumentBuilder()
     .setTitle(config.SWAGGER_TITLE)
     .setDescription(config.SWAGGER_DESCRIPTION)
@@ -116,7 +119,7 @@ function haltOnTimeout(req, res, next) {
 
 export async function createApp(): Promise<INestApplication> {
   const app = await NestFactory.create(AppModule);
-  const config = await app.get(ConfigService);
+  const config = await app.get(EnvService);
 
   setupSwagger(app, config);
   setupPipes(app);

@@ -3,7 +3,6 @@
 import { ClassSerializerInterceptor, Controller, Get, Request, UnauthorizedException, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiUseTags } from '@nestjs/swagger';
 import { Crud, CrudRequest, Override, ParsedBody, ParsedRequest } from '@nestjsx/crud';
-import { isNullOrUndefined } from 'util';
 
 import { BaseCrudController } from '../../../common/base-crud.controller';
 import { ProtectTo } from '../../../decorators/protect/protect.decorator';
@@ -109,7 +108,6 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
     const entity = new UserEntity({
       email: payload.email,
       password: payload.password,
-      ...!isNullOrUndefined(payload.phone) && { phone: payload.phone },
       ...nestRequest.user && nestRequest.user.roles && nestRequest.user.roles.includes('admin') && { roles: payload.roles },
     });
 
@@ -133,7 +131,6 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
     const entity = new UserEntity({
       email: payload.email,
       password: payload.password,
-      ...!isNullOrUndefined(payload.phone) && { phone: payload.phone },
       ...nestRequest.user && nestRequest.user.roles && nestRequest.user.roles.includes('admin') && { roles: payload.roles },
     });
 

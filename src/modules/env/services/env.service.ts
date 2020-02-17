@@ -13,7 +13,7 @@ import { implementOptionalInterface } from '../../../utils/interface';
 /**
  * A classe que representa o serviço que guarda as configurações do ambiente
  */
-export class ConfigService extends implementOptionalInterface<Partial<Readonly<IDotEnv>> & CleanEnv>() {
+export class EnvService extends implementOptionalInterface<Partial<Readonly<IDotEnv>> & CleanEnv>() {
 
   //#region Constructor
 
@@ -44,7 +44,7 @@ export class ConfigService extends implementOptionalInterface<Partial<Readonly<I
 
     const rule: DotEnvValidation = {
       API_BASE_PATH: envalid.str({ default: 'prod', devDefault: 'dev' }),
-      API_PORT: envalid.port({ default: 3000 }),
+      PORT: envalid.port({ default: 3000 }),
       API_DEFAULT_STRATEGY: envalid.str({ default: 'jwt' }),
       DB_TYPE: envalid.str({ default: 'mysql' }),
       DB_DATABASE: envalid.str({ devDefault: 'dev' }),
@@ -65,6 +65,7 @@ export class ConfigService extends implementOptionalInterface<Partial<Readonly<I
       GOOGLE_CLIENT_SECRET: envalid.str({ default: '' }),
       FACEBOOK_CLIENT_ID: envalid.str({ default: '' }),
       FACEBOOK_CLIENT_SECRET: envalid.str({ default: '' }),
+      SWAGGER_ENABLED: envalid.bool({ default: false, })
     };
 
     const env = envalid.cleanEnv<IDotEnv>(process.env, rule, { dotEnvPath: dotEnvName, strict: true });

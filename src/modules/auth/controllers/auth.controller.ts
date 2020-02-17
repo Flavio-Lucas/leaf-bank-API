@@ -49,33 +49,33 @@ export class AuthController {
     return await this.authService.signIn(req.user);
   }
 
-  /**
-   * Método que retorna o token do usuário
-   *
-   * @param req As informações da requisição
-   * @param payload As informações para o login
-   */
-  @ApiImplicitQuery({  name: 'access_token', description: 'O token de autenticação do facebook', required: true, type: 'string' })
-  @ApiOkResponse({ description: 'O usuário foi logado com sucesso', type: TokenProxy })
-  @ApiBadRequestResponse({ description: 'O token de autenticação não é válido.' })
-  @Post('/facebook')
-  @ApplyDecoratorsIfEnvExists(['FACEBOOK_CLIENT_ID', 'FACEBOOK_CLIENT_SECRET'], UseGuards(AuthGuard('facebook-token')))
-  public async loginByFacebook(@Request() req: NestJSRequest): Promise<TokenProxy> {
-    return await this.authService.signInFacebook(req.user);
-  }
-
-  /**
-   * Método que retorna o token do usuário
-   *
-   * @param req As informações da requisição
-   * @param payload As informações para o login
-   */
-  @ApiOkResponse({ description: 'O usuário foi logado com sucesso', type: TokenProxy })
-  @ApiBadRequestResponse({ description: 'As informações do usuário não são válidas.' })
-  @Post('/google')
-  public async loginByGoogle(@Request() req: NestJSRequest, @Body() payload: GoogleLoginPayload): Promise<TokenProxy> {
-    return await this.authService.signInGoogle(payload);
-  }
+  // /**
+  //  * Método que retorna o token do usuário
+  //  *
+  //  * @param req As informações da requisição
+  //  * @param payload As informações para o login
+  //  */
+  // @ApiImplicitQuery({  name: 'access_token', description: 'O token de autenticação do facebook', required: true, type: 'string' })
+  // @ApiOkResponse({ description: 'O usuário foi logado com sucesso', type: TokenProxy })
+  // @ApiBadRequestResponse({ description: 'O token de autenticação não é válido.' })
+  // @Post('/facebook')
+  // @ApplyDecoratorsIfEnvExists(['FACEBOOK_CLIENT_ID', 'FACEBOOK_CLIENT_SECRET'], UseGuards(AuthGuard('facebook-token')))
+  // public async loginByFacebook(@Request() req: NestJSRequest): Promise<TokenProxy> {
+  //   return await this.authService.signInFacebook(req.user);
+  // }
+  //
+  // /**
+  //  * Método que retorna o token do usuário
+  //  *
+  //  * @param req As informações da requisição
+  //  * @param payload As informações para o login
+  //  */
+  // @ApiOkResponse({ description: 'O usuário foi logado com sucesso', type: TokenProxy })
+  // @ApiBadRequestResponse({ description: 'As informações do usuário não são válidas.' })
+  // @Post('/google')
+  // public async loginByGoogle(@Request() req: NestJSRequest, @Body() payload: GoogleLoginPayload): Promise<TokenProxy> {
+  //   return await this.authService.signInGoogle(payload);
+  // }
 
   //#endregion
 

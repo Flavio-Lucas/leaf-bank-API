@@ -1,7 +1,6 @@
 //#region Imports
 
 import { EntitySchema } from 'typeorm/entity-schema/EntitySchema';
-
 import { UserEntity } from '../typeorm/entities/user.entity';
 
 //#endregion

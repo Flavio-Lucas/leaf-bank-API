@@ -53,4 +53,22 @@ if (config.type === 'mysql')
     password: env.DB_PASSWORD,
   });
 
+if (env.DB_TYPE === 'postgres')
+  Object.assign(config, {
+    type: 'postgres',
+    charset: 'utf8mb4',
+    collation: 'utf8mb4_unicode_ci',
+    // https://stackoverflow.com/questions/35553432/error-handshake-inactivity-timeout-in-node-js-mysql-module
+    keepConnectionAlive: true,
+    host: env.DB_HOST,
+    port: env.DB_PORT,
+    username: env.DB_USER,
+    password: env.DB_PASSWORD,
+    acquireTimeout: env.DB_TIMEOUT,
+    rejectUnauthorized: true,
+    extra: {
+      ssl: true,
+    },
+  });
+
 module.exports = config;

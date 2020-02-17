@@ -1,7 +1,7 @@
 //#region Imports
 
 import { NotFoundException, Param, Put } from '@nestjs/common';
-import { ApiNotFoundResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ApiNotFoundResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { CrudRequest, ParsedRequest } from '@nestjsx/crud';
 
 import { ProtectTo } from '../decorators/protect/protect.decorator';
@@ -39,13 +39,14 @@ export class BaseEntityCrudController<TEntity extends BaseEntity, TService exten
    */
   @ProtectTo('admin')
   @Put('/:id/disable')
-  @ApiOkResponse({ description: 'The entity was disabled with successfull.' })
+  @ApiOperation({ title: 'Disable one Entity' })
+  @ApiOkResponse({ description: 'The entity was disabled with successful.' })
   @ApiNotFoundResponse({ description: 'The entity was not found' })
   public async disable(@Param('id') id: number, @ParsedRequest() crudRequest: CrudRequest): Promise<TEntity> {
     const entity = await this.service.repository.findOne(id);
 
     if (!entity)
-      throw new NotFoundException('Uma entidade com essa identificação não existe.');
+      throw new NotFoundException('A entidade procurada não existe.');
 
     entity.isActive = false;
 
@@ -60,13 +61,14 @@ export class BaseEntityCrudController<TEntity extends BaseEntity, TService exten
    */
   @ProtectTo('admin')
   @Put('/:id/enable')
+  @ApiOperation({ title: 'Enable one Entity' })
   @ApiOkResponse({ description: 'The entity was disabled with successfull.' })
   @ApiNotFoundResponse({ description: 'The entity was not found' })
   public async enable(@Param('id') id: number, @ParsedRequest() crudRequest: CrudRequest): Promise<TEntity> {
     const entity = await this.service.repository.findOne(id);
 
     if (!entity)
-      throw new NotFoundException('Uma entidade com essa identificação não existe.');
+      throw new NotFoundException('A entidade procurada não existe.');
 
     entity.isActive = true;
 

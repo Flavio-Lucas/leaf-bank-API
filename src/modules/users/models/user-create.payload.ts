@@ -32,14 +32,6 @@ export class UserCreatePayload {
   public password: string;
 
   /**
-   * O número de telefone do usuário
-   */
-  @ApiModelPropertyOptional()
-  @IsOptional()
-  @IsMobilePhone('pt-BR', { message: DefaultValidationMessages.IsMobilePhone })
-  public phone?: string;
-
-  /**
    * As permissões de um usuário
    */
   @ApiModelProperty({ description: 'Only admins can change this property.' })

@@ -24,14 +24,6 @@ export class UserUpdatePayload {
   public email?: string;
 
   /**
-   * O número de telefone do usuário
-   */
-  @ApiModelPropertyOptional()
-  @IsOptional()
-  @IsMobilePhone('pt-BR', { message: DefaultValidationMessages.IsMobilePhone })
-  public phone?: string;
-
-  /**
    * A senha do usuário
    */
   @ApiModelProperty()

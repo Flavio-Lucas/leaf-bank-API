@@ -13,7 +13,7 @@ import { TokenProxy } from '../../../models/proxys/token.proxy';
 import { UserEntity } from '../../../typeorm/entities/user.entity';
 import { GoogleLoginPayload } from '../../auth-token/models/google-login.payload';
 import { LoginPayload } from '../../auth-token/models/login.payload';
-import { ConfigService } from '../../config/services/config.service';
+import { EnvService } from '../../env/services/env.service';
 import { UserService } from '../../users/services/user.service';
 import { IJwtPayload } from '../models/jwt.payload';
 
@@ -35,7 +35,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
-    private readonly config: ConfigService,
+    private readonly env: EnvService,
   ) {
   }
 
@@ -52,8 +52,8 @@ export class AuthService {
    * O cliente para verificar o token de autenticação do google
    */
   private readonly googleClient: OAuth2Client = new OAuth2Client({
-    clientId: this.config.GOOGLE_CLIENT_ID,
-    clientSecret: this.config.GOOGLE_CLIENT_SECRET,
+    clientId: this.env.GOOGLE_CLIENT_ID,
+    clientSecret: this.env.GOOGLE_CLIENT_SECRET,
   });
 
   //#endregion
@@ -67,20 +67,17 @@ export class AuthService {
    * @param expiresInMilliseconds Diz quando o token deve ser expirado
    */
   public async signIn(user: Partial<UserEntity>, expiresInMilliseconds?: number): Promise<TokenProxy> {
-    const { id, createdAt, updatedAt, email, roles, phone, isActive } = user;
-    const expiresIn = expiresInMilliseconds && ms(expiresInMilliseconds) || this.config.JWT_EXPIRES_IN;
+    const { id, createdAt, updatedAt, isActive } = user;
+    const expiresIn = expiresInMilliseconds && ms(expiresInMilliseconds) || this.env.JWT_EXPIRES_IN;
 
     const token = await this.jwtService.signAsync({
       id,
       createdAt,
       updatedAt,
-      email,
-      roles,
-      phone,
       isActive,
     }, { expiresIn });
 
-    const now = +new Date();
+    const now = Date.now().valueOf();
     const expiresAt = now + ms(expiresIn);
 
     return new TokenProxy({ token: `Bearer ${ token }`, expiresAt });
@@ -119,7 +116,6 @@ export class AuthService {
 
     const createdUser = new UserEntity({
       email: email.value,
-      phone: '',
       facebookIdToken: accessToken,
     });
 
@@ -143,8 +139,8 @@ export class AuthService {
     if (!jwtPayload.iat || !jwtPayload.exp || !jwtPayload.id)
       throw new UnauthorizedException('Os detalhes para a autenticação não foram encontrados.');
 
-    const now = new Date();
-    const jwtExpiresIn = new Date(jwtPayload.exp);
+    const now = Date.now().valueOf() / 1000;
+    const jwtExpiresIn = jwtPayload.exp;
 
     if (now > jwtExpiresIn)
       throw new UnauthorizedException({
@@ -162,7 +158,7 @@ export class AuthService {
    * @param user As informações do usuário
    */
   public async signInFacebook(user: UserEntity) {
-    const hasConfigForFacebookAuth = !!this.config.FACEBOOK_CLIENT_ID && !!this.config.FACEBOOK_CLIENT_SECRET;
+    const hasConfigForFacebookAuth = !!this.env.FACEBOOK_CLIENT_ID && !!this.env.FACEBOOK_CLIENT_SECRET;
 
     if (!hasConfigForFacebookAuth)
       throw new BadRequestException('A autenticação pelo Facebook não foi habilitada.');
@@ -179,7 +175,7 @@ export class AuthService {
    * @param payload As informações de autenticação
    */
   public async signInGoogle(payload: GoogleLoginPayload): Promise<TokenProxy> {
-    const hasConfigForGoogleAuth = !!this.config.GOOGLE_CLIENT_ID && !!this.config.GOOGLE_CLIENT_SECRET;
+    const hasConfigForGoogleAuth = !!this.env.GOOGLE_CLIENT_ID && !!this.env.GOOGLE_CLIENT_SECRET;
 
     if (!hasConfigForGoogleAuth)
       throw new BadRequestException('A autenticação pelo Google não foi habilitada.');
@@ -201,7 +197,6 @@ export class AuthService {
 
     const createdUser = new UserEntity({
       email: googleInfo.email,
-      phone: '',
       googleIdToken: payload.googleIdToken,
     });
 
@@ -225,7 +220,7 @@ export class AuthService {
   private async verifyGoogleIdToken(payload: GoogleLoginPayload): Promise<{ error?: any, success?: TokenPayload }> {
     return await this.googleClient.verifyIdToken({
       idToken: payload.googleIdToken,
-      audience: this.config.GOOGLE_CLIENT_ID,
+      audience: this.env.GOOGLE_CLIENT_ID,
     }).then(success => ({ success: success.getPayload() }))
       .catch(error => ({ error }));
   }

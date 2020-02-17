@@ -39,10 +39,31 @@ export function isNormalUser(user?: UserEntity): boolean {
  * @param ignores A lista de valores a serem ignorados
  */
 export function removeValues(obj: object, includes: any[] = [], ignores: any[] = [null, undefined, '']): object {
-  const isNonEmpty = d => includes.includes(d) || !ignores.includes(d) && (typeof(d) !== 'object' || Object.keys(d).length);
+  const isNonEmpty = d => includes.includes(d) || !ignores.includes(d) && (typeof (d) !== 'object' || Object.keys(d).length);
 
   return JSON.parse(JSON.stringify(obj), (k, v) => {
     if (isNonEmpty(v))
       return v;
   });
+}
+
+/**
+ * Método que separa um array em um array de arrays com tamanhos específicos
+ *
+ * @param array O array que será particionado
+ * @param size O tamanho das partições
+ */
+export function chunk<T>(array: T[], size: number): T[][] {
+  const chunked = [];
+
+  for (const element of array) {
+    const last = chunked[chunked.length - 1];
+
+    if (last && last.length !== size)
+      last.push(element);
+    else
+      chunked.push([element]);
+  }
+
+  return chunked;
 }
