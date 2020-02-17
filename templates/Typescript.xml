@@ -1,0 +1,84 @@
+<templateSet group="user">
+  <template name="region" value="//#region $name$&#10;&#10;//#endregion" description="" toReformat="false" toShortenFQNames="true">
+    <variable name="name" expression="capitalize(String)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_SCRIPT" value="true" />
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="pme" value="//#region $modifier$ Methods&#10;&#10;&#10;//#endregion" description="" toReformat="false" toShortenFQNames="true">
+    <variable name="modifier" expression="capitalize(String)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_SCRIPT" value="true" />
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="pprop" value="//#region $modifier$ Properties&#10;&#10;//#endregion" description="" toReformat="false" toShortenFQNames="true">
+    <variable name="modifier" expression="capitalize(String)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_SCRIPT" value="true" />
+    </context>
+  </template>
+  <template name="ctor" value="//#region Constructor&#10;&#10;/**&#10; * Construtor padrão&#10; */&#10;constructor() { }&#10;&#10;//#endregion" description="" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="JAVA_SCRIPT" value="true" />
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="cycle" value="//#region LifeCycle Events&#10;&#10;//#endregion" description="" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="JAVA_SCRIPT" value="true" />
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="input" value="//#region Inputs&#10;&#10;//#endregion" description="" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="JAVA_SCRIPT" value="true" />
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="childs" value="//#region ViewChilds&#10;&#10;//#endregion" description="" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="JAVA_SCRIPT" value="true" />
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="incontent" value="//#region Inputs&#10;&#10;/**&#10; * As informações de conteúdo desse componente&#10; */&#10;@Input()&#10;public content: $type$;&#10;&#10;//#endregion" description="" toReformat="false" toShortenFQNames="true">
+    <variable name="type" expression="capitalize(String)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_SCRIPT" value="true" />
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="imp" value="//#region Imports&#10;&#10;//#endregion" description="" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="JAVA_SCRIPT" value="true" />
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="pr" value="private readonly $name$" description="" toReformat="false" toShortenFQNames="true">
+    <variable name="name" expression="underscoresToCamelCase(String)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_SCRIPT" value="true" />
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="avoid" value="/**&#10; * Método que é executado quando $description$&#10; */&#10;public async $name$(): Promise&lt;$type$&gt; {&#10;&#10;}" description="" toReformat="false" toShortenFQNames="true">
+    <variable name="description" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="name" expression="underscoresToCamelCase(String)" defaultValue="" alwaysStopAt="true" />
+    <variable name="type" expression="" defaultValue="void" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_SCRIPT" value="true" />
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="ps" value="/**&#10; * $description$&#10; */&#10;public $name$: string;" description="" toReformat="false" toShortenFQNames="true">
+    <variable name="description" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="name" expression="camelCase(String)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="ECMAScript6" value="true" />
+      <option name="JAVA_SCRIPT" value="true" />
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+</templateSet>
