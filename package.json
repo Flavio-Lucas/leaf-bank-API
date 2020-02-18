@@ -25,8 +25,7 @@
       "add-migration": "npm run typeorm:cli -- migration:generate -n",
       "revert-migration": "npm run typeorm:cli -- migration:revert",
       "deploy:docker": "npm run build:docker && docker push base/api",
-      "deploy:heroku": "cd .. && git subtree push --prefix backend heroku master",
-      "postinstall": "npm run build:prod"
+      "deploy:heroku": "cd .. && git subtree push --prefix backend heroku master"
    },
    "dependencies": {
       "@nestjs/common": "^6.10.14",
