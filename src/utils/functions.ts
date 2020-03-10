@@ -28,7 +28,24 @@ export function isValid(value: any): boolean {
  * @param user As informações do usuário
  */
 export function isNormalUser(user?: UserEntity): boolean {
-  return !user || user && user.roles && !user.roles.includes('admin');
+  return !user || user && user.roles && !isAdmin(user.roles);
+}
+
+/**
+ * Método que diz se o usuário é um usuário de administrador
+ *
+ * @param user As informações do usuário
+ */
+export function isAdminUser(user?: UserEntity): boolean {
+  return user && user.roles && isAdmin(user.roles);
+}
+/**
+ * Método que diz se o usuário é um usuário de administrador
+ *
+ * @param roles As permissões de um usuário
+ */
+export function isAdmin(roles: string): boolean {
+  return isValid(roles) && roles.split('|').some(role => role === 'debit.admin' || role === 'admin');
 }
 
 /**

@@ -1,6 +1,6 @@
 //#region Imports
 
-import { ClassSerializerInterceptor, Controller, Get, Request, UnauthorizedException, UseInterceptors } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Get, NotFoundException, Request, UnauthorizedException, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiUseTags } from '@nestjs/swagger';
 import { Crud, CrudRequest, Override, ParsedBody, ParsedRequest } from '@nestjsx/crud';
 
@@ -8,6 +8,7 @@ import { BaseCrudController } from '../../../common/base-crud.controller';
 import { ProtectTo } from '../../../decorators/protect/protect.decorator';
 import { UserEntity } from '../../../typeorm/entities/user.entity';
 import { CrudProxy, mapCrud } from '../../../utils/crud';
+import { isAdmin, isAdminUser, isValid } from '../../../utils/functions';
 import { NestJSRequest } from '../../../utils/type.shared';
 import { UserCreatePayload } from '../models/user-create.payload';
 import { UserUpdatePayload } from '../models/user-update.payload';
@@ -31,12 +32,13 @@ import { UserService } from '../services/user.service';
     exclude: [
       'updateOneBase',
       'createManyBase',
+      'deleteOneBase',
     ],
   },
 })
 @UseInterceptors(ClassSerializerInterceptor)
-@ApiUseTags('user')
-@Controller('user')
+@ApiUseTags('users')
+@Controller('users')
 export class UserController extends BaseCrudController<UserEntity, UserService> {
 
   //#region Constructor
@@ -61,9 +63,9 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
    */
   @Get('me')
   @ApiOkResponse({ description: 'Get info about user logged.', type: UserProxy })
-  @ProtectTo('user')
+  @ProtectTo('user', 'admin')
   public async getMe(@Request() nestRequest: NestJSRequest): Promise<CrudProxy<UserProxy>> {
-    return mapCrud(UserProxy, nestRequest.user);
+    return await this.service.findById(nestRequest.user.id).then(response => mapCrud(UserProxy, response));
   }
 
   /**
@@ -88,11 +90,18 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
   @ProtectTo('user', 'admin')
   @Override()
   @ApiOkResponse({ type: UserProxy })
-  public getOne(@Request() nestRequest: NestJSRequest, @ParsedRequest() crudRequest: CrudRequest): Promise<CrudProxy<UserProxy>> {
-    if ((+nestRequest.params.id) !== nestRequest.user.id && !nestRequest.user.roles.includes('admin'))
+  public async getOne(@Request() nestRequest: NestJSRequest, @ParsedRequest() crudRequest: CrudRequest): Promise<CrudProxy<UserProxy>> {
+    const userId = +nestRequest.params.id;
+
+    if (userId !== nestRequest.user.id && !isAdminUser(nestRequest.user))
       throw new UnauthorizedException('Você não tem permissão para realizar essa operação.');
 
-    return this.base.getOneBase(crudRequest).then(response => mapCrud(UserProxy, response));
+    const { exists } = await this.service.exists([userId]);
+
+    if (!exists)
+      throw new NotFoundException('A entidade procurada não existe.');
+
+    return await this.base.getOneBase(crudRequest).then(response => mapCrud(UserProxy, response));
   }
 
   /**
@@ -108,7 +117,7 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
     const entity = new UserEntity({
       email: payload.email,
       password: payload.password,
-      ...nestRequest.user && nestRequest.user.roles && nestRequest.user.roles.includes('admin') && { roles: payload.roles },
+      ...nestRequest.user && nestRequest.user.roles && isAdmin(nestRequest.user.roles) && { roles: payload.roles },
     });
 
     return this.base.createOneBase(crudRequest, entity).then(response => mapCrud(UserProxy, response));
@@ -124,33 +133,24 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
   @ProtectTo('user', 'admin')
   @Override()
   @ApiOkResponse({ type: UserProxy })
-  public replaceOne(@Request() nestRequest: NestJSRequest, @ParsedRequest() crudRequest: CrudRequest, @ParsedBody() payload: UserUpdatePayload): Promise<CrudProxy<UserProxy>> {
-    if ((+nestRequest.params.id) !== nestRequest.user.id && !nestRequest.user.roles.includes('admin'))
+  public async replaceOne(@Request() nestRequest: NestJSRequest, @ParsedRequest() crudRequest: CrudRequest, @ParsedBody() payload: UserUpdatePayload): Promise<CrudProxy<UserProxy>> {
+    const userId = +nestRequest.params.id;
+
+    if ((+nestRequest.params.id) !== nestRequest.user.id && !isAdmin(nestRequest.user.roles))
       throw new UnauthorizedException('Você não tem permissão para realizar essa operação.');
+
+    const { exists } = await this.service.exists([userId]);
+
+    if (!exists)
+      throw new NotFoundException('A entidade procurada não existe.');
 
     const entity = new UserEntity({
-      email: payload.email,
-      password: payload.password,
-      ...nestRequest.user && nestRequest.user.roles && nestRequest.user.roles.includes('admin') && { roles: payload.roles },
+      id: userId,
+      ...isValid(payload.email) && { email: payload.email },
+      ...isAdmin(nestRequest.user.roles) && { roles: payload.roles },
     });
 
-    return this.base.replaceOneBase(crudRequest, entity).then(response => mapCrud(UserProxy, response));
-  }
-
-  /**
-   * Método que deleta uma entidade
-   *
-   * @param nestRequest As informações da requisição do NestJS
-   * @param crudRequest As informações da requisição do CRUD
-   */
-  @ProtectTo('user', 'admin')
-  @Override()
-  @ApiOkResponse({ type: undefined })
-  public async deleteOne(@Request() nestRequest: NestJSRequest, @ParsedRequest() crudRequest: CrudRequest): Promise<CrudProxy<UserProxy>> {
-    if ((+nestRequest.params.id) !== nestRequest.user.id && !nestRequest.user.roles.includes('admin'))
-      throw new UnauthorizedException('Você não tem permissão para realizar essa operação.');
-
-    return this.base.deleteOneBase(crudRequest).then(response => response && mapCrud(UserProxy, response) || void 0);
+    return await this.service.userRepository.save(entity).then(response => mapCrud(UserProxy, response));
   }
 
   //#endregion

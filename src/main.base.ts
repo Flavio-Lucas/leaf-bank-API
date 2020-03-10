@@ -50,24 +50,24 @@ CrudConfigService.load({
  * Método que configura o Swagger para a aplicação
  *
  * @param app A instância da aplicação
- * @param config As configurações da aplicação
+ * @param env As configurações da aplicação
  */
-function setupSwagger(app: INestApplication, config: EnvService): void {
-  if (!config.SWAGGER_ENABLED)
+function setupSwagger(app: INestApplication, env: EnvService): void {
+  if (!env.SWAGGER_ENABLED)
     return;
 
   const swaggerOptions = new DocumentBuilder()
-    .setTitle(config.SWAGGER_TITLE)
-    .setDescription(config.SWAGGER_DESCRIPTION)
-    .setVersion(config.SWAGGER_VERSION)
-    .addTag(config.SWAGGER_TAG)
-    .setBasePath(config.API_BASE_PATH)
+    .setTitle(env.SWAGGER_TITLE)
+    .setDescription(env.SWAGGER_DESCRIPTION)
+    .setVersion(env.SWAGGER_VERSION)
+    .addTag(env.SWAGGER_TAG)
+    .setBasePath(env.API_BASE_PATH)
     .addBearerAuth('Authorization', 'header')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerOptions);
 
-  SwaggerModule.setup(`${ config.API_BASE_PATH }/swagger`, app, document);
+  SwaggerModule.setup(`${ env.API_BASE_PATH }/swagger`, app, document);
 }
 
 /**
@@ -88,8 +88,9 @@ function setupPipes(app: INestApplication): void {
  * Método que configura os middleware da aplicação
  *
  * @param app A instância da aplicação
+ * @param env As configurações da aplicação
  */
-function setupMiddleware(app: INestApplication): void {
+function setupMiddleware(app: INestApplication, env: EnvService): void {
   app.use(helmet());
 
   app.enableCors();
@@ -99,6 +100,9 @@ function setupMiddleware(app: INestApplication): void {
   app.use(timeout('30s'));
 
   app.use(haltOnTimeout);
+
+  if (env.isTest)
+    return;
 
   app.use(
     rateLimit({
@@ -137,17 +141,25 @@ function haltOnTimeout(req, res, next) {
 
 export async function createApp(): Promise<INestApplication> {
   const app = await NestFactory.create(AppModule);
-  const config = await app.get(EnvService);
 
-  setupSwagger(app, config);
-  setupPipes(app);
-  setupMiddleware(app);
-  setupFilters(app, config);
-
-  app.setGlobalPrefix(config.API_BASE_PATH);
+  await setup(app);
 
   return app;
 }
+
+export async function setup(app: INestApplication): Promise<INestApplication> {
+  const env = await app.get(EnvService);
+
+  setupSwagger(app, env);
+  setupPipes(app);
+  setupMiddleware(app, env);
+  setupFilters(app, env);
+
+  app.setGlobalPrefix(env.API_BASE_PATH);
+
+  return app;
+}
+
 
 export async function createAppInit(): Promise<INestApplication> {
   const app = await createApp();

@@ -2,12 +2,10 @@
 
 import { Body, ClassSerializerInterceptor, Controller, Post, Request, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBadRequestResponse, ApiImplicitQuery, ApiNotFoundResponse, ApiOkResponse, ApiUnauthorizedResponse, ApiUseTags } from '@nestjs/swagger';
-import { ApplyDecoratorsIfEnvExists } from '../../../decorators/apply-if-env-exists/apply-if-env-exists.decorator';
+import { ApiNotFoundResponse, ApiOkResponse, ApiUnauthorizedResponse, ApiUseTags } from '@nestjs/swagger';
 
 import { TokenProxy } from '../../../models/proxys/token.proxy';
 import { NestJSRequest } from '../../../utils/type.shared';
-import { GoogleLoginPayload } from '../../auth-token/models/google-login.payload';
 import { LoginPayload } from '../../auth-token/models/login.payload';
 import { AuthService } from '../services/auth.service';
 
@@ -44,7 +42,7 @@ export class AuthController {
   @ApiUnauthorizedResponse({ description: 'A senha digitada está incorreta.' })
   @ApiNotFoundResponse({ description: 'Não foi encontrado um usuário com esse e-mail.' })
   @UseGuards(AuthGuard('local'))
-  @Post('/credentials')
+  @Post('/local')
   public async login(@Request() req: NestJSRequest, @Body() payload: LoginPayload): Promise<TokenProxy> {
     return await this.authService.signIn(req.user);
   }

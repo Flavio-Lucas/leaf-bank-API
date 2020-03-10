@@ -32,6 +32,17 @@ export class EnvService extends implementOptionalInterface<Partial<Readonly<IDot
 
   //#endregion
 
+  //#region Public Properties
+
+  /**
+   * Diz se está no ambiente de testes
+   */
+  get isTest(): boolean {
+    return this.NODE_ENV === 'test';
+  }
+
+  //#endregion
+
   //#region Private Methods
 
   /**
@@ -43,6 +54,7 @@ export class EnvService extends implementOptionalInterface<Partial<Readonly<IDot
     type DotEnvValidation = { [key in keyof IDotEnv]: ValidatorSpec<any> };
 
     const rule: DotEnvValidation = {
+      NODE_ENV: envalid.str(),
       API_BASE_PATH: envalid.str({ default: 'prod', devDefault: 'dev' }),
       PORT: envalid.port({ default: 3000 }),
       API_DEFAULT_STRATEGY: envalid.str({ default: 'jwt' }),

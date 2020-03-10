@@ -4,6 +4,11 @@
 export interface IDotEnv {
 
   /**
+   * O tipo de ambiente que está rodando a aplicação
+   */
+  NODE_ENV: string;
+
+  /**
    * O tipo de banco de dados suportado
    */
   DB_TYPE: string;

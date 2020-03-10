@@ -37,7 +37,7 @@ export class TypeOrmService implements TypeOrmOptionsFactory {
       database: this.env.DB_DATABASE,
       synchronize: this.env.DB_SYNCHRONIZE,
       migrationsRun: this.env.DB_MIGRATIONS_RUN,
-      logging: !this.env.isProduction,
+      logging: this.env.isDevelopment,
       entities: [
         ...TypeOrmEntities,
       ],

@@ -21,6 +21,7 @@ export class UserProxy extends BaseCrudProxy {
     super(user);
 
     this.email = user.email;
+    this.roles = user.roles;
   }
 
   //#region Public Properties
@@ -30,6 +31,12 @@ export class UserProxy extends BaseCrudProxy {
    */
   @ApiModelProperty()
   public email: string;
+
+  /**
+   * O e-mail ou RA do usuário
+   */
+  @ApiModelProperty()
+  public roles: string;
 
   //#endregion
 

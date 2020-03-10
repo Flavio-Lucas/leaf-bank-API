@@ -9,6 +9,7 @@ import * as xss from 'xss';
 import { Repository } from 'typeorm';
 
 import { TypeOrmValueTypes } from '../../../models/enums/type-orm-value.types';
+import { VerifyProxy } from '../../../models/proxys/verify.proxy';
 import { UserEntity } from '../../../typeorm/entities/user.entity';
 
 //#endregion
@@ -33,6 +34,17 @@ export class UserService extends TypeOrmCrudService<UserEntity> {
   //#endregion
 
   //#region Public Methods
+
+  /**
+   * Método que verifica se algumas entidades existem
+   *
+   * @param ids A lista de identificações das entidades
+   */
+  public async exists(ids: number[]): Promise<VerifyProxy> {
+    const count = await this.userRepository.createQueryBuilder().whereInIds(ids).getCount();
+
+    return new VerifyProxy(count === ids.length);
+  }
 
   /**
    * Método que retorna um usuário pelo e-mail dele
