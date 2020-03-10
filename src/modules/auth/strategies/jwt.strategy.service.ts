@@ -7,7 +7,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserEntity } from '../../../typeorm/entities/user.entity';
 import { EnvService } from '../../env/services/env.service';
 import { IJwtPayload } from '../models/jwt.payload';
-import { AuthService } from './auth.service';
+import { AuthService } from '../services/auth.service';
 
 //#endregion
 

@@ -7,7 +7,7 @@ import * as FacebookTokenStrategy from 'passport-facebook-token';
 import { use } from 'passport';
 
 import { EnvService } from '../../env/services/env.service';
-import { AuthService } from './auth.service';
+import { AuthService } from '../services/auth.service';
 
 //#endregion
 
