@@ -65,7 +65,8 @@ export class EnvService extends implementOptionalInterface<Partial<Readonly<IDot
       GOOGLE_CLIENT_SECRET: envalid.str({ default: '' }),
       FACEBOOK_CLIENT_ID: envalid.str({ default: '' }),
       FACEBOOK_CLIENT_SECRET: envalid.str({ default: '' }),
-      SWAGGER_ENABLED: envalid.bool({ default: false, })
+      SWAGGER_ENABLED: envalid.bool({ default: false, }),
+      SENTRY_DNS: envalid.str({ default: '' }),
     };
 
     const env = envalid.cleanEnv<IDotEnv>(process.env, rule, { dotEnvPath: dotEnvName, strict: true });

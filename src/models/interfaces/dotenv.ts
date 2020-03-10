@@ -122,4 +122,9 @@ export interface IDotEnv {
    */
   FACEBOOK_CLIENT_SECRET: string;
 
+  /**
+   * O DNS da Sentry para enviar as exceções
+   */
+  SENTRY_DNS: string;
+
 }

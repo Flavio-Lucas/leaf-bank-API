@@ -8,7 +8,10 @@ import * as timeout from 'connect-timeout';
 
 import * as rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
+import * as Sentry from '@sentry/node';
+
 import { AppModule } from './app.module';
+import { SentryFilter } from './filters/sentryFilter';
 import { EnvService } from './modules/env/services/env.service';
 
 const bodyParser = require('body-parser');
@@ -106,6 +109,21 @@ function setupMiddleware(app: INestApplication): void {
 }
 
 /**
+ * Método que configura os filtros da aplicação
+ *
+ * @param app A instância da aplicação
+ * @param config As configurações da aplicação
+ */
+function setupFilters(app: INestApplication, config: EnvService) {
+  if (!config.SENTRY_DNS || config.isTest)
+    return;
+
+  Sentry.init({ dsn: config.SENTRY_DNS });
+
+  app.useGlobalFilters(new SentryFilter());
+}
+
+/**
  * Mata a aplicação caso de timeout
  */
 function haltOnTimeout(req, res, next) {
@@ -124,6 +142,7 @@ export async function createApp(): Promise<INestApplication> {
   setupSwagger(app, config);
   setupPipes(app);
   setupMiddleware(app);
+  setupFilters(app, config);
 
   app.setGlobalPrefix(config.API_BASE_PATH);
 

@@ -7,7 +7,9 @@ import * as bcryptjs from 'bcryptjs';
 
 import { OAuth2Client } from 'google-auth-library';
 import { TokenPayload } from 'google-auth-library/build/src/auth/loginticket';
+
 import * as PassportFacebookToken from 'passport-facebook-token';
+import * as Sentry from '@sentry/node';
 
 import { TokenProxy } from '../../../models/proxys/token.proxy';
 import { UserEntity } from '../../../typeorm/entities/user.entity';
@@ -149,7 +151,11 @@ export class AuthService {
         shouldLogout: true,
       });
 
-    return await this.userService.findById(jwtPayload.id);
+    const user = await this.userService.findById(jwtPayload.id);
+
+    Sentry.setUser({ id: user.id.toString(), email: user.email });
+
+    return user;
   }
 
   /**
