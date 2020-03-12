@@ -5,7 +5,7 @@ import { CleanEnv, ValidatorSpec } from 'envalid';
 
 import * as envalid from 'envalid';
 
-import { IDotEnv } from '../../../models/interfaces/dotenv';
+import { IDotEnv } from '../models/dotenv';
 import { implementOptionalInterface } from '../../../utils/interface';
 
 //#endregion
@@ -77,8 +77,14 @@ export class EnvService extends implementOptionalInterface<Partial<Readonly<IDot
       GOOGLE_CLIENT_SECRET: envalid.str({ default: '' }),
       FACEBOOK_CLIENT_ID: envalid.str({ default: '' }),
       FACEBOOK_CLIENT_SECRET: envalid.str({ default: '' }),
-      SWAGGER_ENABLED: envalid.bool({ default: false, }),
+      SWAGGER_ENABLED: envalid.bool({ default: false }),
       SENTRY_DNS: envalid.str({ default: '' }),
+      FACENS_API_ENDPOINT: envalid.str({ default: '' }),
+      FACENS_ADMIN_USER: envalid.str({ default: '' }),
+      FACENS_ADMIN_PASSWORD: envalid.str({ default: '' }),
+      HTTP_TIMEOUT: envalid.num({ default: 5000 }),
+      HTTP_MAX_REDIRECTS: envalid.num({ default: 5 }),
+      HTTP_BASE_URL: envalid.str({ default: '' }),
     };
 
     const env = envalid.cleanEnv<IDotEnv>(process.env, rule, { dotEnvPath: dotEnvName, strict: true });

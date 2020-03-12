@@ -121,7 +121,7 @@ export class AuthService {
       facebookIdToken: accessToken,
     });
 
-    const userEntity = await this.userService.userRepository.save(createdUser).catch((e) => this.logger.error(e));
+    const userEntity = await this.userService.repository.save(createdUser).catch((e) => this.logger.error(e));
 
     if (userEntity)
       return done(null, userEntity);
@@ -206,7 +206,7 @@ export class AuthService {
       googleIdToken: payload.googleIdToken,
     });
 
-    const userEntity = await this.userService.userRepository.save(createdUser).catch((e) => this.logger.error(e));
+    const userEntity = await this.userService.repository.save(createdUser).catch((e) => this.logger.error(e));
 
     if (userEntity)
       return await this.signIn(userEntity, expiresInMilliseconds);

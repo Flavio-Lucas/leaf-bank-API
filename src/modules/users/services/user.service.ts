@@ -26,9 +26,9 @@ export class UserService extends TypeOrmCrudService<UserEntity> {
    * Construtor padrão
    */
   constructor(
-    @InjectRepository(UserEntity) public userRepository: Repository<UserEntity>,
+    @InjectRepository(UserEntity) public repository: Repository<UserEntity>,
   ) {
-    super(userRepository);
+    super(repository);
   }
 
   //#endregion
@@ -41,7 +41,7 @@ export class UserService extends TypeOrmCrudService<UserEntity> {
    * @param ids A lista de identificações das entidades
    */
   public async exists(ids: number[]): Promise<VerifyProxy> {
-    const count = await this.userRepository.createQueryBuilder().whereInIds(ids).getCount();
+    const count = await this.repository.createQueryBuilder().whereInIds(ids).getCount();
 
     return new VerifyProxy(count === ids.length);
   }
@@ -53,7 +53,7 @@ export class UserService extends TypeOrmCrudService<UserEntity> {
    */
   public async findByEmail(email: string): Promise<UserEntity> {
     const cleanedEmail = this.getCleanedEmail(email);
-    const user = await this.userRepository.findOne({ where: { email: cleanedEmail, isActive: TypeOrmValueTypes.TRUE } });
+    const user = await this.repository.findOne({ where: { email: cleanedEmail, isActive: TypeOrmValueTypes.TRUE } });
 
     if (!user)
       throw new NotFoundException('O usuário não existe ou foi deletado.');
@@ -68,7 +68,7 @@ export class UserService extends TypeOrmCrudService<UserEntity> {
    */
   public async findByEmailForAuth(email: string): Promise<Partial<UserEntity>> {
     const cleanedEmail = this.getCleanedEmail(email);
-    const user = await this.userRepository.findOne({ where: { email: cleanedEmail, isActive: TypeOrmValueTypes.TRUE } });
+    const user = await this.repository.findOne({ where: { email: cleanedEmail, isActive: TypeOrmValueTypes.TRUE } });
 
     if (!user)
       throw new NotFoundException('O usuário não existe ou foi deletado.');
@@ -82,7 +82,7 @@ export class UserService extends TypeOrmCrudService<UserEntity> {
    * @param id A identificação do usuário
    */
   public async findById(id: number): Promise<UserEntity> {
-    const user = await this.userRepository.findOne({ where: { id, isActive: TypeOrmValueTypes.TRUE } });
+    const user = await this.repository.findOne({ where: { id, isActive: TypeOrmValueTypes.TRUE } });
 
     if (!user)
       throw new NotFoundException('O usuário não existe ou foi deletado.');
@@ -99,7 +99,7 @@ export class UserService extends TypeOrmCrudService<UserEntity> {
   public async findByEmailAndFacebookIdToken(email: string, facebookIdToken: string): Promise<UserEntity | undefined> {
     const cleanedEmail = this.getCleanedEmail(email);
 
-    return await this.userRepository.findOne({
+    return await this.repository.findOne({
       where: {
         email: cleanedEmail,
         facebookIdToken,
@@ -117,7 +117,7 @@ export class UserService extends TypeOrmCrudService<UserEntity> {
   public async findByEmailAndGoogleIdToken(email: string, googleIdToken: string): Promise<UserEntity | undefined> {
     const cleanedEmail = this.getCleanedEmail(email);
 
-    return await this.userRepository.findOne({
+    return await this.repository.findOne({
       where: {
         email: cleanedEmail,
         googleIdToken,

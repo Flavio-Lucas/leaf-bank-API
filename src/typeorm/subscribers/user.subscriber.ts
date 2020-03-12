@@ -47,7 +47,7 @@ export class UserSubscriber implements EntitySubscriberInterface<UserEntity> {
    * Método que realiza alguns procedimentos padrões antes de salvar um usuário
    */
   public async beforeInsert(event: InsertEvent<UserEntity>): Promise<void> {
-    const alreadyHasUser = await this.userService.userRepository.findOne({ where: { email: event.entity.email } });
+    const alreadyHasUser = await this.userService.repository.findOne({ where: { email: event.entity.email } });
 
     if (alreadyHasUser)
       throw new BadRequestException('Já existe um usuário cadastrado com esse e-mail.');

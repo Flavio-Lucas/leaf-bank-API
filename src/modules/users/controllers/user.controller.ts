@@ -150,7 +150,7 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
       ...isAdmin(nestRequest.user.roles) && { roles: payload.roles },
     });
 
-    return await this.service.userRepository.save(entity).then(response => mapCrud(UserProxy, response));
+    return await this.service.repository.save(entity).then(response => mapCrud(UserProxy, response));
   }
 
   //#endregion

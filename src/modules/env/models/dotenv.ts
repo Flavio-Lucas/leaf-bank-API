@@ -3,10 +3,16 @@
  */
 export interface IDotEnv {
 
+  //#region Environment
+
   /**
    * O tipo de ambiente que está rodando a aplicação
    */
   NODE_ENV: string;
+
+  //#endregion
+
+  //#region Database
 
   /**
    * O tipo de banco de dados suportado
@@ -55,6 +61,10 @@ export interface IDotEnv {
    */
   DB_TIMEOUT: number;
 
+  //#endregion
+
+  //#region API
+
   /**
    * A estratégia padrão de autenticação
    */
@@ -71,6 +81,10 @@ export interface IDotEnv {
    */
   PORT: number;
 
+  //#endregion
+
+  //#region JWT
+
   /**
    * A chave secreta do JWT
    */
@@ -80,6 +94,10 @@ export interface IDotEnv {
    * Diz quando a chave de autenticação deve expirar
    */
   JWT_EXPIRES_IN: string;
+
+  //#endregion
+
+  //#region Swagger
 
   /**
    * O titulo que será usado para a API.
@@ -107,6 +125,9 @@ export interface IDotEnv {
    */
   SWAGGER_ENABLED: boolean;
 
+  //#endregion
+
+  //#region OAuth2
   /**
    * O client id para autenticar com o Google
    */
@@ -127,9 +148,53 @@ export interface IDotEnv {
    */
   FACEBOOK_CLIENT_SECRET: string;
 
+
+  //#endregion
+
+  //#region Monitoring
+
   /**
    * O DNS da Sentry para enviar as exceções
    */
   SENTRY_DNS: string;
 
+  //#endregion
+
+  //#region Facens
+
+  /**
+   * O endpoint da API da Facens
+   */
+  FACENS_API_ENDPOINT: string;
+
+  /**
+   * O usuário de um administrador da Facens
+   */
+  FACENS_ADMIN_USER: string;
+
+  /**
+   * A senha de um usuário administrador da Facens
+   */
+  FACENS_ADMIN_PASSWORD: string;
+
+  //#endregion
+
+  //#region HTTP Settings
+
+  /**
+   * O máximo de timeout de uma requisição
+   */
+  HTTP_TIMEOUT: number;
+
+  /**
+   * O máximo de redirecionamento de uma requisição
+   */
+  HTTP_MAX_REDIRECTS: number;
+
+  /**
+   * O url base para realizar as requisições HTTP
+   */
+  HTTP_BASE_URL: string;
+
+  //#endregion
 }
