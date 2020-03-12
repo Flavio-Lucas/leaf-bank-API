@@ -87,6 +87,35 @@ Dentro da pasta, deve possuir a seguinte estrutura:
         - `products-create.payload.ts`
         - `products-update.payload.ts`
 
+## Autenticação
+
+Há quatro formas de autenticação na aplicação:
+- Local
+- Facebook
+- Google
+- Facens
+
+Todas essas formas de autenticação vem ativas por padrão mas caso queira desativar alguma, basta ir no `app.module.ts` e remove os modulos:
+- `GoogleModule` - Para remover a autenticação com o Google
+- `FacebookModule` - Para remover a autenticação com o Facebook
+- `FacensModule` - Para remover a autenticação com a Facens
+
+## Testes
+
+Todos os testes E2E, que são os mais comuns e que devem ser escritos, estão na pasta `test`.
+
+Para testar, foi adicionado um modulo em `src/modules/test` que contém no `controller` algumas rotas padrões que você pode acabar utilizando.
+
+### Seed
+
+Com relação ao seed de usuários, em `src/modules/test/controllers/test.controller.ts`, ele contém um método para realizar esse seed, edite esse método ou crie outros quando precisar seedar o banco de dados.
+
+### Utilidades
+
+Na pasta `test/utils` eu recomendo você colocar no primeiro funções que realizem vários passos repetitivos que podem ser utilizados em mais de um arquivo. Exemplo: autenticação de cada usuário que foi adicionado por uma seed.
+
+E na pasta `test/models`, eu recomendo você a adicionar todas as `interfaces`, `enums`, `proxies` e `payloads` criados só para os testes.
+
 ## Bugs
 
 ### helmet_1.default is not a function nestjs
