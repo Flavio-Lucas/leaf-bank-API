@@ -128,6 +128,7 @@ export interface IDotEnv {
   //#endregion
 
   //#region OAuth2
+
   /**
    * O client id para autenticar com o Google
    */
@@ -147,7 +148,6 @@ export interface IDotEnv {
    * O client secret para autenticar com o Facebook
    */
   FACEBOOK_CLIENT_SECRET: string;
-
 
   //#endregion
 

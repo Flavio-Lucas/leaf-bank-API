@@ -1,13 +1,13 @@
 //#region Imports
 
 import { Injectable, Logger } from '@nestjs/common';
-import { Profile } from 'passport-facebook-token';
-
-import * as FacebookTokenStrategy from 'passport-facebook-token';
 import { use } from 'passport';
 
+import * as FacebookTokenStrategy from 'passport-facebook-token';
+import { Profile } from 'passport-facebook-token';
+
 import { EnvService } from '../../env/services/env.service';
-import { AuthService } from '../services/auth.service';
+import { FacebookService } from '../services/facebook.service';
 
 //#endregion
 
@@ -23,7 +23,7 @@ export class FacebookStrategy {
    * Construtor padrão
    */
   constructor(
-    private readonly auth: AuthService,
+    private readonly auth: FacebookService,
     private readonly env: EnvService,
   ) {
     this.init();
@@ -36,7 +36,7 @@ export class FacebookStrategy {
   /**
    * A instância para o serviço de log
    */
-  private readonly logger: Logger = new Logger('FacebookStrategy');
+  private readonly logger: Logger = new Logger(FacebookStrategy.name);
 
   //#endregion
 

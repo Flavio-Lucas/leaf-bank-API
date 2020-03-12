@@ -10,7 +10,7 @@ import * as decode from 'jwt-decode';
 import { TypeOrmValueTypes } from '../../../models/enums/type-orm-value.types';
 import { TokenProxy } from '../../../models/proxys/token.proxy';
 import { UserEntity } from '../../../typeorm/entities/user.entity';
-import { LoginPayload } from '../../auth-token/models/login.payload';
+import { LoginPayload } from '../../auth/models/login.payload';
 import { FacensTokenProxy } from '../models/facens-token.proxy';
 import { AuthService } from '../../auth/services/auth.service';
 import { EnvService } from '../../env/services/env.service';
