@@ -1,0 +1,28 @@
+<form class="form-signin card" (ngSubmit)="onSubmit()">
+  <img src="../../../assets/img/liga.png" alt="Logo da aplicação">
+  <h1 class="h3 mt-0 mb-3 font-weight-normal text-center">Bem-vindo</h1>
+
+  <mat-form-field>
+    <input matInput placeholder="Usuário" [formControl]="emailFormControl" [errorStateMatcher]="errorMatcher">
+
+    <mat-error *ngIf="emailFormControl.hasError('required')">
+      O usuário é <strong>obrigatório</strong>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Senha" [type]="hidePassword ? 'password' : 'text'" [formControl]="passwordFormControl" [errorStateMatcher]="errorMatcher">
+
+    <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+      <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+    </button>
+
+    <mat-error *ngIf="passwordFormControl.hasError('required')">
+      A senha é <strong>obrigatória</strong>
+    </mat-error>
+  </mat-form-field>
+
+  <button [disabled]="emailFormControl.hasError('email') || emailFormControl.hasError('required') || passwordFormControl.hasError('required')" mat-stroked-button color="primary" class="btn-block mt-4">Entrar</button>
+
+  <img class="mt-5 mb-3 h-auto mw-100" src="../../../assets/img/liga_logo.svg">
+</form>
