@@ -45,11 +45,12 @@ export class AuthService {
    * @param expiresInMilliseconds Diz quando o token deve ser expirado
    */
   public async signIn(user: Partial<UserEntity>, expiresInMilliseconds?: number): Promise<TokenProxy> {
-    const { id, createdAt, updatedAt, isActive } = user;
+    const { id, roles, createdAt, updatedAt, isActive } = user;
     const expiresIn = expiresInMilliseconds && ms(expiresInMilliseconds) || this.env.JWT_EXPIRES_IN;
 
     const token = await this.jwtService.signAsync({
       id,
+      roles,
       createdAt,
       updatedAt,
       isActive,

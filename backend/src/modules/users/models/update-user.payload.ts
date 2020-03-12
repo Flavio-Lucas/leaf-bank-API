@@ -12,7 +12,7 @@ import { DefaultValidationMessages } from '../../../models/enums/default-validat
 /**
  * As informações enviadas para atualizar um usuário
  */
-export class UserUpdatePayload {
+export class UpdateUserPayload {
 
   /**
    * O e-mail do usuário
@@ -22,14 +22,6 @@ export class UserUpdatePayload {
   @IsString({ message: DefaultValidationMessages.IsString })
   @IsEmail({}, { message: DefaultValidationMessages.IsEmail })
   public email?: string;
-
-  /**
-   * A senha do usuário
-   */
-  @ApiModelProperty()
-  @IsOptional()
-  @IsString({ message: DefaultValidationMessages.IsString })
-  public password?: string;
 
   /**
    * As permissões de um usuário

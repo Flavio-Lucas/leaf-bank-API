@@ -12,7 +12,7 @@ import { DefaultValidationMessages } from '../../../models/enums/default-validat
 /**
  * As informações enviadas para criar um usuário
  */
-export class UserCreatePayload {
+export class CreateUserPayload {
 
   /**
    * O e-mail do usuário

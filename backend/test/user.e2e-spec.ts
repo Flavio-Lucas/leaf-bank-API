@@ -1,5 +1,5 @@
 import * as request from 'supertest';
-import { UserUpdatePayload } from '../src/modules/users/models/user-update.payload';
+import { UpdateUserPayload } from '../src/modules/users/models/update-user.payload';
 import { TestUsersId } from './models/test-users-id.enum';
 
 import { getAdminToken, getFablabToken, getLigaToken } from './utils/auth';
@@ -123,7 +123,7 @@ describe('User (e2e)', () => {
 
     it('should get status 404 when try get user by id that not exists', async () => {
       const adminToken = await getAdminToken(app);
-      const updatePayload: UserUpdatePayload = {
+      const updatePayload: UpdateUserPayload = {
         email: 'joga10@email.com',
       };
       const { body } = await request(app.getHttpServer())
@@ -142,7 +142,7 @@ describe('User (e2e)', () => {
   describe('UPDATE', () => {
     it('should update user by id when logged with same user', async () => {
       const ligaToken = await getLigaToken(app);
-      const updatePayload: UserUpdatePayload = {
+      const updatePayload: UpdateUserPayload = {
         email: 'joga10@email.com',
       };
       const { body } = await request(app.getHttpServer())
@@ -158,7 +158,7 @@ describe('User (e2e)', () => {
 
     it('should update other user by id when logged with admin user', async () => {
       const adminToken = await getAdminToken(app);
-      const updatePayload: UserUpdatePayload = {
+      const updatePayload: UpdateUserPayload = {
         email: 'joga10@email.com',
       };
       const { body } = await request(app.getHttpServer())
@@ -172,9 +172,45 @@ describe('User (e2e)', () => {
       expect(body).not.toHaveProperty('password');
     });
 
+    it('should update roles of other user as admin', async () => {
+      const adminToken = await getAdminToken(app);
+      const updatePayload: UpdateUserPayload = {
+        email: 'joga10@email.com',
+        roles: 'admin',
+      };
+      const { body } = await request(app.getHttpServer())
+        .put(`/users/${ TestUsersId.LIGA }`)
+        .auth(adminToken, { type: 'bearer' })
+        .send(updatePayload)
+        .expect(200);
+
+      expect(body).toBeDefined();
+      expect(body).toHaveProperty('permissions', updatePayload.roles);
+      expect(body).toHaveProperty('email', updatePayload.email);
+      expect(body).not.toHaveProperty('password');
+    });
+
+    it('should cannot update roles of other user as normal user', async () => {
+      const ligaToken = await getLigaToken(app);
+      const updatePayload: UpdateUserPayload = {
+        email: 'joga10@email.com',
+        roles: 'admin',
+      };
+      const { body } = await request(app.getHttpServer())
+        .put(`/users/${ TestUsersId.LIGA }`)
+        .auth(ligaToken, { type: 'bearer' })
+        .send(updatePayload)
+        .expect(200);
+
+      expect(body).toBeDefined();
+      expect(body).not.toHaveProperty('permissions', updatePayload.roles);
+      expect(body).toHaveProperty('email', updatePayload.email);
+      expect(body).not.toHaveProperty('password');
+    });
+
     it('should get status 401 when try update user by id when logged with other user', async () => {
       const fablabToken = await getFablabToken(app);
-      const updatePayload: UserUpdatePayload = {
+      const updatePayload: UpdateUserPayload = {
         email: 'joga10@email.com',
       };
       const { body } = await request(app.getHttpServer())
@@ -191,7 +227,7 @@ describe('User (e2e)', () => {
 
     it('should get status 404 when try update user by id that not exists', async () => {
       const adminToken = await getAdminToken(app);
-      const updatePayload: UserUpdatePayload = {
+      const updatePayload: UpdateUserPayload = {
         email: 'joga10@email.com',
       };
       const { body } = await request(app.getHttpServer())

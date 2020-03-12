@@ -1,6 +1,6 @@
 //#region Imports
 
-import { ClassSerializerInterceptor, Controller, Get, NotFoundException, Request, UnauthorizedException, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get, NotFoundException, Request, UnauthorizedException, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiUseTags } from '@nestjs/swagger';
 import { Crud, CrudRequest, Override, ParsedBody, ParsedRequest } from '@nestjsx/crud';
 
@@ -10,8 +10,8 @@ import { UserEntity } from '../../../typeorm/entities/user.entity';
 import { CrudProxy, mapCrud } from '../../../utils/crud';
 import { isAdmin, isAdminUser, isValid } from '../../../utils/functions';
 import { NestJSRequest } from '../../../utils/type.shared';
-import { UserCreatePayload } from '../models/user-create.payload';
-import { UserUpdatePayload } from '../models/user-update.payload';
+import { CreateUserPayload } from '../models/create-user.payload';
+import { UpdateUserPayload } from '../models/update-user.payload';
 import { UserProxy } from '../models/user.proxy';
 import { UserService } from '../services/user.service';
 
@@ -113,12 +113,9 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
    */
   @Override()
   @ApiOkResponse({ type: UserProxy })
-  public createOne(@Request() nestRequest: NestJSRequest, @ParsedRequest() crudRequest: CrudRequest, @ParsedBody() payload: UserCreatePayload): Promise<CrudProxy<UserProxy>> {
-    const entity = new UserEntity({
-      email: payload.email,
-      password: payload.password,
-      ...nestRequest.user && nestRequest.user.roles && isAdmin(nestRequest.user.roles) && { roles: payload.roles },
-    });
+  public createOne(@Request() nestRequest: NestJSRequest, @ParsedRequest() crudRequest: CrudRequest, @Body() payload: CreateUserPayload): Promise<CrudProxy<UserProxy>> {
+    const isUserAdmin = nestRequest.user && nestRequest.user.roles && isAdmin(nestRequest.user.roles);
+    const entity = this.getEntityFromPayload(payload, null, isUserAdmin);
 
     return this.base.createOneBase(crudRequest, entity).then(response => mapCrud(UserProxy, response));
   }
@@ -127,13 +124,12 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
    * Método que atualiza uma entidade
    *
    * @param nestRequest As informações da requisição do NestJS
-   * @param crudRequest As informações da requisição do CRUD
    * @param payload As informações para a atualização da entidade
    */
   @ProtectTo('user', 'admin')
   @Override()
   @ApiOkResponse({ type: UserProxy })
-  public async replaceOne(@Request() nestRequest: NestJSRequest, @ParsedRequest() crudRequest: CrudRequest, @ParsedBody() payload: UserUpdatePayload): Promise<CrudProxy<UserProxy>> {
+  public async replaceOne(@Request() nestRequest: NestJSRequest, @Body() payload: UpdateUserPayload): Promise<CrudProxy<UserProxy>> {
     const userId = +nestRequest.params.id;
 
     if ((+nestRequest.params.id) !== nestRequest.user.id && !isAdmin(nestRequest.user.roles))
@@ -144,13 +140,29 @@ export class UserController extends BaseCrudController<UserEntity, UserService> 
     if (!exists)
       throw new NotFoundException('A entidade procurada não existe.');
 
-    const entity = new UserEntity({
-      id: userId,
-      ...isValid(payload.email) && { email: payload.email },
-      ...isAdmin(nestRequest.user.roles) && { roles: payload.roles },
-    });
+    const entity = this.getEntityFromPayload(payload, userId, isAdmin(nestRequest.user.roles));
 
     return await this.service.repository.save(entity).then(response => mapCrud(UserProxy, response));
+  }
+
+  //#endregion
+
+  //#region Private Methods
+
+  /**
+   * Método que retorna a entidade a partir de um payload
+   *
+   * @param payload As informações do payload
+   * @param id A identificação do usuário
+   * @param isUserAdmin Diz se é admin
+   */
+  private getEntityFromPayload(payload: CreateUserPayload | UpdateUserPayload, id?: number, isUserAdmin: boolean = false): UserEntity {
+    return new UserEntity({
+      ...isValid(id) && { id },
+      ...isValid(payload.email) && { email: payload.email },
+      ...payload instanceof CreateUserPayload && isValid(payload.password) && { password: payload.password },
+      ...isUserAdmin && { roles: payload.roles },
+    });
   }
 
   //#endregion
