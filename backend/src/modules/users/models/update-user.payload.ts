@@ -1,9 +1,8 @@
 //#region Imports
 
-import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
+import { ApiModelPropertyOptional } from '@nestjs/swagger';
 
-import { IsEmail, IsMobilePhone, IsOptional, IsString } from 'class-validator';
-import { Column } from 'typeorm';
+import { IsEmail, IsOptional, IsString } from 'class-validator';
 
 import { DefaultValidationMessages } from '../../../models/enums/default-validation-messages';
 
@@ -17,7 +16,7 @@ export class UpdateUserPayload {
   /**
    * O e-mail do usuário
    */
-  @ApiModelProperty()
+  @ApiModelPropertyOptional()
   @IsOptional()
   @IsString({ message: DefaultValidationMessages.IsString })
   @IsEmail({}, { message: DefaultValidationMessages.IsEmail })
@@ -26,7 +25,7 @@ export class UpdateUserPayload {
   /**
    * As permissões de um usuário
    */
-  @ApiModelProperty({ description: 'Only admins can change this property.' })
+  @ApiModelPropertyOptional({ description: 'Only admins can change this property.' })
   @IsOptional()
   @IsString({ message: DefaultValidationMessages.IsString })
   public roles?: string;
