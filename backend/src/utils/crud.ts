@@ -23,7 +23,10 @@ export type CrudClassProxy<T, K> = new(item: K) => T;
  * @param classInstance A classe proxy usada para limpar quaisquer propriedades que não devam ser enviadas
  * @param data As informações que precisam ser mapeadas
  */
-export function mapCrud<T extends BaseCrudProxy, K extends BaseEntity>(classInstance: CrudClassProxy<T, K>, data: CrudProxy<K>): CrudProxy<T> {
+export function mapCrud<T extends BaseCrudProxy, K extends BaseEntity>(classInstance: CrudClassProxy<T, K>, data: GetManyDefaultResponse<K> | K[]): GetManyDefaultResponse<T>;
+export function mapCrud<T extends BaseCrudProxy, K extends BaseEntity>(classInstance: CrudClassProxy<T, K>, data: K[]): T[];
+export function mapCrud<T extends BaseCrudProxy, K extends BaseEntity>(classInstance: CrudClassProxy<T, K>, data: K): T;
+export function mapCrud<T extends BaseCrudProxy, K extends BaseEntity>(classInstance: CrudClassProxy<T, K>, data: GetManyDefaultResponse<K> | K[] | K): GetManyDefaultResponse<T> | T[] | T {
   if (Array.isArray(data))
     return data.map(item => new classInstance(item));
 
