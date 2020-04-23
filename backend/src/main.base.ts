@@ -24,6 +24,8 @@ CrudConfigService.load({
   query: {
     limit: 100,
     cache: 2000,
+    alwaysPaginate: true,
+    maxLimit: 250,
   },
   params: {
     id: {
@@ -33,6 +35,7 @@ CrudConfigService.load({
     },
   },
   routes: {
+    exclude: ['replaceOneBase'],
     updateOneBase: {
       allowParamsOverride: true,
     },

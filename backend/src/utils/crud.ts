@@ -1,6 +1,8 @@
 //#region Imports
 
+import { ApiModelProperty } from '@nestjs/swagger';
 import { GetManyDefaultResponse } from '@nestjsx/crud';
+import { ApiProperty } from '@nestjsx/crud/lib/crud';
 
 import { BaseCrudProxy } from '../common/base-crud.proxy';
 import { BaseEntity } from '../common/base-entity';
@@ -49,4 +51,47 @@ export function mapCrud<T extends BaseCrudProxy, K extends BaseEntity>(classInst
  */
 export function isGetMany<T>(value: any): value is GetManyDefaultResponse<T> {
   return value.hasOwnProperty('data') && Array.isArray(value.data);
+}
+
+/**
+ * Método que retorna um tipo válido a ser exibido no Swagger para uma lista de entidades
+ *
+ * @param entity A entidade que está sendo listada
+ * @constructor
+ */
+export function GetManyDefaultResponseProxy<T>(entity: T) {
+  class ResponseProxy implements GetManyDefaultResponse<T> {
+
+    /**
+     * A contagem de quantos items veio nessa busca limitado pelo pageCount
+     */
+    @ApiModelProperty()
+    count: number;
+
+    /**
+     * O total de itens que essa busca pode retornar
+     */
+    @ApiModelProperty()
+    total: number;
+
+    /**
+     * A página na qual está essa busca
+     */
+    @ApiModelProperty()
+    page: number;
+
+    /**
+     * A quantidade de itens que deve retornar por página
+     */
+    @ApiModelProperty()
+    pageCount: number;
+
+    /**
+     * A lista de entidades que essa busca retornou
+     */
+    @ApiModelProperty({ type: entity, isArray: true })
+    data: T[];
+  }
+
+  return ResponseProxy;
 }

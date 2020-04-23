@@ -1,7 +1,7 @@
 import * as request from 'supertest';
+
 import { UpdateUserPayload } from '../src/modules/users/models/update-user.payload';
 import { TestUsersId } from './models/test-users-id.enum';
-
 import { getAdminToken, getFablabToken, getLigaToken } from './utils/auth';
 import { cleanDatabaseAndSeedUsers } from './utils/db';
 import { getInstanceOfApplication } from './utils/nestjs';
@@ -29,7 +29,7 @@ describe('User (e2e)', () => {
 
       expect(body).toBeDefined();
       expect(body).toHaveProperty('email', 'liga@email.com');
-      expect(body).toHaveProperty('roles');
+      expect(body).toHaveProperty('permissions');
       expect(body).not.toHaveProperty('password');
     });
 
