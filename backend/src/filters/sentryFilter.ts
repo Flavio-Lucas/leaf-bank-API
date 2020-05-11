@@ -1,9 +1,11 @@
 //#region Imports
 
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from '@nestjs/common';
 import * as Sentry from '@sentry/minimal';
 
 import { Request, Response } from 'express';
+
+import { EnvService } from '../modules/env/services/env.service';
 
 //#endregion
 
@@ -12,6 +14,26 @@ import { Request, Response } from 'express';
  */
 @Catch()
 export class SentryFilter implements ExceptionFilter {
+
+  //#region Constructor
+
+  /**
+   * Construtor padrão
+   */
+  constructor(
+    private readonly env: EnvService,
+  ) { }
+
+  //#endregion
+
+  //#region Private Properties
+
+  /**
+   * O serviço que lida com os logs da aplicação
+   */
+  private readonly logger: Logger = new Logger('SentryFilter');
+
+  //#endregion
 
   /**
    * Método que lida com as exceções lançadas
@@ -29,12 +51,34 @@ export class SentryFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       exceptionResponse = exception.getResponse();
+    } else {
+      exceptionResponse = { exception };
     }
 
     Sentry.setContext('request', { requestUrl: request.url });
 
     if (status >= 500)
       Sentry.captureException(exception);
+
+    if (this.env.isTest) {
+      if (!('toJSON' in Error.prototype))
+        Object.defineProperty(Error.prototype, 'toJSON', {
+          value() {
+            const alt = {};
+
+            Object.getOwnPropertyNames(this).forEach(function (key) {
+              alt[key] = this[key];
+            }, this);
+
+            return alt;
+          },
+          configurable: true,
+          writable: true,
+        });
+    }
+
+    if (this.env.API_ENABLE_LOGGING)
+      this.logger.error(exceptionResponse);
 
     response
       .status(status)

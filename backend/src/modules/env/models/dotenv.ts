@@ -61,6 +61,11 @@ export interface IDotEnv {
    */
   DB_TIMEOUT: number;
 
+  /**
+   * Diz se deve habilitar os logs
+   */
+  DB_LOGGING: boolean;
+
   //#endregion
 
   //#region API
@@ -75,6 +80,21 @@ export interface IDotEnv {
    * Eu recomendo usar subdominios, e manter o base como ''.
    */
   API_BASE_PATH: string;
+
+  /**
+   * Diz se deve habilitar o log da aplicação
+   */
+  API_ENABLE_LOGGING: boolean;
+
+  /**
+   * A janela em milisegundos para a validação do Rate Limiting
+   */
+  API_RATE_LIMIT_WINDOW_MS: number;
+
+  /**
+   * A quantidade de requisições que pode fazer em uma janela de tempo
+   */
+  API_RATE_LIMIT_MAX: number;
 
   /**
    * O número da porta que será executado a API

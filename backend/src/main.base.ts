@@ -109,8 +109,8 @@ function setupMiddleware(app: INestApplication, env: EnvService): void {
 
   app.use(
     rateLimit({
-      windowMs: 60_000, // 1 minute
-      max: 40, // limit each IP to 100 requests per windowMs
+      windowMs: env.API_RATE_LIMIT_WINDOW_MS, // 1 minute
+      max: env.API_RATE_LIMIT_MAX, // limit each IP to 100 requests per windowMs
     }),
   );
 }
@@ -122,12 +122,12 @@ function setupMiddleware(app: INestApplication, env: EnvService): void {
  * @param config As configurações da aplicação
  */
 function setupFilters(app: INestApplication, config: EnvService) {
+  app.useGlobalFilters(new SentryFilter(config));
+
   if (!config.SENTRY_DNS || config.isTest)
     return;
 
   Sentry.init({ dsn: config.SENTRY_DNS });
-
-  app.useGlobalFilters(new SentryFilter());
 }
 
 /**
