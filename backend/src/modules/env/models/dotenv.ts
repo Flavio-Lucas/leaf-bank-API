@@ -25,6 +25,11 @@ export interface IDotEnv {
   DB_HOST: string;
 
   /**
+   * O url da conexão ao banco de dados
+   */
+  DATABASE_URL: string;
+
+  /**
    * A porta para se conectar ao banco de dados
    */
   DB_PORT: number;
@@ -66,6 +71,11 @@ export interface IDotEnv {
    */
   DB_LOGGING: boolean;
 
+  /**
+   * Diz se deve habilitar habilitar a conexão SSL
+   */
+  DB_SSL: boolean;
+
   //#endregion
 
   //#region API
@@ -97,9 +107,38 @@ export interface IDotEnv {
   API_RATE_LIMIT_MAX: number;
 
   /**
+   * Método que coloca um timeout para as requisições
+   */
+  API_TIMEOUT: number;
+
+  /**
    * O número da porta que será executado a API
    */
   PORT: number;
+
+  //#endregion
+
+  //#region Crud Options
+
+  /**
+   * O limite padrão de itens que podem ser buscados por vez
+   */
+  CRUD_LIMIT: number;
+
+  /**
+   * O limite de itens máximo que pode ser aplicado
+   */
+  CRUD_MAX_LIMIT: number;
+
+  /**
+   * O limite de itens máximo que podem serem cacheados
+   */
+  CRUD_CACHE: number;
+
+  /**
+   * Diz se deve sempre paginar os resultados
+   */
+  CRUD_ALWAYS_PAGINATE: boolean;
 
   //#endregion
 
@@ -217,4 +256,24 @@ export interface IDotEnv {
   HTTP_BASE_URL: string;
 
   //#endregion
+
+  //#region Azure
+
+  /**
+   * A chave de acesso do Storage do Azure
+   */
+  AZURE_SAS_KEY: string;
+
+  /**
+   * O nome da conta do Storage do Azure
+   */
+  AZURE_ACCOUNT_NAME: string;
+
+  /**
+   * O nome do container de Storage do Azure
+   */
+  AZURE_CONTAINER_NAME: string;
+
+  //#endregion
+
 }

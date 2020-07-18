@@ -55,12 +55,16 @@ export class SentryFilter implements ExceptionFilter {
       exceptionResponse = { exception };
     }
 
-    Sentry.setContext('request', { requestUrl: request.url });
+    Sentry.setContext('request', {
+      requestUrl: request.url,
+      body: request.body,
+      headers: request.headers,
+    });
 
     if (status >= 500)
       Sentry.captureException(exception);
 
-    if (this.env.isTest) {
+    if (!this.env.isProduction) {
       if (!('toJSON' in Error.prototype))
         Object.defineProperty(Error.prototype, 'toJSON', {
           value() {

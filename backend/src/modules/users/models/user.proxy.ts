@@ -3,6 +3,7 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 
 import { BaseCrudProxy } from '../../../common/base-crud.proxy';
+import { GetManyDefaultResponseProxy } from '../../../common/get-many-default-response.proxy';
 import { UserEntity } from '../../../typeorm/entities/user.entity';
 
 //#endregion
@@ -39,5 +40,18 @@ export class UserProxy extends BaseCrudProxy {
   public permissions: string;
 
   //#endregion
+
+}
+
+/**
+ * A classe que representa o retorno dos proxies quando é chamado a função GetMany
+ */
+export class GetManyDefaultResponseUserProxy extends GetManyDefaultResponseProxy {
+
+  /**
+   * A lista de entidades que essa busca retornou
+   */
+  @ApiModelProperty({ type: UserProxy, isArray: true })
+  data: UserProxy[];
 
 }

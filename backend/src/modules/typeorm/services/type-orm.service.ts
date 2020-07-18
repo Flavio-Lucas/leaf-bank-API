@@ -3,7 +3,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 
-import { TypeOrmEntities } from '../../../utils/type-orm';
 import { EnvService } from '../../env/services/env.service';
 
 //#endregion
@@ -39,7 +38,7 @@ export class TypeOrmService implements TypeOrmOptionsFactory {
       migrationsRun: this.env.DB_MIGRATIONS_RUN,
       logging: this.env.DB_LOGGING,
       entities: [
-        ...TypeOrmEntities,
+        __dirname + '/../../../typeorm/entities/**/*{.entity.ts,.entity.js}',
       ],
       migrations: [
         __dirname + '/../../../typeorm/migrations/**/*{.ts,.js}',
@@ -51,6 +50,7 @@ export class TypeOrmService implements TypeOrmOptionsFactory {
         type: 'mysql',
         charset: 'utf8mb4',
         collation: 'utf8mb4_unicode_ci',
+        url: this.env.DATABASE_URL,
         // https://stackoverflow.com/questions/35553432/error-handshake-inactivity-timeout-in-node-js-mysql-module
         keepConnectionAlive: true,
         host: this.env.DB_HOST,
@@ -66,13 +66,14 @@ export class TypeOrmService implements TypeOrmOptionsFactory {
         collation: 'utf8mb4_unicode_ci',
         // https://stackoverflow.com/questions/35553432/error-handshake-inactivity-timeout-in-node-js-mysql-module
         keepConnectionAlive: true,
+        url: this.env.DATABASE_URL,
         host: this.env.DB_HOST,
         port: this.env.DB_PORT,
         username: this.env.DB_USER,
         password: this.env.DB_PASSWORD,
         acquireTimeout: this.env.DB_TIMEOUT,
         extra: {
-          ssl: true,
+          ssl: this.env.DB_SSL,
         },
       });
     } else if (this.env.DB_TYPE === 'sqlite') {

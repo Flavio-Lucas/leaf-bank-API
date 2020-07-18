@@ -4,14 +4,16 @@ const rule = {
   API_BASE_PATH: envalid.str({ default: 'prod', devDefault: 'dev' }),
   API_PORT: envalid.port({ default: 3000 }),
   API_DEFAULT_STRATEGY: envalid.str({ default: 'jwt' }),
+  DATABASE_URL: envalid.str({ default: 'mysql' }),
   DB_TYPE: envalid.str({ default: 'mysql' }),
-  DB_DATABASE: envalid.str({ devDefault: 'dev' }),
+  DB_DATABASE: envalid.str({ dafault: '', devDefault: 'dev' }),
   DB_HOST: envalid.str({ default: '', devDefault: 'localhost' }),
   DB_PASSWORD: envalid.str({ default: '', devDefault: '1234' }),
   DB_PORT: envalid.port({ default: 3306 }),
   DB_USER: envalid.str({ default: '', devDefault: 'root' }),
   DB_SYNCHRONIZE: envalid.bool({ default: false, devDefault: true }),
   DB_MIGRATIONS_RUN: envalid.bool({ default: true }),
+  DB_SSL: envalid.bool({ default: true }),
   SQLITE_DATABASE_HOST_PATH: envalid.str({ default: '' }),
   DB_TIMEOUT: envalid.num({ default: 20000 }),
   JWT_EXPIRES_IN: envalid.str({ default: '7d' }),
@@ -32,7 +34,7 @@ const config = {
   acquireTimeout: env.DB_TIMEOUT,
   synchronize: env.DB_SYNCHRONIZE,
   entities: [
-    'src/typeorm/entities/**/*{.ts,.js}',
+    'src/typeorm/entities/**/*{.entity.ts,.entity.js}',
   ],
   migrations: [
     'src/typeorm/migrations/**/*{.ts,.js}',
@@ -60,6 +62,7 @@ if (env.DB_TYPE === 'postgres')
     collation: 'utf8mb4_unicode_ci',
     // https://stackoverflow.com/questions/35553432/error-handshake-inactivity-timeout-in-node-js-mysql-module
     keepConnectionAlive: true,
+    url: env.DATABASE_URL,
     host: env.DB_HOST,
     port: env.DB_PORT,
     username: env.DB_USER,
@@ -67,7 +70,7 @@ if (env.DB_TYPE === 'postgres')
     acquireTimeout: env.DB_TIMEOUT,
     rejectUnauthorized: true,
     extra: {
-      ssl: true,
+      ssl: env.DB_SSL,
     },
   });
 

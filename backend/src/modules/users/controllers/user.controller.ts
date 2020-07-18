@@ -8,10 +8,10 @@ import { BaseEntityCrudController } from '../../../common/base-entity-crud.contr
 import { ProtectTo, UnprotectedRoute } from '../../../decorators/protect/protect.decorator';
 import { User } from '../../../decorators/user/user.decorator';
 import { UserEntity } from '../../../typeorm/entities/user.entity';
-import { GetManyDefaultResponseProxy, mapCrud } from '../../../utils/crud';
+import { mapCrud } from '../../../utils/crud';
 import { CreateUserPayload } from '../models/create-user.payload';
 import { UpdateUserPayload } from '../models/update-user.payload';
-import { UserProxy } from '../models/user.proxy';
+import { GetManyDefaultResponseUserProxy, UserProxy } from '../models/user.proxy';
 import { UserService } from '../services/user.service';
 
 //#endregion
@@ -74,7 +74,7 @@ export class UserController extends BaseEntityCrudController<UserEntity, UserSer
    */
   @ProtectTo('admin')
   @Override()
-  @ApiOkResponse({ type: GetManyDefaultResponseProxy(UserProxy) })
+  @ApiOkResponse({ type: GetManyDefaultResponseUserProxy })
   public getMany(@ParsedRequest() crudRequest: CrudRequest): Promise<GetManyDefaultResponse<UserProxy>> {
     return this.base.getManyBase(crudRequest).then(response => mapCrud(UserProxy, response));
   }

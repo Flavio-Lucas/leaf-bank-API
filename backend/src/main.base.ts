@@ -1,17 +1,20 @@
+/* tslint:disable:ordered-imports */
+// @formatter:off
+
 //#region Imports
 
-import { BadRequestException, INestApplication, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, INestApplication, RequestTimeoutException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { CrudConfigService } from '@nestjsx/crud';
-import * as timeout from 'connect-timeout';
 
+import * as Sentry from '@sentry/node';
+import { Request, Response } from 'express';
 import * as rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
-import * as Sentry from '@sentry/node';
 
-import { AppModule } from './app.module';
 import { SentryFilter } from './filters/sentryFilter';
+import { envConfig } from './modules/env/env.module';
 import { EnvService } from './modules/env/services/env.service';
 
 const bodyParser = require('body-parser');
@@ -22,10 +25,10 @@ const bodyParser = require('body-parser');
 
 CrudConfigService.load({
   query: {
-    limit: 100,
-    cache: 2000,
-    alwaysPaginate: true,
-    maxLimit: 250,
+    limit: envConfig.CRUD_LIMIT,
+    maxLimit: envConfig.CRUD_MAX_LIMIT,
+    cache: envConfig.CRUD_CACHE,
+    alwaysPaginate: envConfig.CRUD_ALWAYS_PAGINATE,
   },
   params: {
     id: {
@@ -44,6 +47,9 @@ CrudConfigService.load({
     },
   },
 });
+
+// Deixar abaixo desse CRUD, é necessário para que funcione
+const AppModule = require('./app.module').AppModule;
 
 //#endregion
 
@@ -65,6 +71,7 @@ function setupSwagger(app: INestApplication, env: EnvService): void {
     .setVersion(env.SWAGGER_VERSION)
     .addTag(env.SWAGGER_TAG)
     .setBasePath(env.API_BASE_PATH)
+    .setSchemes('https', 'http')
     .addBearerAuth('Authorization', 'header')
     .build();
 
@@ -98,11 +105,25 @@ function setupMiddleware(app: INestApplication, env: EnvService): void {
 
   app.enableCors();
 
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({
+    limit: '50mb',
+  }));
 
-  app.use(timeout('30s'));
+  app.use(bodyParser.urlencoded({
+    limit: '50mb',
+    extended: true,
+  }));
 
-  app.use(haltOnTimeout);
+  app.use((req: Request, res: Response, next) => {
+    if (req.url === '/media/upload/image')
+      return next();
+
+    res.setTimeout(env.API_TIMEOUT, () => {
+      next(new RequestTimeoutException('A requisição durou tempo demais.'));
+    });
+
+    next();
+  });
 
   if (env.isTest)
     return;
@@ -143,7 +164,9 @@ function haltOnTimeout(req, res, next) {
 //#endregion
 
 export async function createApp(): Promise<INestApplication> {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['log', 'verbose', 'debug', 'error', 'warn'],
+  });
 
   await setup(app);
 
@@ -162,7 +185,6 @@ export async function setup(app: INestApplication): Promise<INestApplication> {
 
   return app;
 }
-
 
 export async function createAppInit(): Promise<INestApplication> {
   const app = await createApp();
