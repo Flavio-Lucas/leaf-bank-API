@@ -54,7 +54,7 @@ export class EnvService extends implementOptionalInterface<Partial<Readonly<IDot
 
     const rule: DotEnvValidation = {
       NODE_ENV: envalid.str(),
-      API_BASE_PATH: envalid.str({ default: 'prod', devDefault: 'dev' }),
+      API_BASE_PATH: envalid.str({ default: '' }),
       PORT: envalid.port({ default: 3000 }),
       API_DEFAULT_STRATEGY: envalid.str({ default: 'jwt' }),
       API_ENABLE_LOGGING: envalid.bool({ default: false }),
@@ -83,6 +83,7 @@ export class EnvService extends implementOptionalInterface<Partial<Readonly<IDot
       SWAGGER_TAG: envalid.str({ default: 'Base' }),
       SWAGGER_TITLE: envalid.str({ default: 'Base' }),
       SWAGGER_VERSION: envalid.str({ default: '1.0' }),
+      SWAGGER_BASE_PATH: envalid.str({ default: '' }),
       GOOGLE_CLIENT_ID: envalid.str({ default: '' }),
       GOOGLE_CLIENT_SECRET: envalid.str({ default: '' }),
       FACEBOOK_CLIENT_ID: envalid.str({ default: '' }),

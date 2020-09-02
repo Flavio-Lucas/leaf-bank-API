@@ -184,6 +184,11 @@ export interface IDotEnv {
    */
   SWAGGER_ENABLED: boolean;
 
+  /**
+   * O url base para o Swagger
+   */
+  SWAGGER_BASE_PATH: string;
+
   //#endregion
 
   //#region OAuth2

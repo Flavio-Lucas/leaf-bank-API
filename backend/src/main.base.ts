@@ -70,7 +70,7 @@ function setupSwagger(app: INestApplication, env: EnvService): void {
     .setDescription(env.SWAGGER_DESCRIPTION)
     .setVersion(env.SWAGGER_VERSION)
     .addTag(env.SWAGGER_TAG)
-    .setBasePath(env.API_BASE_PATH)
+    .setBasePath(env.SWAGGER_BASE_PATH)
     .setSchemes('https', 'http')
     .addBearerAuth('Authorization', 'header')
     .build();

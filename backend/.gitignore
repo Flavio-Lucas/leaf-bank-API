@@ -42,3 +42,4 @@ nginx/logs/*
 letsencrypt
 certbot
 
+deploy.zip

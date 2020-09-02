@@ -2,12 +2,19 @@
 
 Essa é a API que fornece os dados necessários para o Frontend, escrita em TypeScript com NestJS.
 
-## Configurações iniciais
+## Deploy AWS
 
-Execute antes de tudo o seguinte comando:
-```shell
-npm i typeorm nodemon -g
-```
+Para realizar o deploy dessa API que está hospedada na AWS, você primeiro precisa realizar algumas configurações antes.
+
+Verifique se você possui o AWS CLI, se não, procure no Google como instalar. Ao instalar, você executa `aws configure`,
+e coloca alguns valores aleatórios, isso só vai servir para criar um arquivo numa pasta chamada `.aws` dentro da pasta do seu
+usuário chamado `credentials`, depois que ele cria, abra esse arquivo e troque o conteúdo pelo conteúdo correto de autenticação
+da AWS que você terá que pedir ao Wilson ou o Kleber, é só falar para eles procurar no e-mail por "AWS - IAM". Após trocar, você terá tudo configurado bonitinho para realizar o deploy.
+
+E agora, com o ambiente configurado, basta executar o comando `npm run deploy:aws`, e sua API está hospedada com sucesso na AWS.
+
+Para trocar as variáveis de ambiente você vai precisar ter acesso ao usuário principal da AWS que está hospedando os serviços, para isso,
+converse com o Kleber ou Wilson que eles vão te passar as credênciais necessárias para você ir lá e trocar o que precisar.
 
 ### Docker
 
