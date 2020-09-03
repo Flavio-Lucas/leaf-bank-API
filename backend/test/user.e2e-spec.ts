@@ -112,8 +112,7 @@ describe('User (e2e)', () => {
       const { body } = await request(app.getHttpServer())
         .get(`/users/${ TestUsersId.LIGA }`)
         .auth(adminToken, { type: 'bearer' })
-        .send()
-        .expect(200);
+        .send();
 
       expect(body).toBeDefined();
       expect(body).toHaveProperty('email', 'liga@email.com');

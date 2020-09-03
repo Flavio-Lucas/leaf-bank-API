@@ -1,12 +1,16 @@
 //#region Imports
 
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CrudRequest } from '@nestjsx/crud';
 
 import { Repository } from 'typeorm';
 
 import * as xss from 'xss';
+
+import * as bcryptjs from 'bcryptjs';
+
+import { v4 } from 'uuid';
 
 import { BaseCrudService } from '../../../common/base-crud.service';
 import { TypeOrmValueTypes } from '../../../models/enums/type-orm-value.types';
@@ -67,6 +71,20 @@ export class UserService extends BaseCrudService<UserEntity> {
   public async create(requestUser: UserEntity, payload: CreateUserPayload): Promise<UserEntity> {
     const isUserAdmin = isAdmin(requestUser.roles);
     const entity = this.getEntityFromPayload(payload, null, isUserAdmin);
+
+    const alreadyHasUser = await this.repository.findOne({ where: { email: entity.email } });
+
+    if (alreadyHasUser)
+      throw new BadRequestException('Já existe um usuário cadastrado com esse e-mail.');
+
+    const salt = await bcryptjs.genSalt();
+    const passwordToEncrypt = entity.googleIdToken || entity.facebookIdToken ? v4() : entity.password;
+
+    if (!passwordToEncrypt)
+      throw new BadRequestException('Não foi enviada uma senha, por favor, confirme se você está enviando e processando corretamenta a senha.');
+
+    entity.password = await bcryptjs.hash(passwordToEncrypt, salt);
+    entity.roles = entity.roles || 'user';
 
     return await this.repository.save(entity);
   }

@@ -5,7 +5,10 @@ import { ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiOpe
 import { Connection } from 'typeorm';
 
 import { UserEntity } from '../../../typeorm/entities/user.entity';
+import { validatePayload } from '../../../utils/functions';
 import { EnvService } from '../../env/services/env.service';
+import { CreateUserPayload } from '../../users/models/create-user.payload';
+import { UserService } from '../../users/services/user.service';
 
 //#endregion
 
@@ -24,6 +27,7 @@ export class TestController {
   constructor(
     private readonly connection: Connection,
     private readonly env: EnvService,
+    private readonly user: UserService,
   ) { }
 
   //#endregion
@@ -57,27 +61,27 @@ export class TestController {
     if (!this.env.isTest)
       throw new BadRequestException('Não é permitido limpar o banco de dados caso não esteja no ambiente de teste.');
 
-    const userRepository = this.connection.getRepository(UserEntity);
-
     const admin = new UserEntity({
       roles: 'admin',
-      email: 'admin@email.com',
-      password: '123456',
-    });
-    const firstUser = new UserEntity({
-      roles: 'user',
-      email: 'liga@email.com',
-      password: '123456',
-    });
-    const secondUser = new UserEntity({
-      roles: 'user',
-      email: 'fablab@email.com',
-      password: '123456',
     });
 
-    await userRepository.save(admin);
-    await userRepository.save(firstUser);
-    await userRepository.save(secondUser);
+    await this.user.create(admin, await validatePayload(CreateUserPayload, {
+      email: 'admin@email.com',
+      password: '123456',
+      roles: 'admin',
+    }));
+
+    await this.user.create(admin, await validatePayload(CreateUserPayload, {
+      email: 'liga@email.com',
+      password: '123456',
+      roles: 'user',
+    }));
+
+    await this.user.create(admin, await validatePayload(CreateUserPayload, {
+      email: 'fablab@email.com',
+      password: '123456',
+      roles: 'user',
+    }));
   }
 
   //#endregion
