@@ -1,5 +1,9 @@
 //#region Imports
 
+import { Type, ValidationPipe } from '@nestjs/common';
+import { CrudRequest } from '@nestjsx/crud';
+import { plainToClass } from 'class-transformer';
+import { ClassType } from 'class-transformer/ClassTransformer';
 import { UserEntity } from '../typeorm/entities/user.entity';
 
 //#endregion
@@ -83,4 +87,42 @@ export function chunk<T>(array: T[], size: number): T[][] {
   }
 
   return chunked;
+}
+
+/**
+ * Método que limpa e reseta algumas configurações passadas para a requisição CRUD
+ *
+ * @param crudRequest As informações da requisição da biblioteca Nestjx/Crud
+ */
+export function resetFiltersOnCrud(crudRequest: CrudRequest): CrudRequest {
+  crudRequest.parsed.or = [];
+  crudRequest.parsed.filter = [];
+  crudRequest.parsed.paramsFilter = [];
+
+  return crudRequest;
+}
+
+/**
+ * Método que valida e transforma um objeto plano em um Payload
+ *
+ * Exemplo:
+ * ```TypeScript
+ * const userPayload = await validatePayload(CreateUserPayload, { name: 'Joga10' });
+ * const user = await this.userService.create(userPayload);
+ * ```
+ *
+ * Se falhar, ele irá lançar a mesma exceção que um Payload inválido
+ * enviado pelo cliente lançaria.
+ *
+ * Se der certo, você terá uma objeto com a mesma instância que o
+ * payload, é útil quando você precisa usar o `instanceof`.
+ *
+ * @param payloadClass A classe do Payload
+ * @param payloadObject O objeto a ser validado e transformado
+ */
+export async function validatePayload<T>(payloadClass: ClassType<T> | Type<T>, payloadObject: T): Promise<T> {
+  const validation = new ValidationPipe({ whitelist: true });
+  const payloadValidated = await validation.transform(payloadObject, { type: 'body', metatype: payloadClass });
+
+  return plainToClass(payloadClass, payloadValidated);
 }
