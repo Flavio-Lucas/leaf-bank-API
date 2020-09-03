@@ -1,6 +1,6 @@
 //#region Imports
 
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 import { IsDefined, IsString, MinLength } from 'class-validator';
 
@@ -16,7 +16,7 @@ export class FacensLoginPayload {
   /**
    * O e-mail do usuário
    */
-  @ApiModelProperty()
+  @ApiProperty()
   @IsDefined({ message: 'É necessário enviar o RA ou e-mail do usuário.' })
   @IsString({ message: DefaultValidationMessages.IsString })
   username: string;
@@ -24,7 +24,7 @@ export class FacensLoginPayload {
   /**
    * A senha do usuário
    */
-  @ApiModelProperty()
+  @ApiProperty()
   @IsDefined({ message: 'É necessário enviar a senha do usuário.' })
   @IsString({ message: DefaultValidationMessages.IsString })
   @MinLength(1, { message: 'A senha precisa ter no mínimo 1 caracteres.' })

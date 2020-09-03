@@ -1,7 +1,7 @@
 //#region Imports
 
 import { Body, ClassSerializerInterceptor, Controller, Get, Param, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiUseTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Crud, CrudRequest, GetManyDefaultResponse, Override, ParsedRequest } from '@nestjsx/crud';
 
 import { BaseEntityCrudController } from '../../../common/base-entity-crud.controller';
@@ -36,7 +36,7 @@ import { UserService } from '../services/user.service';
   },
 })
 @UseInterceptors(ClassSerializerInterceptor)
-@ApiUseTags('users')
+@ApiTags('users')
 @Controller('users')
 export class UserController extends BaseEntityCrudController<UserEntity, UserService> {
 

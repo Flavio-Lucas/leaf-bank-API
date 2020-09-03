@@ -1,6 +1,6 @@
 //#region Imports
 
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 //#endregion
 
@@ -27,7 +27,7 @@ export class VerifyProxy {
   /**
    * Diz se a entidade existe
    */
-  @ApiModelProperty()
+  @ApiProperty()
   public exists: boolean;
 
   //#endregion

@@ -1,4 +1,4 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class TokenProxy {
 
@@ -18,13 +18,13 @@ export class TokenProxy {
   /**
    * O Bearer Token gerado pelo JWT
    */
-  @ApiModelProperty()
+  @ApiProperty()
   token: string;
 
   /**
    * A data de quando irá expirar
    */
-  @ApiModelProperty()
+  @ApiProperty()
   expiresAt: Date;
 
   //#endregion

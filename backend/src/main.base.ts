@@ -71,8 +71,7 @@ function setupSwagger(app: INestApplication, env: EnvService): void {
     .setVersion(env.SWAGGER_VERSION)
     .addTag(env.SWAGGER_TAG)
     .setBasePath(env.SWAGGER_BASE_PATH)
-    .setSchemes('https', 'http')
-    .addBearerAuth('Authorization', 'header')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerOptions);

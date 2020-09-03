@@ -1,11 +1,12 @@
 //#region Imports
 
-import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+
+import { CrudValidationGroups } from '@nestjsx/crud';
 import { IsOptional } from 'class-validator';
 
 import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
-import { CrudValidationGroups } from '@nestjsx/crud';
 const { CREATE, UPDATE } = CrudValidationGroups;
 
 //#endregion
@@ -18,7 +19,7 @@ export class BaseEntity {
   /**
    * A identificação do post
    */
-  @ApiModelPropertyOptional()
+  @ApiPropertyOptional()
   @IsOptional({ groups: [CREATE, UPDATE] })
   @PrimaryGeneratedColumn()
   id: number;
@@ -26,7 +27,7 @@ export class BaseEntity {
   /**
    * Diz quando foi criado essa postagem
    */
-  @ApiModelPropertyOptional()
+  @ApiPropertyOptional()
   @IsOptional({ groups: [CREATE, UPDATE] })
   @CreateDateColumn()
   createdAt: Date;
@@ -34,7 +35,7 @@ export class BaseEntity {
   /**
    * Diz quando foi atualizado essa postagem
    */
-  @ApiModelPropertyOptional()
+  @ApiPropertyOptional()
   @IsOptional({ groups: [CREATE, UPDATE] })
   @UpdateDateColumn()
   updatedAt: Date;
@@ -42,7 +43,7 @@ export class BaseEntity {
   /**
    * Diz se está ativo
    */
-  @ApiModelPropertyOptional({ default: true })
+  @ApiPropertyOptional()
   @IsOptional({ groups: [CREATE, UPDATE] })
   @Column({ default: true })
   isActive: boolean;

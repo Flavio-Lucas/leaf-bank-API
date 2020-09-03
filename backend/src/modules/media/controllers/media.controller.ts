@@ -1,7 +1,7 @@
 //#region Imports
 
 import { Body, ClassSerializerInterceptor, Controller, Post, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { ProtectTo } from '../../../decorators/protect/protect.decorator';
 import { User } from '../../../decorators/user/user.decorator';
@@ -17,7 +17,7 @@ import { MediaService } from '../services/media.service';
  */
 @ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
-@ApiUseTags('media')
+@ApiTags('media')
 @Controller('media')
 export class MediaController {
 
@@ -51,7 +51,7 @@ export class MediaController {
    */
   @ProtectTo('user', 'admin')
   @Post('/upload/image')
-  @ApiOperation({ title: 'Upload image to the server.' })
+  @ApiOperation({ summary: 'Upload image to the server.' })
   @ApiOkResponse({ type: UploadProxy })
   public async uploadImage(@User() requestUser: UserEntity, @Body() payload: UploadImagePayload): Promise<UploadProxy> {
     return await this.service.uploadImage(requestUser, payload)

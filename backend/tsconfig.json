@@ -6,10 +6,15 @@
       ],
       "target": "esnext",
       "module": "commonjs",
-      "moduleResolution": "node",
-      "outDir": "./dist",
+      "declaration": true,
+      "removeComments": true,
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
-      "sourceMap": true
+      "allowSyntheticDefaultImports": true,
+      "target": "es2017",
+      "sourceMap": true,
+      "outDir": "./dist",
+      "baseUrl": "./",
+      "incremental": true
    }
 }

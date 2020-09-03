@@ -39,7 +39,7 @@ export class BaseEntityCrudController<TEntity extends BaseEntity, TService exten
    */
   @ProtectTo('admin')
   @Put('/:id/disable')
-  @ApiOperation({ title: 'Disable one Entity' })
+  @ApiOperation({ summary: 'Disable one Entity' })
   @ApiOkResponse({ description: 'The entity was disabled with successful.' })
   @ApiNotFoundResponse({ description: 'The entity was not found' })
   public async disable(@Param('id') id: number, @ParsedRequest() crudRequest: CrudRequest): Promise<TEntity> {
@@ -61,7 +61,7 @@ export class BaseEntityCrudController<TEntity extends BaseEntity, TService exten
    */
   @ProtectTo('admin')
   @Put('/:id/enable')
-  @ApiOperation({ title: 'Enable one Entity' })
+  @ApiOperation({ summary: 'Enable one Entity' })
   @ApiOkResponse({ description: 'The entity was disabled with successfull.' })
   @ApiNotFoundResponse({ description: 'The entity was not found' })
   public async enable(@Param('id') id: number, @ParsedRequest() crudRequest: CrudRequest): Promise<TEntity> {

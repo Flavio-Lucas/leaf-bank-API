@@ -1,7 +1,7 @@
 //#region Imports
 
 import { BadRequestException, Controller, HttpCode, Post } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Connection } from 'typeorm';
 
 import { UserEntity } from '../../../typeorm/entities/user.entity';
@@ -12,7 +12,7 @@ import { EnvService } from '../../env/services/env.service';
 /**
  * A classe que representa o controlador que lida com as rotas de teste dessa aplicação
  */
-@ApiUseTags('tests')
+@ApiTags('tests')
 @Controller('tests')
 export class TestController {
 
@@ -34,7 +34,7 @@ export class TestController {
    * Método que limpa todo o banco de dados
    */
   @Post('clear')
-  @ApiOperation({ title: 'Clear all the database.' })
+  @ApiOperation({ summary: 'Clear all the database.' })
   @ApiCreatedResponse({ description: 'All database was clear with successful.' })
   @ApiBadRequestResponse({ description: 'It is only permitted to perform this operation when is in test environment.' })
   @HttpCode(204)
@@ -49,7 +49,7 @@ export class TestController {
    * Método que realiza o seed básico nas tabelas
    */
   @Post('seed/users')
-  @ApiOperation({ title: 'Seed default users to database.' })
+  @ApiOperation({ summary: 'Seed default users to database.' })
   @ApiNoContentResponse({ description: 'The database was seeded with successful.' })
   @ApiBadRequestResponse({ description: 'It is only permitted to perform this operation when is in test environment.' })
   @HttpCode(204)

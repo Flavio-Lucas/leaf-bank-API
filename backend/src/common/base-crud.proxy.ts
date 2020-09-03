@@ -1,6 +1,6 @@
 //#region Imports
 
-import { ApiModelPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { BaseEntity } from './base-entity';
 
@@ -32,25 +32,25 @@ export class BaseCrudProxy {
   /**
    * A identificação do post
    */
-  @ApiModelPropertyOptional()
+  @ApiPropertyOptional()
   id: number;
 
   /**
    * Diz quando foi criado essa postagem
    */
-  @ApiModelPropertyOptional()
+  @ApiPropertyOptional()
   createdAt: Date;
 
   /**
    * Diz quando foi atualizado essa postagem
    */
-  @ApiModelPropertyOptional()
+  @ApiPropertyOptional()
   updatedAt: Date;
 
   /**
    * Diz se está ativo
    */
-  @ApiModelPropertyOptional({ default: true })
+  @ApiPropertyOptional({ default: true })
   isActive: boolean;
 
   //#endregion

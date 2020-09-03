@@ -70,7 +70,6 @@ describe('Auth (e2e)', () => {
         .expect(401);
 
       expect(errorMessage).toBeDefined();
-      expect(errorMessage).toHaveProperty('error');
       expect(errorMessage).toHaveProperty('statusCode');
     });
 
@@ -81,7 +80,6 @@ describe('Auth (e2e)', () => {
         .expect(401);
 
       expect(errorMessage).toBeDefined();
-      expect(errorMessage).toHaveProperty('error');
       expect(errorMessage).toHaveProperty('statusCode');
     });
   });
@@ -134,7 +132,6 @@ describe('Auth (e2e)', () => {
         .expect(401);
 
       expect(errorMessage).toBeDefined();
-      expect(errorMessage).toHaveProperty('error');
       expect(errorMessage).toHaveProperty('statusCode');
     });
 
@@ -145,7 +142,7 @@ describe('Auth (e2e)', () => {
 
       expect(errorMessage).toBeDefined();
       expect(errorMessage).toHaveProperty('statusCode', 401);
-      expect(errorMessage).toHaveProperty('error', 'Unauthorized');
+      expect(errorMessage).toHaveProperty('message', 'Unauthorized');
     });
   });
 

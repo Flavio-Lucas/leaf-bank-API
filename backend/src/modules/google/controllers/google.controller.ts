@@ -1,7 +1,7 @@
 //#region Imports
 
 import { Body, ClassSerializerInterceptor, Controller, Post, Request, UseInterceptors } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiOkResponse, ApiUseTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { TokenProxy } from '../../../models/proxys/token.proxy';
 import { NestJSRequest } from '../../../utils/type.shared';
@@ -13,7 +13,7 @@ import { GoogleService } from '../services/google.service';
 /**
  * A classe que representa o construtor que lida com as autenticações
  */
-@ApiUseTags('auth')
+@ApiTags('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
 export class GoogleController {

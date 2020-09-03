@@ -1,6 +1,6 @@
 //#region Imports
 
-import { ApiModelPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsOptional } from 'class-validator';
 
 import { DefaultValidationMessages } from '../models/enums/default-validation-messages';
@@ -15,7 +15,7 @@ export class BaseCrudUpdatePayload {
   /**
    * Diz se deve ativar a entidade assim que criar
    */
-  @ApiModelPropertyOptional()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean({  message: DefaultValidationMessages.IsBoolean })
   isActive?: boolean;

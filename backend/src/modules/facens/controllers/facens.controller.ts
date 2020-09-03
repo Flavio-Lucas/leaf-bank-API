@@ -2,7 +2,7 @@
 
 import { Body, ClassSerializerInterceptor, Controller, Post, Request, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiNotFoundResponse, ApiOkResponse, ApiUnauthorizedResponse, ApiUseTags } from '@nestjs/swagger';
+import { ApiNotFoundResponse, ApiOkResponse, ApiUnauthorizedResponse, ApiTags } from '@nestjs/swagger';
 
 import { TokenProxy } from '../../../models/proxys/token.proxy';
 import { NestJSRequest } from '../../../utils/type.shared';
@@ -14,7 +14,7 @@ import { FacensService } from '../services/facens.service';
 /**
  * A classe que representa o construtor que lida com as autenticações
  */
-@ApiUseTags('auth')
+@ApiTags('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
 export class FacensController {

@@ -2,7 +2,7 @@
 
 import { ClassSerializerInterceptor, Controller, Post, Request, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBadRequestResponse, ApiImplicitQuery, ApiOkResponse, ApiUseTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { ApplyDecoratorsIfEnvExists } from '../../../decorators/apply-if-env-exists/apply-if-env-exists.decorator';
 import { TokenProxy } from '../../../models/proxys/token.proxy';
@@ -14,7 +14,7 @@ import { FacebookService } from '../services/facebook.service';
 /**
  * A classe que representa o construtor que lida com as autenticações
  */
-@ApiUseTags('auth')
+@ApiTags('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
 export class FacebookController {
@@ -38,7 +38,7 @@ export class FacebookController {
    * @param req As informações da requisição
    * @param payload As informações para o login
    */
-  @ApiImplicitQuery({  name: 'access_token', description: 'O token de autenticação do facebook', required: true, type: 'string' })
+  @ApiQuery({ name: 'access_token', description: 'O token de autenticação do facebook', required: true, type: 'string' })
   @ApiOkResponse({ description: 'O usuário foi logado com sucesso', type: TokenProxy })
   @ApiBadRequestResponse({ description: 'O token de autenticação não é válido.' })
   @Post('/facebook')

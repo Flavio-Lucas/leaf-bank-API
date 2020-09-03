@@ -1,6 +1,6 @@
 //#region Imports
 
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 import { BaseCrudProxy } from '../../../common/base-crud.proxy';
 import { GetManyDefaultResponseProxy } from '../../../common/get-many-default-response.proxy';
@@ -30,13 +30,13 @@ export class UserProxy extends BaseCrudProxy {
   /**
    * O e-mail do usuário
    */
-  @ApiModelProperty()
+  @ApiProperty()
   public email: string;
 
   /**
    * O e-mail ou RA do usuário
    */
-  @ApiModelProperty()
+  @ApiProperty()
   public permissions: string;
 
   //#endregion
@@ -51,7 +51,7 @@ export class GetManyDefaultResponseUserProxy extends GetManyDefaultResponseProxy
   /**
    * A lista de entidades que essa busca retornou
    */
-  @ApiModelProperty({ type: UserProxy, isArray: true })
+  @ApiProperty({ type: UserProxy, isArray: true })
   data: UserProxy[];
 
 }

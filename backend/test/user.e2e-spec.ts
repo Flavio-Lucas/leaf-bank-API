@@ -40,7 +40,7 @@ describe('User (e2e)', () => {
         .expect(401);
 
       expect(body).toBeDefined();
-      expect(body).toHaveProperty('error', 'Unauthorized');
+      expect(body).toHaveProperty('message', 'Unauthorized');
       expect(body).toHaveProperty('statusCode');
     });
   });
@@ -53,7 +53,7 @@ describe('User (e2e)', () => {
         .expect(401);
 
       expect(body).toBeDefined();
-      expect(body).toHaveProperty('error', 'Unauthorized');
+      expect(body).toHaveProperty('message', 'Unauthorized');
       expect(body).toHaveProperty('statusCode');
     });
 
@@ -64,7 +64,7 @@ describe('User (e2e)', () => {
         .expect(401);
 
       expect(body).toBeDefined();
-      expect(body).toHaveProperty('error', 'Unauthorized');
+      expect(body).toHaveProperty('message', 'Unauthorized');
       expect(body).toHaveProperty('statusCode');
     });
 
@@ -103,7 +103,6 @@ describe('User (e2e)', () => {
         .expect(401);
 
       expect(body).toBeDefined();
-      expect(body).toHaveProperty('error', 'Unauthorized');
       expect(body).toHaveProperty('message');
       expect(body).toHaveProperty('statusCode');
     });
@@ -133,7 +132,6 @@ describe('User (e2e)', () => {
         .expect(404);
 
       expect(body).toBeDefined();
-      expect(body).toHaveProperty('error', 'Not Found');
       expect(body).toHaveProperty('message');
       expect(body).toHaveProperty('statusCode');
     });
@@ -220,7 +218,6 @@ describe('User (e2e)', () => {
         .expect(401);
 
       expect(body).toBeDefined();
-      expect(body).toHaveProperty('error', 'Unauthorized');
       expect(body).toHaveProperty('message');
       expect(body).toHaveProperty('statusCode');
     });
@@ -237,7 +234,6 @@ describe('User (e2e)', () => {
         .expect(404);
 
       expect(body).toBeDefined();
-      expect(body).toHaveProperty('error', 'Not Found');
       expect(body).toHaveProperty('message');
       expect(body).toHaveProperty('statusCode');
     });

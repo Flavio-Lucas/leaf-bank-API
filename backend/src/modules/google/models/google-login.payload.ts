@@ -1,6 +1,6 @@
 //#region Imports
 
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsDefined, IsString } from 'class-validator';
 
 import { DefaultValidationMessages } from '../../../models/enums/default-validation-messages';
@@ -15,7 +15,7 @@ export class GoogleLoginPayload {
   /**
    * O token de autenticação do Google
    */
-  @ApiModelProperty()
+  @ApiProperty()
   @IsDefined({ message: 'É necessário enviar o token de autenticação do google.' })
   @IsString({ message: DefaultValidationMessages.IsString })
   googleIdToken: string;
