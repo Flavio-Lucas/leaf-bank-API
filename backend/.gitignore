@@ -43,3 +43,5 @@ letsencrypt
 certbot
 
 deploy.zip
+deploy/deploy.zip
+

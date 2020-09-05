@@ -23,13 +23,12 @@
       "add-migration": "npm run typeorm:cli -- migration:generate -n",
       "revert-migration": "npm run typeorm:cli -- migration:revert",
       "deploy:heroku": "cd .. && git subtree push --prefix backend heroku master",
-      "deploy:aws": "bash deploy.sh"
+      "deploy:aws": "node deploy/aws.js"
    },
    "engines": {
       "node": "12.x"
    },
    "dependencies": {
-      "aws-serverless-express": "^3.3.8",
       "@nestjs/azure-storage": "^2.1.1",
       "@nestjs/common": "^7.4.4",
       "@nestjs/core": "^7.4.4",
@@ -40,9 +39,10 @@
       "@nestjs/typeorm": "^7.1.3",
       "@nestjsx/crud": "^4.6.2",
       "@nestjsx/crud-typeorm": "^4.6.2",
-      "@sentry/node": "^5.22.3",
       "@sentry/minimal": "^5.22.3",
-      "jwt-decode": "^2.2.0",
+      "@sentry/node": "^5.22.3",
+      "archiver": "^5.0.0",
+      "aws-serverless-express": "^3.3.8",
       "axios": "^0.20.0",
       "bcryptjs": "^2.4.3",
       "body-parser": "^1.19.0",
@@ -54,12 +54,13 @@
       "express-rate-limit": "^5.1.3",
       "google-auth-library": "^6.0.6",
       "helmet": "^4.1.0",
-      "pg": "^8.3.3",
+      "jwt-decode": "^2.2.0",
       "omit-deep": "^0.3.0",
       "passport": "^0.4.1",
       "passport-facebook-token": "^4.0.0",
       "passport-jwt": "^4.0.0",
       "passport-local": "^1.0.0",
+      "pg": "^8.3.3",
       "reflect-metadata": "^0.1.13",
       "rimraf": "^3.0.2",
       "rxjs": "^6.6.2",

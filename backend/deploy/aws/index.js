@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
-// lambda.ts
-const core_1 = require("@nestjs/core");
-const platform_express_1 = require("@nestjs/platform-express");
-const aws_serverless_express_1 = require("aws-serverless-express");
-const main_base_1 = require("./dist/main.base");
-const app_module_1 = require("./dist/app.module");
+
+const nestjsCore = require("@nestjs/core");
+const platformExpress = require("@nestjs/platform-express");
+const awsServerlessExpress = require("aws-serverless-express");
+const mainBase = require("./dist/main.base");
+const appModule = require("./dist/app.module");
 
 const express = require('express');
 
@@ -23,9 +23,9 @@ async function bootstrapServer() {
   if (!cachedServer) {
     const expressApp = express();
 
-    let nestApp = await core_1.NestFactory.create(app_module_1.AppModule, new platform_express_1.ExpressAdapter(expressApp));
+    let nestApp = await nestjsCore.NestFactory.create(appModule.AppModule, new platformExpress.ExpressAdapter(expressApp));
 
-    nestApp = await main_base_1.setup(nestApp);
+    nestApp = await mainBase.setup(nestApp);
 
     nestApp.enableCors({
       origin: true,
@@ -37,7 +37,7 @@ async function bootstrapServer() {
     });
     await nestApp.init();
 
-    cachedServer = aws_serverless_express_1.createServer(expressApp, undefined, binaryMimeTypes);
+    cachedServer = awsServerlessExpress.createServer(expressApp, undefined, binaryMimeTypes);
   }
 
   return cachedServer;
@@ -47,7 +47,6 @@ async function bootstrapServer() {
 exports.handler = async (event, context) => {
   cachedServer = await bootstrapServer();
 
-  return aws_serverless_express_1.proxy(cachedServer, event, context, 'PROMISE').promise;
+  return awsServerlessExpress.proxy(cachedServer, event, context, 'PROMISE').promise;
 };
 
-//# sourceMappingURL=lambda.js.map
