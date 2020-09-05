@@ -1,9 +1,9 @@
 {
-   "name": "freela.blog-norimport",
+   "name": "nestjs.base",
    "version": "0.0.1",
-   "description": "",
-   "author": "",
-   "license": "MIT",
+   "description": "A API base para os projetos que necessitam de uma API.",
+   "author": "Vinícius Lourenço",
+   "private": true,
    "scripts": {
       "build": "tsc -p tsconfig.build.json",
       "build:prod": "rm -r -f dist && rimraf dist && npm run build",
