@@ -18,9 +18,7 @@ converse com o Kleber ou Wilson que eles vão te passar as credênciais necessá
 
 ### Docker
 
-Se não possuir o Docker e o Docker Compose instalado, instale na máquina antes para conseguir usar o banco MySQL localmente.
-
-Após instalar, execute `docker-compose up -d` para iniciar o banco de dados.
+Se não possuir o Docker e o Docker Compose instalado, instale na máquina antes para conseguir usar o banco MySQL ou Postgres localmente.
 
 ### MySQL
 
@@ -32,6 +30,20 @@ cp .env.mysql.example .env
 E depois, inicie o `container` que contém os serviços do MySQL usando:
 ```shell
 docker-compose up -d mysql
+```
+
+Pronto! Agora, você pode criar uma `migration` usando `npm run add-migration v1`, e depois executa-la com `npm run migration` para iniciar o banco de dados. 
+
+### Postgres
+
+Use o seguinte comando para criar o arquivo de configurações a partir do exemplo:
+```shell
+cp .env.postgres.example .env
+```
+
+E depois, inicie o `container` que contém os serviços do Postgres usando:
+```shell
+docker-compose up -d postgres
 ```
 
 Pronto! Agora, você pode criar uma `migration` usando `npm run add-migration v1`, e depois executa-la com `npm run migration` para iniciar o banco de dados. 

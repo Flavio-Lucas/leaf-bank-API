@@ -7,12 +7,10 @@
    "scripts": {
       "build": "tsc -p tsconfig.build.json",
       "build:prod": "rm -r -f dist && rimraf dist && npm run build",
-      "build:docker": "docker build . -t base/api",
       "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
       "start": "ts-node src/index.ts",
       "start:dev": "nest start --watch",
       "start:debug": "nest start --debug --watch",
-      "start:azure": "npm run deploy && func host start",
       "start:prod": "node dist/main.js",
       "lint": "tslint -p tsconfig.json -c tslint.json",
       "test": "npm run test:e2e",
@@ -24,7 +22,6 @@
       "migration": "npm run typeorm:cli -- migration:run",
       "add-migration": "npm run typeorm:cli -- migration:generate -n",
       "revert-migration": "npm run typeorm:cli -- migration:revert",
-      "deploy:docker": "npm run build:docker && docker push base/api",
       "deploy:heroku": "cd .. && git subtree push --prefix backend heroku master",
       "deploy:aws": "bash deploy.sh"
    },
