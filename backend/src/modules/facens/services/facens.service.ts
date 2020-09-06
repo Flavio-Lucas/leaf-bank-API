@@ -9,6 +9,7 @@ import * as decode from 'jwt-decode';
 
 import { TypeOrmValueTypes } from '../../../models/enums/type-orm-value.types';
 import { TokenProxy } from '../../../models/proxys/token.proxy';
+import { encryptPassword } from '../../../utils/password';
 import { UserEntity } from '../../users/entities/user.entity';
 import { LoginPayload } from '../../auth/models/login.payload';
 import { FacensTokenProxy } from '../models/facens-token.proxy';
@@ -199,15 +200,14 @@ export class FacensService {
     if (user) {
       user.roles = roles;
 
-      const salt = await bcryptjs.genSalt();
-      user.password = await bcryptjs.hash(password, salt);
+      user.password = await encryptPassword(password);
 
       return await user.save();
     }
 
     const userEntity = new UserEntity({
       email: username,
-      password,
+      password: await encryptPassword(password),
       roles,
     });
 

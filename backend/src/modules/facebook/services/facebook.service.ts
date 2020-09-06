@@ -5,10 +5,16 @@ import * as Sentry from '@sentry/node';
 
 import * as PassportFacebookToken from 'passport-facebook-token';
 
-import { UserEntity } from '../../users/entities/user.entity';
+import { v4 } from 'uuid';
+
+import { TokenProxy } from '../../../models/proxys/token.proxy';
+import { encryptPassword } from '../../../utils/password';
+import { RolesEnum } from '../../auth/models/roles.enum';
 import { AuthService } from '../../auth/services/auth.service';
 import { EnvService } from '../../env/services/env.service';
+import { UserEntity } from '../../users/entities/user.entity';
 import { UserService } from '../../users/services/user.service';
+import { FacebookEntity } from '../entities/facebook-user.entity';
 
 //#endregion
 
@@ -51,14 +57,16 @@ export class FacebookService {
     if (!email || !email.value)
       throw new BadRequestException('As informações do usuário não são válidas.');
 
-    const user = await UserEntity.findByEmailAndFacebookIdToken(email.value, accessToken);
+    const user = await FacebookEntity.findByEmailAndFacebookIdToken(email.value, accessToken);
 
     if (user)
       return done(null, user);
 
-    const createdUser = new UserEntity({
+    const createdUser = new FacebookEntity({
       email: email.value,
       facebookIdToken: accessToken,
+      roles: RolesEnum.USER,
+      password: await encryptPassword(v4()),
     });
 
     const userEntity = await createdUser.save().catch((e) => this.logger.error(e));
@@ -74,7 +82,7 @@ export class FacebookService {
    *
    * @param user As informações do usuário
    */
-  public async signInFacebook(user: UserEntity) {
+  public async signInFacebook(user: UserEntity): Promise<TokenProxy> {
     const hasConfigForFacebookAuth = !!this.env.FACEBOOK_CLIENT_ID && !!this.env.FACEBOOK_CLIENT_SECRET;
 
     if (!hasConfigForFacebookAuth)

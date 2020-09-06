@@ -1,10 +1,10 @@
 //#region Imports
 
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 import { Exclude } from 'class-transformer';
 
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, TableInheritance } from 'typeorm';
 
 import { BaseEntity } from '../../../common/base-entity';
 import { ToProxy } from '../../../common/to-proxy';
@@ -18,6 +18,7 @@ import { UserProxy } from '../models/user.proxy';
  * A classe que representa a entidade que lida com os usuários
  */
 @Entity('users')
+@TableInheritance({ column: { type: "varchar", name: "type" } })
 export class UserEntity extends BaseEntity implements ToProxy<UserProxy> {
 
   //#region Constructor
@@ -48,20 +49,6 @@ export class UserEntity extends BaseEntity implements ToProxy<UserProxy> {
   @ApiProperty()
   @Column({ nullable: false })
   public password: string;
-
-  /**
-   * O token de identificação do Google
-   */
-  @ApiPropertyOptional()
-  @Column({ nullable: true, unique: true })
-  public googleIdToken: string;
-
-  /**
-   * O token de identificação do Facebook
-   */
-  @ApiPropertyOptional()
-  @Column({ nullable: true, unique: true })
-  public facebookIdToken: string;
 
   /**
    * As permissões desse usuário
@@ -97,42 +84,6 @@ export class UserEntity extends BaseEntity implements ToProxy<UserProxy> {
     email = getCleanedEmail(email);
 
     return await this.findOne({ where: { email, ...whereOptions } });
-  }
-
-  /**
-   * Método que retorna as informações do usuário pelo e-mail e ID Token do Facebook
-   *
-   * @param email O endereço de e-mail do usuário
-   * @param facebookIdToken O token de autenticação
-   */
-  public static async findByEmailAndFacebookIdToken(email: string, facebookIdToken: string): Promise<UserEntity | undefined> {
-    const cleanedEmail = getCleanedEmail(email);
-
-    return await this.findOne({
-      where: {
-        email: cleanedEmail,
-        facebookIdToken,
-        isActive: TypeOrmValueTypes.TRUE,
-      },
-    });
-  }
-
-  /**
-   * Método que retorna as informações do usuário pelo e-mail e ID Token do Google
-   *
-   * @param email O endereço de e-mail do usuário
-   * @param googleIdToken O token de autenticação
-   */
-  public static async findByEmailAndGoogleIdToken(email: string, googleIdToken: string): Promise<UserEntity | undefined> {
-    const cleanedEmail = getCleanedEmail(email);
-
-    return await this.findOne({
-      where: {
-        email: cleanedEmail,
-        googleIdToken,
-        isActive: TypeOrmValueTypes.TRUE,
-      },
-    });
   }
 
   //#endregion
