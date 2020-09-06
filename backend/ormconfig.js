@@ -17,7 +17,8 @@ const rule = {
 };
 
 const envFieldName = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
-const env = envalid.cleanEnv({  }, rule, { dotEnvPath: envFieldName, strict: true });
+const processEnvObject = process.env.NODE_ENV === 'test' ? { } : process.env;
+const env = envalid.cleanEnv(processEnvObject, rule, { dotEnvPath: envFieldName, strict: true });
 
 const config = {
   name: 'default',
