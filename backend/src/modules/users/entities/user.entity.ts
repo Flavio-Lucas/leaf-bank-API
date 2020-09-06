@@ -64,7 +64,7 @@ export class UserEntity extends BaseEntity implements ToProxy<UserProxy> {
   /**
    * Método que retorna um proxy da entidade
    */
-  public toProxy(isActive?: boolean, user?: string): UserProxy {
+  public toProxy(): UserProxy {
     return new UserProxy(this);
   }
 
