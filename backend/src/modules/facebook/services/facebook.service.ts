@@ -51,7 +51,7 @@ export class FacebookService {
     if (!email || !email.value)
       throw new BadRequestException('As informações do usuário não são válidas.');
 
-    const user = await this.userService.findByEmailAndFacebookIdToken(email.value, accessToken);
+    const user = await UserEntity.findByEmailAndFacebookIdToken(email.value, accessToken);
 
     if (user)
       return done(null, user);
@@ -61,7 +61,7 @@ export class FacebookService {
       facebookIdToken: accessToken,
     });
 
-    const userEntity = await this.userService.repository.save(createdUser).catch((e) => this.logger.error(e));
+    const userEntity = await createdUser.save().catch((e) => this.logger.error(e));
 
     if (userEntity)
       return done(null, userEntity);

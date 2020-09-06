@@ -2,70 +2,55 @@
 
 import { GetManyDefaultResponse } from '@nestjsx/crud';
 
-import { BaseCrudProxy } from '../common/base-crud.proxy';
-import { BaseEntity } from '../common/base-entity';
+import { ToProxy } from '../common/to-proxy';
 import { isValid } from './functions';
 
 //#endregion
 
 /**
- * O tipo da resposta que irá retornar as entidades convertidas em proxy
+ * Método que mapeia as entidades buscadas pelo crud e retorna uma versão com o Proxy do objeto
+ *
+ * @param data As informações que precisam ser mapeadas
+ * @param proxyParams Os parâmetros a mais passados para o proxy
  */
-export type CrudProxy<T> = GetManyDefaultResponse<T> | T[] | T;
-
-/**
- * O tipo usado para especificar que é uma classe que possui um construtor
- */
-export type CrudClassProxy<T, K> = new(item: K, ...params: unknown[]) => T;
+export function mapCrud<T, E extends ToProxy<T>>(data: E, ...proxyParams: Parameters<E['toProxy']>): T;
 
 /**
  * Método que mapeia as entidades buscadas pelo crud e retorna uma versão com o Proxy do objeto
  *
- * @param classInstance A classe proxy usada para limpar quaisquer propriedades que não devam ser enviadas
  * @param data As informações que precisam ser mapeadas
  * @param proxyParams Os parâmetros a mais passados para o proxy
  */
-export function mapCrud<T extends BaseCrudProxy, K extends BaseEntity, P>(classInstance: CrudClassProxy<T, K>, data: K, ...proxyParams: P[]): T;
+export function mapCrud<T, E extends ToProxy<T>>(data: E[], ...proxyParams: Parameters<E['toProxy']>): T[];
 
 /**
  * Método que mapeia as entidades buscadas pelo crud e retorna uma versão com o Proxy do objeto
  *
- * @param classInstance A classe proxy usada para limpar quaisquer propriedades que não devam ser enviadas
  * @param data As informações que precisam ser mapeadas
  * @param proxyParams Os parâmetros a mais passados para o proxy
  */
-export function mapCrud<T extends BaseCrudProxy, K extends BaseEntity, P>(classInstance: CrudClassProxy<T, K>, data: K[], ...proxyParams: P[]): T[];
+export function mapCrud<T, E extends ToProxy<T>>(data: GetManyDefaultResponse<E> | E[], ...proxyParams: Parameters<E['toProxy']>): GetManyDefaultResponse<T>;
 
 /**
  * Método que mapeia as entidades buscadas pelo crud e retorna uma versão com o Proxy do objeto
  *
- * @param classInstance A classe proxy usada para limpar quaisquer propriedades que não devam ser enviadas
  * @param data As informações que precisam ser mapeadas
  * @param proxyParams Os parâmetros a mais passados para o proxy
  */
-export function mapCrud<T extends BaseCrudProxy, K extends BaseEntity, P>(classInstance: CrudClassProxy<T, K>, data: GetManyDefaultResponse<K> | K[], ...proxyParams: P[]): GetManyDefaultResponse<T>;
-
-/**
- * Método que mapeia as entidades buscadas pelo crud e retorna uma versão com o Proxy do objeto
- *
- * @param classInstance A classe proxy usada para limpar quaisquer propriedades que não devam ser enviadas
- * @param data As informações que precisam ser mapeadas
- * @param proxyParams Os parâmetros a mais passados para o proxy
- */
-export function mapCrud<T extends BaseCrudProxy, K extends BaseEntity, P>(classInstance: CrudClassProxy<T, K>, data: GetManyDefaultResponse<K> | K[] | K, ...proxyParams: P[]): GetManyDefaultResponse<T> | T[] | T {
+export function mapCrud<T, E extends ToProxy<T>>(data: GetManyDefaultResponse<E> | E[] | E, ...proxyParams: Parameters<E['toProxy']>): GetManyDefaultResponse<T> | T[] | T {
   if (Array.isArray(data))
-    return data.map(item => new classInstance(item, ...proxyParams));
+    return data.map(item => item.toProxy(...proxyParams));
 
-  if (isGetMany<K>(data)) {
+  if (isGetMany(data)) {
     const { data: listEntities } = data;
     const result: GetManyDefaultResponse<T> = { ...data, data: [] };
 
-    result.data = listEntities.map(item => new classInstance(item, ...proxyParams));
+    result.data = listEntities.map(item => item.toProxy(...proxyParams));
 
     return result;
   }
 
-  return new classInstance(data, ...proxyParams);
+  return data.toProxy(...proxyParams);
 }
 
 /**
@@ -75,12 +60,23 @@ export function mapCrud<T extends BaseCrudProxy, K extends BaseEntity, P>(classI
  *
  * Caso não seja válido, e seja um objeto, ele retorna undefined.
  *
- * @param classInstance A classe proxy usada para limpar quaisquer propriedades que não devam ser enviadas
+ * @param data As informações que precisam ser mapeadas
+ * @param proxyParams Os parâmetros passados para o proxy
+ */
+export function mapCrudIfValid<T, E extends ToProxy<T>>(data: E, ...proxyParams: Parameters<E['toProxy']>): T | undefined;
+
+/**
+ * Método que mapeia, se estiverem válidas, as entidades buscadas pelo crud e retorna uma versão com o Proxy do objeto
+ *
+ * Caso não seja válido, e seja um array, ele retorna um array vázio.
+ *
+ * Caso não seja válido, e seja um objeto, ele retorna undefined.
+ *
  * @param data As informações que precisam ser mapeadas
  * @param isArray Diz se os dados mapeados são um array
  * @param proxyParams Os parâmetros passados para o proxy
  */
-export function mapCrudIfValid<T extends BaseCrudProxy, K extends BaseEntity, P>(classInstance: CrudClassProxy<T, K>, data: K[], isArray: boolean, ...proxyParams: P[]): T[];
+export function mapCrudIfValid<T, E extends ToProxy<T>>(data: E[], isArray: boolean, ...proxyParams: Parameters<E['toProxy']>): T[];
 
 /**
  * Método que mapeia, se estiverem válidas, as entidades buscadas pelo crud e retorna uma versão com o Proxy do objeto
@@ -89,30 +85,16 @@ export function mapCrudIfValid<T extends BaseCrudProxy, K extends BaseEntity, P>
  *
  * Caso não seja válido, e seja um objeto, ele retorna undefined.
  *
- * @param classInstance A classe proxy usada para limpar quaisquer propriedades que não devam ser enviadas
- * @param data As informações que precisam ser mapeadas
- * @param proxyParams Os parâmetros passados para o proxy
- */
-export function mapCrudIfValid<T extends BaseCrudProxy, K extends BaseEntity, P>(classInstance: CrudClassProxy<T, K>, data: K, ...proxyParams: P[]): T | undefined;
-
-/**
- * Método que mapeia, se estiverem válidas, as entidades buscadas pelo crud e retorna uma versão com o Proxy do objeto
- *
- * Caso não seja válido, e seja um array, ele retorna um array vázio.
- *
- * Caso não seja válido, e seja um objeto, ele retorna undefined.
- *
- * @param classInstance A classe proxy usada para limpar quaisquer propriedades que não devam ser enviadas
  * @param data As informações que precisam ser mapeadas
  * @param isArrayOrParams Diz se a lista é um array ou representa os restos dos parametros
  * @param proxyParams O resto dos parametros
  */
-export function mapCrudIfValid<T extends BaseCrudProxy, K extends BaseEntity, P>(classInstance: CrudClassProxy<T, K>, data?: K[] | K, isArrayOrParams?: boolean | P[], ...proxyParams: P[]): T[] | T {
+export function mapCrudIfValid<T, E extends ToProxy<T>>(data?: E[] | E, isArrayOrParams?: boolean | Parameters<E['toProxy']>[], ...proxyParams: Parameters<E['toProxy']>): T[] | T {
   if (Array.isArray(data))
-    return data.map(item => new classInstance(item, ...(Array.isArray(isArrayOrParams) ? isArrayOrParams : proxyParams)));
+    return data.map(item => item.toProxy(...(Array.isArray(isArrayOrParams) ? isArrayOrParams : proxyParams)));
 
   if (isValid(data))
-    return new classInstance(data, isArrayOrParams, ...proxyParams);
+    return data.toProxy(isArrayOrParams, ...proxyParams);
 
   if (typeof isArrayOrParams === 'boolean' && isArrayOrParams)
     return [];

@@ -4,19 +4,16 @@ import { BadRequestException, Injectable, NotFoundException, UnauthorizedExcepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { CrudRequest } from '@nestjsx/crud';
 
-import { Repository } from 'typeorm';
-
-import * as xss from 'xss';
-
 import * as bcryptjs from 'bcryptjs';
+
+import { Repository } from 'typeorm';
 
 import { v4 } from 'uuid';
 
 import { BaseCrudService } from '../../../common/base-crud.service';
-import { TypeOrmValueTypes } from '../../../models/enums/type-orm-value.types';
+import { isAdminUser, isValid } from '../../../utils/functions';
 import { RolesEnum } from '../../auth/models/roles.enum';
 import { UserEntity } from '../entities/user.entity';
-import { isAdmin, isAdminUser, isValid } from '../../../utils/functions';
 import { CreateUserPayload } from '../models/create-user.payload';
 import { UpdateUserPayload } from '../models/update-user.payload';
 
@@ -51,16 +48,24 @@ export class UserService extends BaseCrudService<UserEntity> {
    * @param entityId A identificação da entidade que está sendo procurada
    * @param crudRequest As informações da requisição do CRUD
    */
-  public async get(requestUser: UserEntity, entityId: number, crudRequest: CrudRequest): Promise<UserEntity> {
-    if (entityId !== requestUser.id && !isAdminUser(requestUser))
-      throw new UnauthorizedException('Você não tem permissão para realizar essa operação.');
+  public async get(requestUser: UserEntity, entityId: number, crudRequest?: CrudRequest): Promise<UserEntity> {
+    let entity: UserEntity;
 
-    const { exists } = await this.exists([entityId]);
+    if (crudRequest)
+      entity = await super.getOne(crudRequest);
+    else
+      entity = await UserEntity.findById(entityId);
 
-    if (!exists)
-      throw new NotFoundException('A entidade procurada não existe.');
+    if (!entity)
+      throw new NotFoundException(`A entidade procurada pela identificação (${ entityId }) não foi encontrada.`);
 
-    return super.getOne(crudRequest);
+    if (entityId === requestUser.id)
+      return entity;
+
+    if (isAdminUser(requestUser))
+      return entity;
+
+    throw new UnauthorizedException('Você não tem permissão para realizar essa operação.');
   }
 
   /**
@@ -70,24 +75,26 @@ export class UserService extends BaseCrudService<UserEntity> {
    * @param payload As informações para a criação
    */
   public async create(requestUser: UserEntity, payload: CreateUserPayload): Promise<UserEntity> {
-    const isUserAdmin = isAdmin(requestUser.roles);
-    const entity = this.getEntityFromPayload(payload, null, isUserAdmin);
+    const entity = this.getEntityFromPayload(payload);
 
-    const alreadyHasUser = await this.repository.findOne({ where: { email: entity.email } });
+    const alreadyHasUser = await UserEntity.getByEmail(payload.email, false);
 
     if (alreadyHasUser)
       throw new BadRequestException('Já existe um usuário cadastrado com esse e-mail.');
+
+    if (isAdminUser(requestUser) && isValid(payload.roles))
+      entity.roles = payload.roles;
 
     const salt = await bcryptjs.genSalt();
     const passwordToEncrypt = entity.googleIdToken || entity.facebookIdToken ? v4() : entity.password;
 
     if (!passwordToEncrypt)
-      throw new BadRequestException('Não foi enviada uma senha, por favor, confirme se você está enviando e processando corretamenta a senha.');
+      throw new BadRequestException('Não foi enviada uma senha, por favor, confirme se você está enviando e processando corretamente a senha.');
 
     entity.password = await bcryptjs.hash(passwordToEncrypt, salt);
     entity.roles = entity.roles || RolesEnum.USER;
 
-    return await this.repository.save(entity);
+    return await entity.save();
   }
 
   /**
@@ -98,86 +105,23 @@ export class UserService extends BaseCrudService<UserEntity> {
    * @param payload As informações para a atualização da entidade
    */
   public async update(requestUser: UserEntity, entityId: number, payload: UpdateUserPayload): Promise<UserEntity> {
-    if (entityId !== requestUser.id && !isAdmin(requestUser.roles))
-      throw new UnauthorizedException('Você não tem permissão para realizar essa operação.');
+    const isUserExists = await UserEntity.exists(entityId);
 
-    const { exists } = await this.exists([entityId]);
-
-    if (!exists)
+    if (!isUserExists)
       throw new NotFoundException('A entidade procurada não existe.');
 
-    const entity = this.getEntityFromPayload(payload, entityId, isAdmin(requestUser.roles));
+    const entity = this.getEntityFromPayload(payload, entityId);
 
-    return await this.repository.save(entity);
-  }
+    if (isAdminUser(requestUser) && isValid(payload.roles))
+      entity.roles = payload.roles;
 
-  //#endregion
+    if (entityId === requestUser.id)
+      return await entity.save();
 
-  //#region Public Methods
+    if (isAdminUser(requestUser))
+      return await entity.save();
 
-  /**
-   * Método que encontra um usuário para a validação de autenticação
-   *
-   * @param email O e-mail do usuário
-   */
-  public async findByEmailForAuth(email: string): Promise<Partial<UserEntity>> {
-    const cleanedEmail = this.getCleanedEmail(email);
-    const user = await this.repository.findOne({ where: { email: cleanedEmail, isActive: TypeOrmValueTypes.TRUE } });
-
-    if (!user)
-      throw new NotFoundException('O usuário não existe ou foi deletado.');
-
-    return user;
-  }
-
-  /**
-   * Método que retorna um usuário baseado no seu id
-   *
-   * @param id A identificação do usuário
-   */
-  public async findById(id: number): Promise<UserEntity> {
-    const user = await this.repository.findOne({ where: { id, isActive: TypeOrmValueTypes.TRUE } });
-
-    if (!user)
-      throw new NotFoundException('O usuário não existe ou foi deletado.');
-
-    return user;
-  }
-
-  /**
-   * Método que retorna as informações do usuário pelo e-mail e ID Token do Facebook
-   *
-   * @param email O endereço de e-mail do usuário
-   * @param facebookIdToken O token de autenticação
-   */
-  public async findByEmailAndFacebookIdToken(email: string, facebookIdToken: string): Promise<UserEntity | undefined> {
-    const cleanedEmail = this.getCleanedEmail(email);
-
-    return await this.repository.findOne({
-      where: {
-        email: cleanedEmail,
-        facebookIdToken,
-        isActive: TypeOrmValueTypes.TRUE,
-      },
-    });
-  }
-
-  /**
-   * Método que retorna as informações do usuário pelo e-mail e ID Token do Google
-   *
-   * @param email O endereço de e-mail do usuário
-   * @param googleIdToken O token de autenticação
-   */
-  public async findByEmailAndGoogleIdToken(email: string, googleIdToken: string): Promise<UserEntity | undefined> {
-    const cleanedEmail = this.getCleanedEmail(email);
-
-    return await this.repository.findOne({
-      where: {
-        email: cleanedEmail,
-        googleIdToken,
-        isActive: TypeOrmValueTypes.TRUE,
-      },
-    });
+    throw new UnauthorizedException('Você não tem permissão para realizar essa operação.');
   }
 
   //#endregion
@@ -185,27 +129,16 @@ export class UserService extends BaseCrudService<UserEntity> {
   //#region Private Methods
 
   /**
-   * Método que limpa o e-mail de qualquer ataque ou problema
-   *
-   * @param email O endereço de e-mail
-   */
-  private getCleanedEmail(email: string): string {
-    return xss.filterXSS(email.trim().toLocaleLowerCase());
-  }
-
-  /**
    * Método que retorna a entidade a partir de um payload
    *
    * @param payload As informações do payload
    * @param id A identificação do usuário
-   * @param isUserAdmin Diz se é admin
    */
-  private getEntityFromPayload(payload: CreateUserPayload | UpdateUserPayload, id?: number, isUserAdmin: boolean = false): UserEntity {
+  private getEntityFromPayload(payload: CreateUserPayload | UpdateUserPayload, id?: number): UserEntity {
     return new UserEntity({
       ...isValid(id) && { id },
       ...isValid(payload.email) && { email: payload.email },
       ...payload instanceof CreateUserPayload && isValid(payload.password) && { password: payload.password },
-      ...isUserAdmin && { roles: payload.roles },
     });
   }
 

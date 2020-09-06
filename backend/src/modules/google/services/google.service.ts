@@ -75,7 +75,7 @@ export class GoogleService {
 
     const expiresInMilliseconds = googleInfo.exp * 1000;
 
-    const user = await this.userService.findByEmailAndGoogleIdToken(googleInfo.email, payload.googleIdToken);
+    const user = await UserEntity.findByEmailAndGoogleIdToken(googleInfo.email, payload.googleIdToken);
 
     if (user)
       return await this.authService.signIn(user, expiresInMilliseconds);
@@ -85,7 +85,7 @@ export class GoogleService {
       googleIdToken: payload.googleIdToken,
     });
 
-    const userEntity = await this.userService.repository.save(createdUser).catch((e) => this.logger.error(e));
+    const userEntity = await createdUser.save().catch((e) => this.logger.error(e));
 
     if (userEntity)
       return await this.authService.signIn(userEntity, expiresInMilliseconds);

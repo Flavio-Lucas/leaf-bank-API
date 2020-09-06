@@ -70,7 +70,7 @@ export class AuthService {
    * @param passwordWithoutEncryption A senha do usuário
    */
   public async authenticate({ username, password: passwordWithoutEncryption }: LoginPayload): Promise<Partial<UserEntity>> {
-    const { password, ...user } = await this.userService.findByEmailForAuth(username);
+    const { password, ...user } = await UserEntity.getByEmail(username);
 
     const passwordIsMatch = await bcryptjs.compare(passwordWithoutEncryption, password);
 
@@ -102,7 +102,7 @@ export class AuthService {
         shouldLogout: true,
       });
 
-    const user = await this.userService.findById(jwtPayload.id);
+    const user = await UserEntity.findById<UserEntity>(jwtPayload.id);
 
     Sentry.setUser({ id: user.id.toString(), email: user.email });
 
@@ -131,14 +131,13 @@ export class AuthService {
         shouldLogout: true,
       });
 
-    const user = await this.userService.findById(jwtPayload.refreshId);
+    const user: UserEntity = await UserEntity.findById(jwtPayload.refreshId);
 
     Sentry.setUser({ id: user.id.toString(), email: user.email });
 
-    return {
-      ...user,
-      roles: 'refreshjwt',
-    };
+    user.roles = 'refreshjwt';
+
+    return user;
   }
 
   //#endregion

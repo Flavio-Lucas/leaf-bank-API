@@ -7,9 +7,9 @@ import { Crud, CrudRequest, GetManyDefaultResponse, Override, ParsedRequest } fr
 import { BaseEntityCrudController } from '../../../common/base-entity-crud.controller';
 import { ProtectTo, UnprotectedRoute } from '../../../decorators/protect/protect.decorator';
 import { User } from '../../../decorators/user/user.decorator';
+import { mapCrud } from '../../../utils/crud';
 import { RolesEnum } from '../../auth/models/roles.enum';
 import { UserEntity } from '../entities/user.entity';
-import { mapCrud } from '../../../utils/crud';
 import { CreateUserPayload } from '../models/create-user.payload';
 import { UpdateUserPayload } from '../models/update-user.payload';
 import { GetManyDefaultResponseUserProxy, UserProxy } from '../models/user.proxy';
@@ -66,7 +66,7 @@ export class UserController extends BaseEntityCrudController<UserEntity, UserSer
   @ApiOkResponse({ description: 'Get info about user logged.', type: UserProxy })
   @ProtectTo(RolesEnum.USER, RolesEnum.ADMIN)
   public getMe(@User() user: UserEntity): UserProxy {
-    return mapCrud(UserProxy, user);
+    return mapCrud(user);
   }
 
   /**
@@ -77,8 +77,8 @@ export class UserController extends BaseEntityCrudController<UserEntity, UserSer
   @ProtectTo(RolesEnum.ADMIN)
   @Override()
   @ApiOkResponse({ type: GetManyDefaultResponseUserProxy })
-  public getMany(@ParsedRequest() crudRequest: CrudRequest): Promise<GetManyDefaultResponse<UserProxy>> {
-    return this.base.getManyBase(crudRequest).then(response => mapCrud(UserProxy, response));
+  public async getMany(@ParsedRequest() crudRequest: CrudRequest): Promise<GetManyDefaultResponse<UserProxy>> {
+    return await this.base.getManyBase(crudRequest).then(response => mapCrud(response));
   }
 
   /**
@@ -92,7 +92,7 @@ export class UserController extends BaseEntityCrudController<UserEntity, UserSer
   @Override()
   @ApiOkResponse({ type: UserProxy })
   public async getOne(@User() requestUser: UserEntity, @Param('id') entityId: number, @ParsedRequest() crudRequest: CrudRequest): Promise<UserProxy> {
-    return await this.service.get(requestUser, +entityId, crudRequest).then(response => mapCrud(UserProxy, response));
+    return await this.service.get(requestUser, +entityId, crudRequest).then(response => mapCrud(response));
   }
 
   /**
@@ -105,7 +105,7 @@ export class UserController extends BaseEntityCrudController<UserEntity, UserSer
   @Override()
   @ApiOkResponse({ type: UserProxy })
   public createOne(@User() requestUser: UserEntity, @Body() payload: CreateUserPayload): Promise<UserProxy> {
-    return this.service.create(requestUser, payload).then(response => mapCrud(UserProxy, response));
+    return this.service.create(requestUser, payload).then(response => mapCrud(response));
   }
 
   /**
@@ -119,7 +119,7 @@ export class UserController extends BaseEntityCrudController<UserEntity, UserSer
   @Override()
   @ApiOkResponse({ type: UserProxy })
   public async replaceOne(@User() requestUser: UserEntity, @Param('id') entityId: number, @Body() payload: UpdateUserPayload): Promise<UserProxy> {
-    return await this.service.update(requestUser, +entityId, payload).then(response => mapCrud(UserProxy, response));
+    return await this.service.update(requestUser, +entityId, payload).then(response => mapCrud(response));
   }
 
   //#endregion

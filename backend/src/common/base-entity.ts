@@ -1,26 +1,25 @@
 //#region Imports
 
+import { NotFoundException } from '@nestjs/common';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { CrudValidationGroups } from '@nestjsx/crud';
-import { IsOptional } from 'class-validator';
-
-import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-
-const { CREATE, UPDATE } = CrudValidationGroups;
+import { BaseEntity as BaseTypeormEntity, Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { TypeOrmValueTypes } from '../models/enums/type-orm-value.types';
+import { BaseCrudProxy } from './base-crud.proxy';
 
 //#endregion
 
 /**
  * A classe base para as entidades
  */
-export class BaseEntity {
+export class BaseEntity extends BaseTypeormEntity {
+
+  //#region Public Properties
 
   /**
    * A identificação do post
    */
   @ApiPropertyOptional()
-  @IsOptional({ groups: [CREATE, UPDATE] })
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -28,7 +27,6 @@ export class BaseEntity {
    * Diz quando foi criado essa postagem
    */
   @ApiPropertyOptional()
-  @IsOptional({ groups: [CREATE, UPDATE] })
   @CreateDateColumn()
   createdAt: Date;
 
@@ -36,7 +34,6 @@ export class BaseEntity {
    * Diz quando foi atualizado essa postagem
    */
   @ApiPropertyOptional()
-  @IsOptional({ groups: [CREATE, UPDATE] })
   @UpdateDateColumn()
   updatedAt: Date;
 
@@ -44,8 +41,49 @@ export class BaseEntity {
    * Diz se está ativo
    */
   @ApiPropertyOptional()
-  @IsOptional({ groups: [CREATE, UPDATE] })
   @Column({ default: true })
   isActive: boolean;
+
+  //#endregion
+
+  //#region Public Static Methods
+
+  /**
+   * Método que verifica se uma entidade existe
+   *
+   * @param entityIds A identificação dos ids
+   */
+  public static async exists(...entityIds: number[]): Promise<boolean> {
+    const cleanedIds = [...new Set(entityIds)];
+
+    return await this.createQueryBuilder()
+      .whereInIds(cleanedIds)
+      .getCount()
+      .then(count => count >= cleanedIds.length);
+  }
+
+  /**
+   * Método que procura uma entidade pela sua identificação
+   *
+   * @param entityId A identificação da entidade
+   * @param validateIsActive Diz se deve validar se a entidade está ativa
+   * @param relations A lista de relações que você pode incluir
+   */
+  public static async findById<TEntity extends BaseEntity>(entityId: number, validateIsActive: boolean = true, relations?: string[]): Promise<TEntity> {
+    const entity = await this.findOne<TEntity>({
+      where: {
+        id: entityId,
+        ...validateIsActive && { isActive: TypeOrmValueTypes.TRUE },
+      },
+      relations,
+    });
+
+    if (!entity)
+      throw new NotFoundException(`A entidade procurada pela identificação (${ entityId }) não foi encontrada.`);
+
+    return entity;
+  }
+
+  //#endregion
 
 }

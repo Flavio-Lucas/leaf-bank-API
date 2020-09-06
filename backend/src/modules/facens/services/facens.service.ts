@@ -194,7 +194,7 @@ export class FacensService {
    * @param roles As permissões do usuário
    */
   public async findOrSynchronizeUserForFacensAuth(username: string, password: string, roles: string): Promise<UserEntity> {
-    const user = await this.userService.repository.findOne({ where: { email: username, isActive: TypeOrmValueTypes.TRUE } });
+    const user = await UserEntity.findOne({ where: { email: username, isActive: TypeOrmValueTypes.TRUE } });
 
     if (user) {
       user.roles = roles;
@@ -202,7 +202,7 @@ export class FacensService {
       const salt = await bcryptjs.genSalt();
       user.password = await bcryptjs.hash(password, salt);
 
-      return await this.userService.repository.save(user);
+      return await user.save();
     }
 
     const userEntity = new UserEntity({
@@ -211,7 +211,7 @@ export class FacensService {
       roles,
     });
 
-    return await this.userService.repository.save(userEntity);
+    return await userEntity.save();
   }
 
   /**
