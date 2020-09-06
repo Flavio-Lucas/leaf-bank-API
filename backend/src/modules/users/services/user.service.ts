@@ -14,7 +14,7 @@ import { v4 } from 'uuid';
 
 import { BaseCrudService } from '../../../common/base-crud.service';
 import { TypeOrmValueTypes } from '../../../models/enums/type-orm-value.types';
-import { UserEntity } from '../../../typeorm/entities/user.entity';
+import { UserEntity } from '../entities/user.entity';
 import { isAdmin, isAdminUser, isValid } from '../../../utils/functions';
 import { CreateUserPayload } from '../models/create-user.payload';
 import { UpdateUserPayload } from '../models/update-user.payload';

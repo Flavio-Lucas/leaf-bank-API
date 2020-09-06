@@ -1,5 +1,5 @@
 import { CrudRequest } from '@nestjsx/crud';
-import { UserEntity } from '../typeorm/entities/user.entity';
+import { UserEntity } from '../modules/users/entities/user.entity';
 
 export interface NestJSRequest {
   _readableState: ReadableState;

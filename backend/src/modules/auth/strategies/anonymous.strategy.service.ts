@@ -5,7 +5,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt } from 'passport-jwt';
 
 import { AnonymousStrategy } from '../../../common/anonymous.strategy';
-import { UserEntity } from '../../../typeorm/entities/user.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import { EnvService } from '../../env/services/env.service';
 
 //#endregion

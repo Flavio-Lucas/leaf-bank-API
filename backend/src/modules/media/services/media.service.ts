@@ -5,7 +5,7 @@ import { BadRequestException, Injectable, UnsupportedMediaTypeException } from '
 
 import { v4 } from 'uuid';
 
-import { UserEntity } from '../../../typeorm/entities/user.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import { EnvService } from '../../env/services/env.service';
 import { UploadImagePayload } from '../models/upload-image.payload';
 

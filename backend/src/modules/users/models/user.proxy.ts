@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { BaseCrudProxy } from '../../../common/base-crud.proxy';
 import { GetManyDefaultResponseProxy } from '../../../common/get-many-default-response.proxy';
-import { UserEntity } from '../../../typeorm/entities/user.entity';
+import { UserEntity } from '../entities/user.entity';
 
 //#endregion
 

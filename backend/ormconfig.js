@@ -1,61 +1,56 @@
 const envalid = require('envalid');
+const { join } = require('path');
 
 const rule = {
-  API_BASE_PATH: envalid.str({ default: 'prod', devDefault: 'dev' }),
-  API_PORT: envalid.port({ default: 3000 }),
-  API_DEFAULT_STRATEGY: envalid.str({ default: 'jwt' }),
-  DATABASE_URL: envalid.str({ default: 'mysql' }),
-  DB_TYPE: envalid.str({ default: 'mysql' }),
-  DB_DATABASE: envalid.str({ dafault: '', devDefault: 'dev' }),
-  DB_HOST: envalid.str({ default: '', devDefault: 'localhost' }),
-  DB_PASSWORD: envalid.str({ default: '', devDefault: '1234' }),
+  DATABASE_URL: envalid.str({ default: '' }),
+  DB_TYPE: envalid.str({ default: '' }),
+  DB_DATABASE: envalid.str({ dafault: '' }),
+  DB_HOST: envalid.str({ default: '' }),
+  DB_PASSWORD: envalid.str({ default: '' }),
   DB_PORT: envalid.port({ default: 3306 }),
-  DB_USER: envalid.str({ default: '', devDefault: 'root' }),
-  DB_SYNCHRONIZE: envalid.bool({ default: false, devDefault: true }),
+  DB_USER: envalid.str({ default: '' }),
+  DB_SYNCHRONIZE: envalid.bool({ default: false }),
   DB_MIGRATIONS_RUN: envalid.bool({ default: true }),
+  DB_LOGGING: envalid.bool({ default: true }),
   DB_SSL: envalid.bool({ default: true }),
-  SQLITE_DATABASE_HOST_PATH: envalid.str({ default: '' }),
   DB_TIMEOUT: envalid.num({ default: 20000 }),
-  JWT_EXPIRES_IN: envalid.str({ default: '7d' }),
-  JWT_SECRET_KEY: envalid.str({ devDefault: 'CHANGE_THIS_SECRET' }),
-  SWAGGER_DESCRIPTION: envalid.str({ default: 'Base API' }),
-  SWAGGER_TAG: envalid.str({ default: 'Base' }),
-  SWAGGER_TITLE: envalid.str({ default: 'Base' }),
-  SWAGGER_VERSION: envalid.str({ default: '1.0' }),
 };
 
-const env = envalid.cleanEnv(process.env, rule, { dotEnvPath: '.env', strict: true, });
+const env = envalid.cleanEnv(process.env, rule, { dotEnvPath: '.env', strict: true });
 
 const config = {
   type: env.DB_TYPE,
   database: env.DB_DATABASE,
-  logging: env.isDevelopment,
+  logging: env.DB_LOGGING,
+  logger: 'advanced-console',
   migrationsRun: env.DB_MIGRATIONS_RUN,
   acquireTimeout: env.DB_TIMEOUT,
   synchronize: env.DB_SYNCHRONIZE,
   entities: [
-    'src/typeorm/entities/**/*{.entity.ts,.entity.js}',
+    join(__dirname, 'dist', '**', '*.entity.js'),
   ],
   migrations: [
-    'src/typeorm/migrations/**/*{.ts,.js}',
+    join(__dirname, 'dist/migrations', '**', '*.js'),
   ],
   cli: {
-    entitiesDir: 'src/typeorm/entities',
-    migrationsDir: 'src/typeorm/migrations',
+    migrationsDir: 'src/migrations',
   },
 };
 
-if (config.type === 'mysql')
+if (config.type === 'mysql') {
   Object.assign(config, {
     charset: 'utf8mb4',
     collation: 'utf8mb4_unicode_ci',
+    // https://stackoverflow.com/questions/35553432/error-handshake-inactivity-timeout-in-node-js-mysql-module
+    keepConnectionAlive: true,
+    url: env.DATABASE_URL,
     port: env.DB_PORT,
     host: env.DB_HOST,
     username: env.DB_USER,
     password: env.DB_PASSWORD,
+    acquireTimeout: env.DB_TIMEOUT,
   });
-
-if (env.DB_TYPE === 'postgres')
+} else if (env.DB_TYPE === 'postgres') {
   Object.assign(config, {
     type: 'postgres',
     charset: 'utf8mb4',
@@ -73,5 +68,12 @@ if (env.DB_TYPE === 'postgres')
       ssl: env.DB_SSL,
     },
   });
+} else if (env.DB_TYPE === 'sqlite') {
+  Object.assign(config, {
+    type: 'sqlite',
+  });
+} else {
+  throw new Error('Não há um outro tipo de banco de dados suportado, por favor, altere para MySQL o valor de DB_TYPE.');
+}
 
 module.exports = config;

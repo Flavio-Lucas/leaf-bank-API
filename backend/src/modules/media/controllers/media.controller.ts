@@ -5,7 +5,7 @@ import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swa
 
 import { ProtectTo } from '../../../decorators/protect/protect.decorator';
 import { User } from '../../../decorators/user/user.decorator';
-import { UserEntity } from '../../../typeorm/entities/user.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import { UploadImagePayload } from '../models/upload-image.payload';
 import { UploadProxy } from '../models/upload.proxy';
 import { MediaService } from '../services/media.service';

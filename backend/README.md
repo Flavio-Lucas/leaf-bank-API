@@ -88,8 +88,7 @@ npm run typeorm:cli COMANDO
 
 Esse é o nome biblioteca que lida com o banco de dados, a estrutura desse cara é a seguinte:
 
-- `src/typeorm/migrations`: O local onde todas as migrations ficam.
-- `src/typeorm/entities`: O local onde todas as entidades criadas devem ficar, **SEMPRE** devem possuir o final terminando em `.entity.ts`.
+- `src/migrations`: O local onde todas as migrations ficam.
 
 ## Estrutura
 
@@ -105,6 +104,10 @@ Dentro da pasta, deve possuir a seguinte estrutura:
     - `models` ( Proxys, payloads e interfaces relacionados ao produto )
         - `products-create.payload.ts`
         - `products-update.payload.ts`
+    - `entities` ( Todas as entidades relativas a esse modulo, **SEMPRE** devem possuir o `.entity.ts` )
+        - `product.entity.ts`
+    - `subscribers` ( Os subscribers relacionados a esse modulo )
+        - `product.subscriber.ts`
 
 ## Autenticação
 

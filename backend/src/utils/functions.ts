@@ -4,7 +4,7 @@ import { Type, ValidationPipe } from '@nestjs/common';
 import { CrudRequest } from '@nestjsx/crud';
 import { plainToClass } from 'class-transformer';
 import { ClassType } from 'class-transformer/ClassTransformer';
-import { UserEntity } from '../typeorm/entities/user.entity';
+import { UserEntity } from '../modules/users/entities/user.entity';
 
 //#endregion
 

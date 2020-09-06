@@ -4,7 +4,7 @@ import { BadRequestException, Controller, HttpCode, Post } from '@nestjs/common'
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Connection } from 'typeorm';
 
-import { UserEntity } from '../../../typeorm/entities/user.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import { validatePayload } from '../../../utils/functions';
 import { EnvService } from '../../env/services/env.service';
 import { CreateUserPayload } from '../../users/models/create-user.payload';

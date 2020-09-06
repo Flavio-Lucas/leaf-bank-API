@@ -7,7 +7,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { TokenPayload } from 'google-auth-library/build/src/auth/loginticket';
 
 import { TokenProxy } from '../../../models/proxys/token.proxy';
-import { UserEntity } from '../../../typeorm/entities/user.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import { GoogleLoginPayload } from '../models/google-login.payload';
 import { AuthService } from '../../auth/services/auth.service';
 import { EnvService } from '../../env/services/env.service';

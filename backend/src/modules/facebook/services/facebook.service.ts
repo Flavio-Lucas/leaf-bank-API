@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/node';
 
 import * as PassportFacebookToken from 'passport-facebook-token';
 
-import { UserEntity } from '../../../typeorm/entities/user.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import { AuthService } from '../../auth/services/auth.service';
 import { EnvService } from '../../env/services/env.service';
 import { UserService } from '../../users/services/user.service';

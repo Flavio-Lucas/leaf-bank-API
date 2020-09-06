@@ -7,7 +7,7 @@ import * as Sentry from '@sentry/node';
 import * as bcryptjs from 'bcryptjs';
 
 import { TokenProxy } from '../../../models/proxys/token.proxy';
-import { UserEntity } from '../../../typeorm/entities/user.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import { EnvService } from '../../env/services/env.service';
 import { UserService } from '../../users/services/user.service';
 import { IJwtPayload } from '../models/jwt.payload';

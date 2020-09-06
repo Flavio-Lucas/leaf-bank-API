@@ -7,7 +7,7 @@ import { Crud, CrudRequest, GetManyDefaultResponse, Override, ParsedRequest } fr
 import { BaseEntityCrudController } from '../../../common/base-entity-crud.controller';
 import { ProtectTo, UnprotectedRoute } from '../../../decorators/protect/protect.decorator';
 import { User } from '../../../decorators/user/user.decorator';
-import { UserEntity } from '../../../typeorm/entities/user.entity';
+import { UserEntity } from '../entities/user.entity';
 import { mapCrud } from '../../../utils/crud';
 import { CreateUserPayload } from '../models/create-user.payload';
 import { UpdateUserPayload } from '../models/update-user.payload';
