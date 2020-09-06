@@ -5,6 +5,7 @@ import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swa
 
 import { ProtectTo } from '../../../decorators/protect/protect.decorator';
 import { User } from '../../../decorators/user/user.decorator';
+import { RolesEnum } from '../../auth/models/roles.enum';
 import { UserEntity } from '../../users/entities/user.entity';
 import { UploadImagePayload } from '../models/upload-image.payload';
 import { UploadProxy } from '../models/upload.proxy';
@@ -49,7 +50,7 @@ export class MediaController {
    * @param requestUser As informações do usuário que faz a requisição
    * @param payload As informações para a criação da entidade
    */
-  @ProtectTo('user', 'admin')
+  @ProtectTo(RolesEnum.USER, RolesEnum.ADMIN)
   @Post('/upload/image')
   @ApiOperation({ summary: 'Upload image to the server.' })
   @ApiOkResponse({ type: UploadProxy })

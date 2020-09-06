@@ -14,6 +14,7 @@ import { v4 } from 'uuid';
 
 import { BaseCrudService } from '../../../common/base-crud.service';
 import { TypeOrmValueTypes } from '../../../models/enums/type-orm-value.types';
+import { RolesEnum } from '../../auth/models/roles.enum';
 import { UserEntity } from '../entities/user.entity';
 import { isAdmin, isAdminUser, isValid } from '../../../utils/functions';
 import { CreateUserPayload } from '../models/create-user.payload';
@@ -84,7 +85,7 @@ export class UserService extends BaseCrudService<UserEntity> {
       throw new BadRequestException('Não foi enviada uma senha, por favor, confirme se você está enviando e processando corretamenta a senha.');
 
     entity.password = await bcryptjs.hash(passwordToEncrypt, salt);
-    entity.roles = entity.roles || 'user';
+    entity.roles = entity.roles || RolesEnum.USER;
 
     return await this.repository.save(entity);
   }

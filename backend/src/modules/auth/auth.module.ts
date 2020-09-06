@@ -1,31 +1,28 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { UserEntity } from '../users/entities/user.entity';
+import { UserModule } from '../users/users.module';
 import { AuthTokenModule } from './auth-token.module';
-import { UserService } from '../users/services/user.service';
 import { AuthController } from './controllers/auth.controller';
+import { AnonymousStrategyService } from './services/anonymous.strategy.service';
 import { AuthService } from './services/auth.service';
-import { AnonymousStrategyService } from './strategies/anonymous.strategy.service';
-import { JwtStrategy } from './strategies/jwt.strategy.service';
-import { LocalStrategy } from './strategies/local.strategy.service';
+import { JwtStrategy } from './services/jwt.strategy.service';
+import { LocalStrategy } from './services/local.strategy.service';
+import { RefreshJwtStrategy } from './services/refresh-jwt.strategy.service';
 
 @Module({
   providers: [
     AuthService,
     LocalStrategy,
     JwtStrategy,
-    UserService,
     AnonymousStrategyService,
+    RefreshJwtStrategy,
   ],
   controllers: [
     AuthController,
   ],
   imports: [
     AuthTokenModule,
-    TypeOrmModule.forFeature([
-      UserEntity,
-    ]),
+    UserModule,
   ],
   exports: [
     AuthService,

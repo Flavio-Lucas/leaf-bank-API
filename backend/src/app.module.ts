@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthTokenModule } from './modules/auth/auth-token.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { EnvModule } from './modules/env/env.module';
+import { FacensModule } from './modules/facens/facens.module';
 import { TestModule } from './modules/test/test.module';
 import { UserModule } from './modules/users/users.module';
 
@@ -19,6 +20,7 @@ if (process.env.NODE_ENV === 'test')
     AuthModule,
     AuthTokenModule,
     UserModule,
+    FacensModule,
     ...testModules,
   ],
   providers: [

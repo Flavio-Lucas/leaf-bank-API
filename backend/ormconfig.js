@@ -16,9 +16,11 @@ const rule = {
   DB_TIMEOUT: envalid.num({ default: 20000 }),
 };
 
-const env = envalid.cleanEnv(process.env, rule, { dotEnvPath: '.env', strict: true });
+const envFieldName = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
+const env = envalid.cleanEnv({  }, rule, { dotEnvPath: envFieldName, strict: true });
 
 const config = {
+  name: 'default',
   type: env.DB_TYPE,
   database: env.DB_DATABASE,
   logging: env.DB_LOGGING,
@@ -26,16 +28,20 @@ const config = {
   migrationsRun: env.DB_MIGRATIONS_RUN,
   acquireTimeout: env.DB_TIMEOUT,
   synchronize: env.DB_SYNCHRONIZE,
-  entities: [
-    join(__dirname, 'dist', '**', '*.entity.js'),
-  ],
-  migrations: [
-    join(__dirname, 'dist/migrations', '**', '*.js'),
-  ],
+  entities: [],
+  migrations: [],
   cli: {
     migrationsDir: 'src/migrations',
   },
 };
+
+if (env.isTest) {
+  config.entities.push(join(__dirname, 'src', '**', '*.entity.ts'));
+  config.migrations.push(join(__dirname, 'src/migrations', '**', '*.ts'));
+} else {
+  config.entities.push(join(__dirname, 'dist', '**', '*.entity.js'));
+  config.migrations.push(join(__dirname, 'dist/migrations', '**', '*.js'));
+}
 
 if (config.type === 'mysql') {
   Object.assign(config, {

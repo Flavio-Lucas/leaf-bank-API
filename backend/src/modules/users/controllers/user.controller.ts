@@ -1,12 +1,13 @@
 //#region Imports
 
 import { Body, ClassSerializerInterceptor, Controller, Get, Param, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Crud, CrudRequest, GetManyDefaultResponse, Override, ParsedRequest } from '@nestjsx/crud';
 
 import { BaseEntityCrudController } from '../../../common/base-entity-crud.controller';
 import { ProtectTo, UnprotectedRoute } from '../../../decorators/protect/protect.decorator';
 import { User } from '../../../decorators/user/user.decorator';
+import { RolesEnum } from '../../auth/models/roles.enum';
 import { UserEntity } from '../entities/user.entity';
 import { mapCrud } from '../../../utils/crud';
 import { CreateUserPayload } from '../models/create-user.payload';
@@ -60,9 +61,10 @@ export class UserController extends BaseEntityCrudController<UserEntity, UserSer
    *
    * @param user As informações do usuário que está fazend oa requisição
    */
+  @ApiOperation({ summary: 'Returns info about user logged.' })
   @Get('me')
   @ApiOkResponse({ description: 'Get info about user logged.', type: UserProxy })
-  @ProtectTo('user', 'admin')
+  @ProtectTo(RolesEnum.USER, RolesEnum.ADMIN)
   public getMe(@User() user: UserEntity): UserProxy {
     return mapCrud(UserProxy, user);
   }
@@ -72,7 +74,7 @@ export class UserController extends BaseEntityCrudController<UserEntity, UserSer
    *
    * @param crudRequest As informações da requisição do CRUD
    */
-  @ProtectTo('admin')
+  @ProtectTo(RolesEnum.ADMIN)
   @Override()
   @ApiOkResponse({ type: GetManyDefaultResponseUserProxy })
   public getMany(@ParsedRequest() crudRequest: CrudRequest): Promise<GetManyDefaultResponse<UserProxy>> {
@@ -86,7 +88,7 @@ export class UserController extends BaseEntityCrudController<UserEntity, UserSer
    * @param entityId A identificação da entidade que está sendo procurada
    * @param crudRequest As informações da requisição do CRUD
    */
-  @ProtectTo('user', 'admin')
+  @ProtectTo(RolesEnum.USER, RolesEnum.ADMIN)
   @Override()
   @ApiOkResponse({ type: UserProxy })
   public async getOne(@User() requestUser: UserEntity, @Param('id') entityId: number, @ParsedRequest() crudRequest: CrudRequest): Promise<UserProxy> {
@@ -113,7 +115,7 @@ export class UserController extends BaseEntityCrudController<UserEntity, UserSer
    * @param entityId A identificação da entidade que está sendo procurada
    * @param payload As informações para a atualização da entidade
    */
-  @ProtectTo('user', 'admin')
+  @ProtectTo(RolesEnum.USER, RolesEnum.ADMIN)
   @Override()
   @ApiOkResponse({ type: UserProxy })
   public async replaceOne(@User() requestUser: UserEntity, @Param('id') entityId: number, @Body() payload: UpdateUserPayload): Promise<UserProxy> {

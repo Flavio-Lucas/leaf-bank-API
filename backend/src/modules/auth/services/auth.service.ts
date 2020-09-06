@@ -12,6 +12,7 @@ import { EnvService } from '../../env/services/env.service';
 import { UserService } from '../../users/services/user.service';
 import { IJwtPayload } from '../models/jwt.payload';
 import { LoginPayload } from '../models/login.payload';
+import { IRefreshJwtPayload } from '../models/refresh-jwt.payload';
 
 const ms = require('ms');
 
@@ -106,6 +107,38 @@ export class AuthService {
     Sentry.setUser({ id: user.id.toString(), email: user.email });
 
     return user;
+  }
+
+  /**
+   * Método que valida um usuário com o base no payload extraido do token de atualização
+   *
+   * @param jwtPayload As informações extraídas do token
+   */
+  public async validateUserForRefreshTokenByPayload(jwtPayload: IRefreshJwtPayload): Promise<UserEntity> {
+    if (!jwtPayload)
+      throw new UnauthorizedException('As informações para a autenticação não foram encontradas.');
+
+    if (!jwtPayload.iat || !jwtPayload.exp || !jwtPayload.refreshId)
+      throw new UnauthorizedException('Os detalhes para a autenticação não foram encontrados.');
+
+    const now = Date.now().valueOf() / 1000;
+    const jwtExpiresIn = jwtPayload.exp;
+
+    if (now > jwtExpiresIn)
+      throw new UnauthorizedException({
+        error: HttpStatus.UNAUTHORIZED,
+        message: 'O token de autenticação está expirado.',
+        shouldLogout: true,
+      });
+
+    const user = await this.userService.findById(jwtPayload.refreshId);
+
+    Sentry.setUser({ id: user.id.toString(), email: user.email });
+
+    return {
+      ...user,
+      roles: 'refreshjwt',
+    };
   }
 
   //#endregion
