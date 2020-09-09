@@ -1,5 +1,6 @@
 //#region Imports
 
+import { NotFoundException, NotImplementedException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { Exclude } from 'class-transformer';
@@ -83,7 +84,23 @@ export class UserEntity extends BaseEntity implements ToProxy<UserProxy> {
 
     email = getCleanedEmail(email);
 
-    return await this.findOne({ where: { email, ...whereOptions } });
+    const user = await this.findOne({ where: { email, ...whereOptions } });
+
+    if (!user)
+        throw new NotImplementedException('O usuário com o e-mail informado não existe ou foi desativado.');
+
+    return user;
+  }
+
+  /**
+   * Método que diz se já existe um usuário com aquele e-mail especifico
+   *
+   * @param email O e-mail usado para procurar o usuário
+   */
+  public static async hasUserWithEmail(email: string): Promise<boolean> {
+    email = getCleanedEmail(email);
+
+    return await this.count({ where: { email } }).then(count => count > 0);
   }
 
   //#endregion

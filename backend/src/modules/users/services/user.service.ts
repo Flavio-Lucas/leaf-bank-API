@@ -78,7 +78,7 @@ export class UserService extends BaseCrudService<UserEntity> {
   public async create(requestUser: UserEntity, payload: CreateUserPayload): Promise<UserEntity> {
     const entity = this.getEntityFromPayload(payload);
 
-    const alreadyHasUser = await UserEntity.getByEmail(payload.email, false);
+    const alreadyHasUser = await UserEntity.hasUserWithEmail(payload.email);
 
     if (alreadyHasUser)
       throw new BadRequestException('Já existe um usuário cadastrado com esse e-mail.');
