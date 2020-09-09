@@ -3,12 +3,15 @@
 
 //#region Imports
 
-import { BadRequestException, INestApplication, RequestTimeoutException, ValidationPipe } from '@nestjs/common';
+import { INestApplication, RequestTimeoutException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { CrudConfigService } from '@nestjsx/crud';
+import { ReportingObserver } from '@sentry/integrations';
 
 import * as Sentry from '@sentry/node';
+import * as Tracing from '@sentry/tracing';
+
 import { Request, Response } from 'express';
 import * as rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
@@ -147,17 +150,28 @@ function setupFilters(app: INestApplication, config: EnvService) {
   if (!config.SENTRY_DNS || config.isTest)
     return;
 
-  Sentry.init({ dsn: config.SENTRY_DNS });
-}
+  app.use(Sentry.Handlers.requestHandler());
+  app.use(Sentry.Handlers.tracingHandler());
+  app.use(Sentry.Handlers.errorHandler());
 
-/**
- * Mata a aplicação caso de timeout
- */
-function haltOnTimeout(req, res, next) {
-  if (req.timedout)
-    throw new BadRequestException('A requisição durou tempo demais.');
-
-  next();
+  Sentry.init({
+    dsn: config.SENTRY_DNS,
+    integrations: [
+      new Sentry.Integrations.Http({ tracing: true, breadcrumbs: true }),
+      new Sentry.Integrations.Console(),
+      new Sentry.Integrations.Modules(),
+      new Sentry.Integrations.FunctionToString(),
+      new Sentry.Integrations.LinkedErrors(),
+      new Tracing.Integrations.Express({ app }),
+      new ReportingObserver(),
+    ],
+    tracesSampleRate: 1.0,
+    debug: !config.isProduction,
+    environment: config.NODE_ENV,
+    maxBreadcrumbs: 100,
+    attachStacktrace: true,
+    maxValueLength: 1024,
+  });
 }
 
 //#endregion

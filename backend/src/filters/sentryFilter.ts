@@ -1,7 +1,8 @@
 //#region Imports
 
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from '@nestjs/common';
-import * as Sentry from '@sentry/minimal';
+
+import * as Sentry from '@sentry/node';
 
 import { Request, Response } from 'express';
 

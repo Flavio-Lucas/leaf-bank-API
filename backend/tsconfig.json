@@ -7,14 +7,17 @@
       "target": "esnext",
       "module": "commonjs",
       "declaration": true,
-      "removeComments": true,
+      "removeComments": false,
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
       "allowSyntheticDefaultImports": true,
-      "target": "es2017",
-      "sourceMap": true,
-      "outDir": "./dist",
-      "baseUrl": "./",
-      "incremental": true
+      "inlineSourceMap": true,
+      "inlineSources": true,
+      "outDir": "dist",
+      "baseUrl": ".",
+      "sourceRoot": "/",
+      "incremental": true,
+      "noEmitHelpers": true,
+      "importHelpers": true
    }
 }
