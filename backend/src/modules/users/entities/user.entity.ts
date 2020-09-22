@@ -1,6 +1,6 @@
 //#region Imports
 
-import { NotFoundException, NotImplementedException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { Exclude } from 'class-transformer';
@@ -87,7 +87,7 @@ export class UserEntity extends BaseEntity implements ToProxy<UserProxy> {
     const user = await this.findOne({ where: { email, ...whereOptions } });
 
     if (!user)
-        throw new NotImplementedException('O usuário com o e-mail informado não existe ou foi desativado.');
+      throw new NotFoundException('O usuário com o e-mail informado não existe ou foi desativado.');
 
     return user;
   }
