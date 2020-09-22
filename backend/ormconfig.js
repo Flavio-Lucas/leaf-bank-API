@@ -4,7 +4,7 @@ const { join } = require('path');
 const rule = {
   DATABASE_URL: envalid.str({ default: '' }),
   DB_TYPE: envalid.str({ default: '' }),
-  DB_DATABASE: envalid.str({ dafault: '' }),
+  DB_DATABASE: envalid.str({ default: '' }),
   DB_HOST: envalid.str({ default: '' }),
   DB_PASSWORD: envalid.str({ default: '' }),
   DB_PORT: envalid.port({ default: 3306 }),
