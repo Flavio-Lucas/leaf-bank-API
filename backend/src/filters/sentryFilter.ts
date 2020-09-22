@@ -62,9 +62,17 @@ export class SentryFilter implements ExceptionFilter {
       headers: request.headers,
     });
 
-    if (status >= 500)
+    Sentry.setTags({
+      statusCode: String(status),
+      'X-Amzn-Trace-Id': request.headers['X-Amzn-Trace-Id'] as string,
+    });
+
+    if (status >= 500) {
       Sentry.captureException(exception);
 
+      await Sentry.flush(2000);
+    }
+    
     if (!this.env.isProduction) {
       if (!('toJSON' in Error.prototype))
         Object.defineProperty(Error.prototype, 'toJSON', {
