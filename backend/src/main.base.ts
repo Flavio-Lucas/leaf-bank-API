@@ -16,6 +16,7 @@ import { Request, Response } from 'express';
 import * as rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
 
+import { pathLogger } from './middlewares/pathLogger.middleware';
 import { SentryFilter } from './filters/sentryFilter';
 import { envConfig } from './modules/env/env.module';
 import { EnvService } from './modules/env/services/env.service';
@@ -103,7 +104,15 @@ function setupPipes(app: INestApplication): void {
  * @param env As configurações da aplicação
  */
 function setupMiddleware(app: INestApplication, env: EnvService): void {
-  app.use(helmet());
+  app.use(helmet.dnsPrefetchControl());
+  app.use(helmet.expectCt());
+  app.use(helmet.frameguard());
+  app.use(helmet.hidePoweredBy());
+  app.use(helmet.hsts());
+  app.use(helmet.ieNoOpen());
+  app.use(helmet.noSniff());
+  app.use(helmet.permittedCrossDomainPolicies());
+  app.use(helmet.referrerPolicy());
 
   app.enableCors();
 
@@ -126,6 +135,8 @@ function setupMiddleware(app: INestApplication, env: EnvService): void {
 
     next();
   });
+
+  app.use(pathLogger);
 
   if (env.isTest)
     return;

@@ -1,14 +1,56 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
-
-const nestjsCore = require("@nestjs/core");
-const platformExpress = require("@nestjs/platform-express");
-const awsServerlessExpress = require("aws-serverless-express");
-const mainBase = require("./dist/main.base");
-const appModule = require("./dist/app.module");
+// lambda.ts
 
 const express = require('express');
+const expressApp = express();
+
+const SentryIntegrations = require('@sentry/integrations');
+const SentryServerless = require('@sentry/serverless');
+const SentryNode = require('@sentry/node');
+const SentryTracing = require('@sentry/tracing');
+
+const envalid = require('envalid');
+
+const rule = {
+  NODE_ENV: envalid.str({ default: '' }),
+  SENTRY_DNS: envalid.str({ default: '' }),
+};
+
+const env = envalid.cleanEnv(process.env, rule, { dotEnvPath: '.env', strict: true, });
+
+if (env.SENTRY_DNS) {
+  expressApp.use(SentryNode.Handlers.requestHandler());
+  expressApp.use(SentryNode.Handlers.tracingHandler());
+  expressApp.use(SentryNode.Handlers.errorHandler());
+
+  SentryServerless.init({
+    dsn: env.SENTRY_DNS,
+    integrations: [
+      new SentryNode.Integrations.Http({ tracing: true, breadcrumbs: true }),
+      new SentryNode.Integrations.Console(),
+      new SentryNode.Integrations.Modules(),
+      new SentryNode.Integrations.FunctionToString(),
+      new SentryTracing.Integrations.Express({ app: expressApp }),
+      new SentryIntegrations.ReportingObserver(),
+    ],
+    tracesSampleRate: 1.0,
+    debug: !env.isProduction,
+    environment: env.NODE_ENV,
+    maxBreadcrumbs: 100,
+    attachStacktrace: true,
+    maxValueLength: 1024,
+  });
+}
+
+const nestjs = require("@nestjs/core");
+
+const platformExpress = require("@nestjs/platform-express");
+const awsServerless = require("aws-serverless-express");
+
+const mainBase = require("./dist/main.base");
+const appModule = require("./dist/app.module");
 
 // NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this
 // is likely due to a compressed response (e.g. gzip) which has not
@@ -21,9 +63,7 @@ let cachedServer;
 // Create the Nest.js server and convert it into an Express.js server
 async function bootstrapServer() {
   if (!cachedServer) {
-    const expressApp = express();
-
-    let nestApp = await nestjsCore.NestFactory.create(appModule.AppModule, new platformExpress.ExpressAdapter(expressApp));
+    let nestApp = await nestjs.NestFactory.create(appModule.AppModule, new platformExpress.ExpressAdapter(expressApp));
 
     nestApp = await mainBase.setup(nestApp);
 
@@ -37,16 +77,16 @@ async function bootstrapServer() {
     });
     await nestApp.init();
 
-    cachedServer = awsServerlessExpress.createServer(expressApp, undefined, binaryMimeTypes);
+    cachedServer = awsServerless.createServer(expressApp, undefined, binaryMimeTypes);
   }
 
   return cachedServer;
 }
 
-// Export the handler : the entry point of the Lambda function
-exports.handler = async (event, context) => {
+const awsHandler = async (event, context) => {
   cachedServer = await bootstrapServer();
 
-  return awsServerlessExpress.proxy(cachedServer, event, context, 'PROMISE').promise;
+  return awsServerless.proxy(cachedServer, event, context, 'PROMISE').promise;
 };
 
+exports.handler = SentryServerless.AWSLambda.wrapHandler(awsHandler);
