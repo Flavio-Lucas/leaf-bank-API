@@ -4,6 +4,7 @@ import { Type, ValidationPipe } from '@nestjs/common';
 import { CrudRequest } from '@nestjsx/crud';
 import { plainToClass } from 'class-transformer';
 import { ClassType } from 'class-transformer/ClassTransformer';
+import { RolesEnum } from '../modules/auth/models/roles.enum';
 import { UserEntity } from '../modules/users/entities/user.entity';
 
 //#endregion
@@ -27,12 +28,12 @@ export function isValid(value: any): boolean {
 }
 
 /**
- * Método que diz se o usuário é um usuário normal ( não admin )
+ * Método que diz se o usuário é um usuário de administrador
  *
  * @param user As informações do usuário
  */
-export function isNormalUser(user?: UserEntity): boolean {
-  return !user || user && user.roles && !isAdmin(user.roles);
+export function isAdminUser(user?: UserEntity): boolean {
+  return user && user.roles && hasRole(user.roles, RolesEnum.ADMIN);
 }
 
 /**
@@ -40,16 +41,18 @@ export function isNormalUser(user?: UserEntity): boolean {
  *
  * @param user As informações do usuário
  */
-export function isAdminUser(user?: UserEntity): boolean {
-  return user && user.roles && isAdmin(user.roles);
+export function isNormalUser(user?: UserEntity): boolean {
+  return user && user.roles && hasRole(user.roles, RolesEnum.USER);
 }
+
 /**
  * Método que diz se o usuário é um usuário de administrador
  *
  * @param roles As permissões de um usuário
+ * @param targetRole A permissão que você está procurando
  */
-export function isAdmin(roles: string): boolean {
-  return isValid(roles) && roles.split('|').some(role => role === 'debit.admin' || role === 'admin');
+export function hasRole(roles: string, targetRole: string): boolean {
+  return isValid(roles) && roles.split('|').some(role => role === targetRole);
 }
 
 /**
