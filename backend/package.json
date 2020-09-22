@@ -10,7 +10,7 @@
       "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
       "start": "ts-node src/index.ts",
       "start:dev": "rimraf dist && nest start --watch",
-      "start:debug": "rimraf dist && nest start --debug --watch",
+      "start:debug": "rimraf dist && nest start --debug --watch --preserveWatchOutput",
       "start:prod": "node dist/main.js",
       "lint": "tslint -p tsconfig.json -c tslint.json",
       "test": "npm run test:e2e",
