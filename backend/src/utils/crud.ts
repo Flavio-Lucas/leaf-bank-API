@@ -13,7 +13,7 @@ import { isValid } from './functions';
  * @param data As informações que precisam ser mapeadas
  * @param proxyParams Os parâmetros a mais passados para o proxy
  */
-export function mapCrud<T, E extends ToProxy<T>>(data: E, ...proxyParams: Parameters<E['toProxy']>): T;
+export function mapCrud<E extends ToProxy<ReturnType<E['toProxy']>>>(data: E, ...proxyParams: Parameters<E['toProxy']>): ReturnType<E['toProxy']>;
 
 /**
  * Método que mapeia as entidades buscadas pelo crud e retorna uma versão com o Proxy do objeto
@@ -21,7 +21,7 @@ export function mapCrud<T, E extends ToProxy<T>>(data: E, ...proxyParams: Parame
  * @param data As informações que precisam ser mapeadas
  * @param proxyParams Os parâmetros a mais passados para o proxy
  */
-export function mapCrud<T, E extends ToProxy<T>>(data: E[], ...proxyParams: Parameters<E['toProxy']>): T[];
+export function mapCrud<E extends ToProxy<ReturnType<E['toProxy']>>>(data: E[], ...proxyParams: Parameters<E['toProxy']>): ReturnType<E['toProxy']>[];
 
 /**
  * Método que mapeia as entidades buscadas pelo crud e retorna uma versão com o Proxy do objeto
@@ -29,7 +29,7 @@ export function mapCrud<T, E extends ToProxy<T>>(data: E[], ...proxyParams: Para
  * @param data As informações que precisam ser mapeadas
  * @param proxyParams Os parâmetros a mais passados para o proxy
  */
-export function mapCrud<T, E extends ToProxy<T>>(data: GetManyDefaultResponse<E> | E[], ...proxyParams: Parameters<E['toProxy']>): GetManyDefaultResponse<T>;
+export function mapCrud<E extends ToProxy<ReturnType<E['toProxy']>>>(data: GetManyDefaultResponse<E> | E[], ...proxyParams: Parameters<E['toProxy']>): GetManyDefaultResponse<ReturnType<E['toProxy']>>;
 
 /**
  * Método que mapeia as entidades buscadas pelo crud e retorna uma versão com o Proxy do objeto
@@ -37,13 +37,13 @@ export function mapCrud<T, E extends ToProxy<T>>(data: GetManyDefaultResponse<E>
  * @param data As informações que precisam ser mapeadas
  * @param proxyParams Os parâmetros a mais passados para o proxy
  */
-export function mapCrud<T, E extends ToProxy<T>>(data: GetManyDefaultResponse<E> | E[] | E, ...proxyParams: Parameters<E['toProxy']>): GetManyDefaultResponse<T> | T[] | T {
+export function mapCrud<E extends ToProxy<ReturnType<E['toProxy']>>>(data: GetManyDefaultResponse<E> | E[] | E, ...proxyParams: Parameters<E['toProxy']>): GetManyDefaultResponse<ReturnType<E['toProxy']>> | ReturnType<E['toProxy']>[] | ReturnType<E['toProxy']> {
   if (Array.isArray(data))
     return data.map(item => item.toProxy(...proxyParams));
 
   if (isGetMany(data)) {
     const { data: listEntities } = data;
-    const result: GetManyDefaultResponse<T> = { ...data, data: [] };
+    const result: GetManyDefaultResponse<ReturnType<E['toProxy']>> = { ...data, data: [] };
 
     result.data = listEntities.map(item => item.toProxy(...proxyParams));
 
@@ -63,7 +63,7 @@ export function mapCrud<T, E extends ToProxy<T>>(data: GetManyDefaultResponse<E>
  * @param data As informações que precisam ser mapeadas
  * @param proxyParams Os parâmetros passados para o proxy
  */
-export function mapCrudIfValid<T, E extends ToProxy<T>>(data: E, ...proxyParams: Parameters<E['toProxy']>): T | undefined;
+export function mapCrudIfValid<E extends ToProxy<ReturnType<E['toProxy']>>>(data: E, ...proxyParams: Parameters<E['toProxy']>): ReturnType<E['toProxy']> | undefined;
 
 /**
  * Método que mapeia, se estiverem válidas, as entidades buscadas pelo crud e retorna uma versão com o Proxy do objeto
@@ -76,7 +76,7 @@ export function mapCrudIfValid<T, E extends ToProxy<T>>(data: E, ...proxyParams:
  * @param isArray Diz se os dados mapeados são um array
  * @param proxyParams Os parâmetros passados para o proxy
  */
-export function mapCrudIfValid<T, E extends ToProxy<T>>(data: E[], isArray: boolean, ...proxyParams: Parameters<E['toProxy']>): T[];
+export function mapCrudIfValid<E extends ToProxy<ReturnType<E['toProxy']>>>(data: E[], isArray: boolean, ...proxyParams: Parameters<E['toProxy']>): ReturnType<E['toProxy']>[];
 
 /**
  * Método que mapeia, se estiverem válidas, as entidades buscadas pelo crud e retorna uma versão com o Proxy do objeto
@@ -89,7 +89,7 @@ export function mapCrudIfValid<T, E extends ToProxy<T>>(data: E[], isArray: bool
  * @param isArrayOrParams Diz se a lista é um array ou representa os restos dos parametros
  * @param proxyParams O resto dos parametros
  */
-export function mapCrudIfValid<T, E extends ToProxy<T>>(data?: E[] | E, isArrayOrParams?: boolean | Parameters<E['toProxy']>[], ...proxyParams: Parameters<E['toProxy']>): T[] | T {
+export function mapCrudIfValid<E extends ToProxy<ReturnType<E['toProxy']>>>(data?: E[] | E, isArrayOrParams?: boolean | Parameters<E['toProxy']>[], ...proxyParams: Parameters<E['toProxy']>): ReturnType<E['toProxy']>[] | ReturnType<E['toProxy']> {
   if (Array.isArray(data))
     return data.map(item => item.toProxy(...(Array.isArray(isArrayOrParams) ? isArrayOrParams : proxyParams)));
 
