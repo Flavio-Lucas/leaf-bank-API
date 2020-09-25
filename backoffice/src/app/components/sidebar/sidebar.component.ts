@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { environment } from '../../../environments/environment';
 import { RouteInfo } from '../../models/interfaces/route-info';
 import { Keys } from '../../utils/keys';
 
@@ -19,7 +18,7 @@ declare const $: any;
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.css']
+  styleUrls: ['./sidebar.component.css'],
 })
 
 //#endregion
@@ -36,7 +35,7 @@ export class SidebarComponent implements OnInit {
    */
   constructor(
     private readonly router: Router,
-  ) {}
+  ) { }
 
   //#endregion
 
@@ -47,23 +46,13 @@ export class SidebarComponent implements OnInit {
    */
   public menuItems: RouteInfo[] = [];
 
-  /**
-   * O nome da aplicação
-   */
-  public appName: string = environment.app_name;
-
-  /**
-   * O icone da aplicação
-   */
-  public icon_name: string = environment.icon_name;
-
   //#endregion
 
   //#region LifeCycle Events
 
   /**
-  * Método executado ao iniciar o componente
-  */
+   * Método executado ao iniciar o componente
+   */
   public async ngOnInit(): Promise<void> {
     const user = localStorage.getItem(Keys.USER_INFO);
 
@@ -77,6 +66,22 @@ export class SidebarComponent implements OnInit {
 
     const userRoles = JSON.parse(user).permissions.split('|');
     this.menuItems = JSON.parse(JSON.stringify(Keys.ROUTES)).filter(route => userRoles.some(role => route.roles.includes(role)));
+  }
+
+  //#endregion
+
+  //#region Public Methods
+
+  /**
+   * Método que navega o usuário para uma página em específico
+   *
+   * @param path O caminho da página
+   */
+  public async onClickToNavigate(path: string): Promise<void> {
+    if (path !== '/login')
+      return;
+
+    localStorage.clear();
   }
 
   //#endregion
