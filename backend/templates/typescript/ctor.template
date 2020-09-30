@@ -1,0 +1,8 @@
+//#region Constructor
+
+/**
+ * Construtor padrão
+ */
+constructor() { }
+
+//#endregion

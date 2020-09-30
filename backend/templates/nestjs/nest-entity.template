@@ -1,0 +1,43 @@
+//#region Imports
+
+import { Entity } from 'typeorm';
+
+import { BaseEntity } from '../../../common/base-entity';
+import { ToProxy } from '../../../common/to-proxy';
+
+//#endregion
+
+/**
+ * A class que representa a entidade que lida com as informações $description$
+ */
+@Entity('$name$')
+export class $Name$Entity extends BaseEntity implements ToProxy<$Name$Proxy> {
+
+  //#region Constructor
+
+  /**
+   * Construtor padrão
+   */
+  constructor(
+    partial: Partial<$Name$Entity> | $Name$Entity,
+  ) {
+    super();
+
+    Object.assign(this, { ... partial });
+  }
+
+  //#endregion
+
+
+  //#region Public Methods
+
+  /**
+   * Método que retorna um proxy da entidade
+   */
+  public toProxy(): $Name$Proxy {
+    return new $Name$Proxy(this);
+  }
+
+  //#endregion
+
+}
