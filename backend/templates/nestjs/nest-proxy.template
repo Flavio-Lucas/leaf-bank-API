@@ -1,0 +1,40 @@
+//#region Imports
+
+import { BaseCrudProxy } from '../../../common/base-crud.proxy';
+
+//#endregion
+
+/**
+ * A classe que representa as informações que são enviadas pela API sobre $Description$
+ */
+export class $Name$Proxy extends BaseCrudProxy {
+
+  //#region Constructor
+
+  /**
+   * Construtor padrão
+   */
+  constructor(
+    entity: $Name$Entity,
+  ) {
+    super(entity);
+
+    $END$
+  }
+
+  //#endregion
+
+}
+
+/**
+ * A classe que representa o retorno dos proxies quando é chamado a função GetMany
+ */
+export class GetManyDefaultResponse$Name$Proxy extends GetManyDefaultResponseProxy {
+
+  /**
+   * A lista de entidades que essa busca retornou
+   */
+  @ApiProperty({ type: $Name$Proxy, isArray: true })
+  data: $Name$Proxy[];
+
+}

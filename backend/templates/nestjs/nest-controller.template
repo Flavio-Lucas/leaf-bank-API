@@ -1,0 +1,113 @@
+//#region Imports
+
+import { Body, ClassSerializerInterceptor, Controller, Param, UseInterceptors } from '@nestjs/common';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Crud, CrudRequest, GetManyDefaultResponse, Override, ParsedRequest } from '@nestjsx/crud';
+
+//#endregion
+
+/**
+ * A classe que representa o controller que lida com $Description$
+ */
+@ApiBearerAuth()
+@Crud({
+  model: {
+    type: $Entity$Entity,
+  },
+  routes: {
+    exclude: [
+      'updateOneBase',
+      'createManyBase',
+    ],
+  },
+})
+@UseInterceptors(ClassSerializerInterceptor)
+@ApiTags('$entity$s')
+@Controller('$entity$s')
+export class $Entity$Controller extends BaseEntityCrudController<$Entity$Entity, $Entity$Service> {
+
+  //#region Constructor
+
+  /**
+   * Construtor padrão
+   */
+  constructor(
+    service: $Entity$Service,
+  ) {
+    super(service);
+  }
+
+  //#endregion
+
+  //#region Public Methods
+
+  /**
+   * Método que retorna várias informações da entidade
+   *
+   * @param requestUser As informações do usuário da requisição
+   * @param crudRequest As informações da requisição do CRUD
+   */
+  @ProtectTo(RolesEnum.ADMIN)
+  @Override()
+  @ApiOkResponse({ type: GetManyDefaultResponse$Entity$Proxy })
+  public getMany(@User() requestUser: UserEntity, @ParsedRequest() crudRequest: CrudRequest): Promise<GetManyDefaultResponse<$Entity$Proxy>> {
+    return this.service.listMany(requestUser, crudRequest).then(response => mapCrud(response));
+  }
+
+  /**
+   * Método que retorna as informações de uma entidade
+   *
+   * @param requestUser As informações do usuário da requisição
+   * @param entityId A identificação da entidade
+   * @param crudRequest As informações da requisição do CRUD
+   */
+  @ProtectTo(RolesEnum.ADMIN)
+  @Override()
+  @ApiOkResponse({ type: $Entity$Proxy })
+  public async getOne(@User() requestUser: UserEntity, @Param('id') entityId: number, @ParsedRequest() crudRequest: CrudRequest): Promise<$Entity$Proxy> {
+    return await this.service.get(requestUser, entityId, crudRequest).then(response => mapCrud(response));
+  }
+
+  /**
+   * Método que cria uma nova entidade
+   *
+   * @param requestUser As informações do usuário da requisição
+   * @param payload As informações para a criação da entidade
+   */
+  @ProtectTo(RolesEnum.ADMIN)
+  @Override()
+  @ApiOkResponse({ type: $Entity$Proxy })
+  public createOne(@User() requestUser: UserEntity, @Body() payload: Create$Entity$Payload): Promise<CrudProxy<$Entity$Proxy>> {
+    return this.service.create(requestUser, payload).then(response => mapCrud(response));
+  }
+
+  /**
+   * Método que atualiza uma entidade
+   *
+   * @param requestUser As informações do usuário da requisição
+   * @param entityId A identificação da entidade
+   * @param payload As informações para a atualização da entidade
+   */
+  @ProtectTo(RolesEnum.ADMIN)
+  @Override()
+  @ApiOkResponse({ type: $Entity$Proxy })
+  public async replaceOne(@User() requestUser: UserEntity, @Param('id') entityId: number, @Body() payload: Update$Entity$Payload): Promise<$Entity$Proxy> {
+    return await this.service.update(requestUser, entityId, payload).then(response => mapCrud(response));
+  }
+
+  /**
+   * Método que deleta uma entidade
+   *
+   * @param requestUser As informações do usuário da requisição
+   * @param entityId A identificação da entidade
+   */
+  @ProtectTo(RolesEnum.ADMIN)
+  @Override()
+  @ApiOkResponse({ type: void 0 })
+  public async deleteOne(@User() requestUser: UserEntity, @Param('id') entityId: number): Promise<void> {
+    return await this.service.delete(requestUser, entityId);
+  }
+
+  //#endregion
+
+}

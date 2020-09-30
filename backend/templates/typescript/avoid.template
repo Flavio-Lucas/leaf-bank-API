@@ -1,0 +1,6 @@
+/**
+ * Método que é executado quando $description$
+ */
+public async $name$(): Promise<$type$> {
+
+}

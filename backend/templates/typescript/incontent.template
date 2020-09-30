@@ -1,0 +1,9 @@
+//#region Inputs
+
+/**
+ * As informações de conteúdo desse componente
+ */
+@Input()
+public content: $type$;
+
+//#endregion
