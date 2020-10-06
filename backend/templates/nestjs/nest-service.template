@@ -65,7 +65,9 @@ export class $Entity$Service extends BaseCrudService<$Entity$Entity> {
 
     if (!crudRequest)
       entity = await $Entity$Entity.findById(entityId);
-    else {
+    else if (isAdminUser(requestUser)) {
+      entity = await super.getOne(crudRequest).catch(() => null);
+    } else {
       crudRequest = resetFiltersOnCrud(crudRequest);
       crudRequest.parsed.search = {
         $and: [
@@ -83,6 +85,9 @@ export class $Entity$Service extends BaseCrudService<$Entity$Entity> {
       throw new NotFoundException(`A entidade procurada pela identificação (${ entityId }) não foi encontrada.`);
 
     if (isAdminUser(requestUser))
+      return entity;
+
+    if (isNormalUser(requestUser))
       return entity;
 
     throw new ForbiddenException('Você não tem permissão para visualizar as informações dessa entidade.');

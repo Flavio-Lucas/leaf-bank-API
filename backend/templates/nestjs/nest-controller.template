@@ -77,7 +77,7 @@ export class $Entity$Controller extends BaseEntityCrudController<$Entity$Entity,
   @ProtectTo(RolesEnum.ADMIN)
   @Override()
   @ApiOkResponse({ type: $Entity$Proxy })
-  public createOne(@User() requestUser: UserEntity, @Body() payload: Create$Entity$Payload): Promise<CrudProxy<$Entity$Proxy>> {
+  public createOne(@User() requestUser: UserEntity, @Body() payload: Create$Entity$Payload): Promise<$Entity$Proxy> {
     return this.service.create(requestUser, payload).then(response => mapCrud(response));
   }
 
