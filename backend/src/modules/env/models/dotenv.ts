@@ -281,4 +281,26 @@ export interface IDotEnv {
 
   //#endregion
 
+  //#region Mail
+
+  /**
+   * As credencias para enviar e-mails
+   */
+  EMAIL_TRANSPORT: string;
+
+  /**
+   * O e-mail usado para enviar os outros e-mails
+   */
+  EMAIL_FROM: string;
+
+  //#endregion
+
+  //#region Password Reset
+
+  /**
+   * O site para o qual o usuário poderá ir com o código para resetar a senha
+   */
+  PASSWORD_RESET_WEBSITE: string;
+
+  //#endregion
 }

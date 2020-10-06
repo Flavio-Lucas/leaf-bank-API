@@ -99,6 +99,9 @@ export class EnvService extends implementOptionalInterface<Partial<Readonly<IDot
       AZURE_SAS_KEY: envalid.str({ default: '' }),
       AZURE_ACCOUNT_NAME: envalid.str({ default: '' }),
       AZURE_CONTAINER_NAME: envalid.str({ default: '' }),
+      EMAIL_TRANSPORT: envalid.str({ default: '' }),
+      EMAIL_FROM: envalid.str({ default: '' }),
+      PASSWORD_RESET_WEBSITE: envalid.str({ default: '' }),
     };
 
     const env = envalid.cleanEnv<IDotEnv>(process.env, rule, { dotEnvPath: dotEnvName, strict: true });
