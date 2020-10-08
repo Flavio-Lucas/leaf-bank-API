@@ -67,7 +67,7 @@ export class SentryFilter implements ExceptionFilter {
       'X-Amzn-Trace-Id': request.headers['X-Amzn-Trace-Id'] as string,
     });
 
-    if (status >= 500) {
+    if (status >= 500 && Sentry.getCurrentHub().getClient()) {
       Sentry.captureException(exception);
 
       await Sentry.flush(2000);
