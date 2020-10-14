@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { AngularFireStorageModule } from '@angular/fire/storage';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatExpansionModule, MatFormFieldModule, MatInputModule, MatPaginatorIntl, MatPaginatorModule, MatProgressSpinnerModule, MatRippleModule, MatSelectModule, MatSortModule, MatTableModule, MatTooltipModule } from '@angular/material';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -10,8 +9,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule } from '@angular/router';
-
-import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 import { DialogLoadingModule } from '../../components/dialog-loading/dialog.loading.module';
 import { DialogYesnoReasonModule } from '../../components/dialog-yesno-reason/dialog.yesno-reason.module';
@@ -38,12 +35,10 @@ import { AdminLayoutRoutes } from './admin-layout.routing';
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSortModule,
-    AngularFireStorageModule,
     DialogYesnoModule,
     DialogLoadingModule,
     DialogYesnoReasonModule,
     MatExpansionModule,
-    CKEditorModule,
     MatCheckboxModule,
     MatRadioModule,
     MatListModule,

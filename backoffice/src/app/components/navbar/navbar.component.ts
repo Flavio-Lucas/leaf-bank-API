@@ -2,10 +2,9 @@
 
 import { Location } from '@angular/common';
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { RouteInfo } from '../../models/interfaces/route-info';
 
+import { RouteInfo } from '../../models/interfaces/route-info';
 import { Keys } from '../../utils/keys';
 
 //#endregion
