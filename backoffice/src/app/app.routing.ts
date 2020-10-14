@@ -25,13 +25,13 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        loadChildren: './layouts/admin-layout/admin-layout.module#AdminLayoutModule' },
+        loadChildren: () => import('./layouts/admin-layout/admin-layout.module').then(m => m.AdminLayoutModule) },
     ],
     ...authenticatedRoute,
   },
   {
     path: 'login',
-    loadChildren: './pages/login/login.module#LoginModule',
+    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule),
     ...unAuthenticatedRoute,
   }
 ];
