@@ -1,12 +1,14 @@
 //#region Imports
 
 import { MatPaginatorIntl } from '@angular/material';
+import { Injectable } from "@angular/core";
 
 //#endregion
 
 /**
  * A classe usada para traduzir a paginação para português
  */
+@Injectable()
 export class MatPaginatorIntlBr extends MatPaginatorIntl {
 
   //#region Public Properties
