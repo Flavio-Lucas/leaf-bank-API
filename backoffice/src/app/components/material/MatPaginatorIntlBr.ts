@@ -1,7 +1,7 @@
 //#region Imports
 
-import { MatPaginatorIntl } from '@angular/material';
-import { Injectable } from "@angular/core";
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { Injectable } from '@angular/core';
 
 //#endregion
 

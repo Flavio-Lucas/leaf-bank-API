@@ -16,6 +16,7 @@ export class Keys {
    */
   public static readonly ROUTES: RouteInfo[] = [
     { path: '/dashboard/users', title: 'Usuários', icon: 'people', class: '', roles: ['admin'] },
+    { path: '/login', title: 'Sair', icon: 'exit_to_app', class: '', roles: ['admin'] },
   ];
 
   /**

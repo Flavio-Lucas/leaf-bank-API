@@ -33,6 +33,9 @@ export function getCrudErrors({ status, error }: any): string[] {
     return [error.message || 'Ocorreu um erro inesperado, por favor, contate os administradores se o erro persistir.'];
   }
 
+  if (error.message.every(message => typeof message === 'string'))
+    return error.message;
+
   // @ts-ignore
   return error.message.map(({ constraints }) => constraints && Object.values(constraints) || [])
     .reduce((acc, actual) => [...acc, ...actual] as string[]);

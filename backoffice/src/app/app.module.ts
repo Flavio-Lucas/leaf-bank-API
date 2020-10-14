@@ -3,7 +3,7 @@ import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common
 
 import localeFr from '@angular/common/locales/pt-PT';
 import { LOCALE_ID, NgModule } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 
@@ -37,7 +37,7 @@ registerLocaleData(localeFr, 'pt-PT');
   ],
   bootstrap: [
     AppComponent,
-  ]
+  ],
 })
 
 export class AppModule {

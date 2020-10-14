@@ -2,7 +2,7 @@
 
 import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { Router } from '@angular/router';
 
 import { DialogLoadingService } from '../../components/dialog-loading/dialog.loading.service';
