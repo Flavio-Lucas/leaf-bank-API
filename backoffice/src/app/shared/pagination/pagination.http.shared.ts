@@ -1,6 +1,6 @@
 //#region Imports
 
-import { AfterViewInit, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ElementRef, OnDestroy, OnInit, ViewChild, Directive } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource, PageEvent } from '@angular/material';
 import { QueryJoin, QueryJoinArr, QuerySort, RequestQueryBuilder, SCondition } from '@nestjsx/crud-request';
 
@@ -20,6 +20,7 @@ import { JqueryHelper } from '../../utils/jquery';
 /**
  * A classe que representa o conteúdo básico para uma página que irá conter páginação
  */
+@Directive()
 export class PaginationHttpShared<TProxy extends BaseEntity> implements OnInit, AfterViewInit, OnDestroy {
 
   //#region Constructor
