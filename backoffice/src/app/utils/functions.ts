@@ -1,5 +1,7 @@
 import { JwtHelperService } from '@auth0/angular-jwt';
 import decode from 'jwt-decode';
+import { UploadProxy } from '../../../../backend/src/modules/media/models/upload.proxy';
+import { HttpAsyncService } from '../services/http-async/http-async.service';
 
 /**
  * Método que pausa a execução por uma certa quantidade de tempo
@@ -61,6 +63,35 @@ export function processBase64Image(file: any, onLoad: (base64: string) => void):
   };
 
   reader.readAsDataURL(file);
+}
+
+/**
+ * Método que carrega uma imagem base64
+ *
+ * @param file A referencia da imagem
+ */
+export async function processBase64ImageAsync(file: any): Promise<string> {
+  return new Promise(resolve => {
+    processBase64Image(file, resolve);
+  });
+}
+
+/**
+ * Método que realiza o upload de uma imagem
+ *
+ * @param http O serviço usado para realizar requisições http
+ * @param base64WithData O base64 da imagem
+ */
+export async function uploadImage(http: HttpAsyncService, base64WithData: string): Promise<[boolean, string]> {
+  const base64 = base64WithData.split(',')[1];
+  const mimeType = base64WithData.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0];
+
+  const { error, success } = await http.post<UploadProxy>('/media/upload/image', { base64, mimeType });
+
+  if (error)
+    return [false, getCrudErrors(error)[0]];
+
+  return [true, success.url];
 }
 
 /**
