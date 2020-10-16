@@ -12,6 +12,8 @@ import { ReportingObserver } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 
+import { initializeTransactionalContext, patchTypeORMRepositoryWithBaseRepository } from 'typeorm-transactional-cls-hooked';
+
 import { Request, Response } from 'express';
 import * as rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
@@ -22,6 +24,13 @@ import { envConfig } from './modules/env/env.module';
 import { EnvService } from './modules/env/services/env.service';
 
 const bodyParser = require('body-parser');
+
+//#endregion
+
+//#region Transactional
+
+initializeTransactionalContext();
+patchTypeORMRepositoryWithBaseRepository();
 
 //#endregion
 
