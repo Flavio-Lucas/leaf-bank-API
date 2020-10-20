@@ -48,6 +48,7 @@ export class AuthService {
   public async signIn(user: Partial<UserEntity>, expiresInMilliseconds?: number): Promise<TokenProxy> {
     const { id, roles, createdAt, updatedAt, isActive } = user;
     const expiresIn = expiresInMilliseconds && ms(expiresInMilliseconds) || this.env.JWT_EXPIRES_IN;
+    const refreshExpireIn = ms(ms(expiresIn) * 2);
 
     const token = await this.jwtService.signAsync({
       id,
@@ -57,10 +58,15 @@ export class AuthService {
       isActive,
     }, { expiresIn });
 
-    const now = Date.now().valueOf();
-    const expiresAt = now + ms(expiresIn);
+    const refreshToken = await this.jwtService.signAsync({
+      refreshId: id,
+      roles: 'refreshjwt',
+      createdAt,
+      updatedAt,
+      isActive,
+    }, { expiresIn: refreshExpireIn });
 
-    return new TokenProxy({ token: `Bearer ${ token }`, expiresAt });
+    return new TokenProxy(token, expiresIn, refreshToken, refreshExpireIn);
   }
 
   /**
