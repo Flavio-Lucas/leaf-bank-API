@@ -15,6 +15,7 @@ const awsArtifacts = [
   { path: './node_modules', name: 'node_modules', type: 'directory' },
   { path: './dist', name: 'dist', type: 'directory' },
   { path: './deploy/aws/index.js', name: 'index.js', type: 'file' },
+  { path: './ormconfig.js', name: 'ormconfig.js', type: 'file' },
 ];
 
 async function runDeploy() {
