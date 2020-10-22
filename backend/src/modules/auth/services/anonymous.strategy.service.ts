@@ -4,9 +4,9 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt } from 'passport-jwt';
 
-import { AnonymousStrategy } from '../strategies/anonymous.strategy';
-import { UserEntity } from '../../users/entities/user.entity';
 import { EnvService } from '../../env/services/env.service';
+import { UserEntity } from '../../users/entities/user.entity';
+import { AnonymousStrategy } from '../strategies/anonymous.strategy';
 
 //#endregion
 
@@ -38,13 +38,10 @@ export class AnonymousStrategyService extends PassportStrategy(AnonymousStrategy
   /**
    * Método que retorna as informações que devem ser serializadas
    *
-   * @param id A identificação do usuário
-   * @param email O e-mail do usuário
-   * @param roles As permissões do usuário
-   * @param createdAt A data de quando o usuário foi criado
+   * @param user As informações do usuário
    */
-  public validate({ id, email, roles, createdAt }: UserEntity): Partial<UserEntity> {
-    return { id, email, roles, createdAt };
+  public async validate(user: UserEntity): Promise<UserEntity> {
+    return await UserEntity.findById(user.id);
   }
 
   //#endregion
