@@ -177,7 +177,7 @@ export class PaginationHttpShared<TProxy extends BaseEntity> implements OnInit, 
 
     this.pageEvent = event;
 
-    const value = this.searchInput.nativeElement.value;
+    const value = this.searchInput && this.searchInput.nativeElement && this.searchInput.nativeElement.value || '';
     const searchValue = this.isString(value) && value.trim().toLocaleLowerCase() || '';
 
     const { error, success } = await this.getValues<TProxy>(this.route, this.pageEvent.pageIndex || 0, this.pageEvent.pageSize || this.pageSizeDefault, searchValue);
@@ -273,9 +273,9 @@ export class PaginationHttpShared<TProxy extends BaseEntity> implements OnInit, 
       }
     }
 
-    const queryParams = encodeURI(query.query(false));
+    const queryParams = query.query(true);
 
-    const { success, error } = await this.http.get<CrudRequestResponseProxy<T>>(`${ url }?${ queryParams }`);
+    const { success, error } = await this.http.get<CrudRequestResponseProxy<T>>(`${ url }${ url.includes('?') ? '&' : '?' }${ queryParams }`);
 
     if (error)
       return { error };
