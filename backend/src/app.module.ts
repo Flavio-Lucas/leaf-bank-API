@@ -1,35 +1,33 @@
-import {Module} from '@nestjs/common';
-import {TypeOrmModule} from '@nestjs/typeorm';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import {AuthTokenModule} from './modules/auth/auth-token.module';
-import {AuthModule} from './modules/auth/auth.module';
-import {EnvModule} from './modules/env/env.module';
-import {TestModule} from './modules/test/test.module';
-import {UserModule} from './modules/users/users.module';
-import {MailModule} from "./modules/mail/mail.module";
-import {UserPasswordResetModule} from "./modules/user-password-reset/user-password-reset.module";
+import { AuthTokenModule } from './modules/auth/auth-token.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { EnvModule } from './modules/env/env.module';
+import { MediaModule } from './modules/media/media.module';
+import { TestModule } from './modules/test/test.module';
+import { UserModule } from './modules/users/users.module';
 
 const testModules = [];
 
 if (process.env.NODE_ENV === 'test')
-    testModules.push(TestModule);
+  testModules.push(TestModule);
 
 @Module({
-    imports: [
-        TypeOrmModule.forRoot(),
-        EnvModule,
-        AuthModule,
-        AuthTokenModule,
-        UserModule,
-        MailModule,
-        UserPasswordResetModule,
-        ...testModules,
-    ],
-    providers: [
-        EnvModule,
-        UserModule,
-        AuthModule,
-    ],
+  imports: [
+    TypeOrmModule.forRoot(),
+    EnvModule,
+    AuthModule,
+    AuthTokenModule,
+    UserModule,
+    MediaModule,
+    ...testModules,
+  ],
+  providers: [
+    EnvModule,
+    UserModule,
+    AuthModule,
+  ],
 })
 export class AppModule {
 }

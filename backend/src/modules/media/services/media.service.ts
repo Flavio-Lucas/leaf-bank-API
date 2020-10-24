@@ -1,13 +1,17 @@
 //#region Imports
 
 import { AzureStorageService, UploadedFileMetadata } from '@nestjs/azure-storage/dist';
-import { BadRequestException, Injectable, UnsupportedMediaTypeException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { extname } from 'path';
 
 import { v4 } from 'uuid';
 
-import { UserEntity } from '../../users/entities/user.entity';
 import { EnvService } from '../../env/services/env.service';
-import { UploadImagePayload } from '../models/upload-image.payload';
+import { UserEntity } from '../../users/entities/user.entity';
+import { MulterFile } from '../models/multer-file';
+import { UploadImageProxy } from '../models/upload-image.proxy';
+import { UploadProxy } from '../models/upload.proxy';
+import { getPlaceholderImage } from '../utils/get-placeholder-image';
 
 //#endregion
 
@@ -29,60 +33,94 @@ export class MediaService {
 
   //#endregion
 
-  //#region Private Properties
-
-  /**
-   * Método que diz quais sao os tipos de midia permitidos para imagens
-   */
-  private imageMimeTypes: string[] = ['image/png', 'image/jpeg', 'image/jpg'];
-
-  //#endregion
-
   //#region Crud Methods
 
   /**
    * Método que realiza o upload de uma imagem
    *
    * @param requestUser As informações do usuário que faz a requisição
-   * @param payload As informações para o upload da imagem
+   * @param file As informações do arquivo a ser hospedado
+   * @param disabledPlaceholder Diz se deve desabilitar a imagem em placeholder
    */
-  public async uploadImage(requestUser: UserEntity, payload: UploadImagePayload): Promise<string> {
-    if (!this.imageMimeTypes.some(mimeType => mimeType === payload.mimeType))
-      throw new UnsupportedMediaTypeException(`É necessário enviar a imagem com tipo de arquivo: ${ this.imageMimeTypes.join(', ') }.`);
+  public async uploadImage(requestUser: UserEntity, file?: MulterFile, disabledPlaceholder: boolean = false): Promise<UploadImageProxy> {
+    if (!file)
+      throw new BadRequestException('É necessário enviar o arquivo que você deseja realizar o upload.');
 
-    return await this.uploadImageToAzure(payload);
-  }
-
-  //#endregion
-
-  //#region Private Methods
-
-  /**
-   * Método que realiza o upload de uma imagem para o Azure
-   *
-   * @param payload As informações para o upload da imagem
-   */
-  private async uploadImageToAzure(payload: UploadImagePayload): Promise<string> {
-    const extension = payload.mimeType.split('/')[1];
+    type ValidMimetypes = 'webp' | 'png' | 'jpeg' | 'jpg';
+    const extension: ValidMimetypes = extname(file.originalname).substr(1) as ValidMimetypes;
 
     const uploadFile: UploadedFileMetadata = {
-      mimetype: payload.mimeType,
-      buffer: new Buffer(payload.base64, 'base64'),
-      encoding: 'base64',
+      mimetype: file.mimetype,
+      buffer: file.buffer,
+      encoding: file.encoding,
       originalname: `${ v4() }.${ extension }`,
       fieldname: `${ v4() }.${ extension }`,
       size: undefined,
       storageUrl: this.env.AZURE_CONTAINER_NAME,
     };
 
-    const url = await this.azure.upload(uploadFile);
+    const uploadedSecureUrl = await this.azure.upload(uploadFile);
 
-    if (!url)
+    if (!uploadedSecureUrl)
       throw new BadRequestException('Não foi possível salvar a imagem, por favor, tente novamente.');
 
-    const cleanedUrl = url.split('?sv')[0];
+    const url = uploadedSecureUrl.split('?sv')[0];
 
-    return cleanedUrl;
+    if (disabledPlaceholder)
+      return new UploadImageProxy(url, url);
+
+    const placeholderImage = await getPlaceholderImage(file.buffer, { outputFormat: extension, resize: 16 });
+
+    const uploadPlaceholderFile: UploadedFileMetadata = {
+      mimetype: file.mimetype,
+      buffer: placeholderImage.content,
+      encoding: 'buffer',
+      originalname: `${ v4() }.${ extension }`,
+      fieldname: `${ v4() }.${ extension }`,
+      size: undefined,
+      storageUrl: this.env.AZURE_CONTAINER_NAME,
+    };
+
+    const placeholderImageSecureUrl = await this.azure.upload(uploadPlaceholderFile);
+
+    if (!placeholderImageSecureUrl)
+      return new UploadImageProxy(url, url);
+
+    const placeholderUrl = placeholderImageSecureUrl.split('?sv')[0];
+
+    return new UploadImageProxy(url, placeholderUrl);
+  }
+
+  /**
+   * Método que realiza o upload de um pdf
+   *
+   * @param requestUser As informações do usuário que faz a requisição
+   * @param file As informações do arquivo a ser hospedado
+   */
+  public async uploadPdf(requestUser: UserEntity, file?: MulterFile): Promise<UploadProxy> {
+    if (!file)
+      throw new BadRequestException('É necessário enviar o arquivo que você deseja realizar o upload.');
+
+    const extension = extname(file.originalname).substr(1);
+
+    const uploadFile: UploadedFileMetadata = {
+      mimetype: file.mimetype,
+      buffer: file.buffer,
+      encoding: file.encoding,
+      originalname: `${ v4() }.${ extension }`,
+      fieldname: `${ v4() }.${ extension }`,
+      size: undefined,
+      storageUrl: this.env.AZURE_CONTAINER_NAME,
+    };
+
+    const uploadedSecureUrl = await this.azure.upload(uploadFile);
+
+    if (!uploadedSecureUrl)
+      throw new BadRequestException('Não foi possível salvar o pdf, por favor, tente novamente.');
+
+    const url = uploadedSecureUrl.split('?sv')[0];
+
+    return new UploadProxy(url);
   }
 
   //#endregion
