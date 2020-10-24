@@ -1,11 +1,11 @@
 //#region Imports
 
-import { AzureStorageService, UploadedFileMetadata } from '@nestjs/azure-storage/dist';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { extname } from 'path';
 
 import { v4 } from 'uuid';
 
+import { AzureStorageService, UploadedFileMetadata } from '../../azure/azure-storage.service';
 import { EnvService } from '../../env/services/env.service';
 import { UserEntity } from '../../users/entities/user.entity';
 import { MulterFile } from '../models/multer-file';

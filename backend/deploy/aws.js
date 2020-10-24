@@ -24,7 +24,7 @@ async function runDeploy() {
 
   console.log('Instalando dependências...');
   // Realiza o build da API
-  execSync('npm i');
+  execSync('npm ci');
 
   console.log('Realizando o build...');
   // Realiza o build da API
@@ -33,6 +33,11 @@ async function runDeploy() {
   console.log('Limpando node_modules...');
   // Realiza o build da API
   execSync('npm prune --production');
+
+  // Remove dependências e arquivos inúteis
+  await new Promise(resolve => rimraf('./node_modules/**/*.d.ts', resolve));
+  await new Promise(resolve => rimraf('./node_modules/**/*.js.map', resolve));
+  await new Promise(resolve => rimraf('./node_modules/typeorm/browser', resolve));
 
   console.log('Zipando arquivos...');
   // Zip os arquivos que precisam ser enviados

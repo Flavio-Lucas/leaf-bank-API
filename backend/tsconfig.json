@@ -1,23 +1,23 @@
 {
-   "compilerOptions": {
-      "lib": [
-         "es5",
-         "es6"
-      ],
-      "target": "esnext",
-      "module": "commonjs",
-      "declaration": true,
-      "removeComments": false,
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "allowSyntheticDefaultImports": true,
-      "inlineSourceMap": true,
-      "inlineSources": true,
-      "outDir": "dist",
-      "baseUrl": ".",
-      "sourceRoot": "/",
-      "incremental": true,
-      "noEmitHelpers": true,
-      "importHelpers": true
-   }
+  "compilerOptions": {
+    "lib": [
+      "es5",
+      "es6"
+    ],
+    "target": "esnext",
+    "module": "commonjs",
+    "declaration": false,
+    "removeComments": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "sourceRoot": "/",
+    "incremental": true,
+    "noEmitHelpers": true,
+    "importHelpers": true
+  }
 }

@@ -1,6 +1,7 @@
-import { AZURE_STORAGE_MODULE_OPTIONS, AzureMulterStorageService, AzureStorageOptions, AzureStorageService } from '@nestjs/azure-storage/dist';
 import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
 import { ForwardReference } from '@nestjs/common/interfaces/modules/forward-reference.interface';
+import { AZURE_STORAGE_MODULE_OPTIONS } from './azure-storage.constant';
+import { AzureStorageOptions, AzureStorageService } from './azure-storage.service';
 
 export interface AzureStorageAsyncOptions {
   useExisting?: Type<AzureStorageOptionsFactory>;
@@ -20,11 +21,9 @@ export interface AzureStorageOptionsFactory {
 
 @Module({
   providers: [
-    AzureMulterStorageService,
     AzureStorageService,
   ],
   exports: [
-    AzureMulterStorageService,
     AzureStorageService,
     AZURE_STORAGE_MODULE_OPTIONS,
   ],

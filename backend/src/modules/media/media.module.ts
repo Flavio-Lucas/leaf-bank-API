@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
 import { AuthTokenModule } from '../auth/auth-token.module';
+import { AzureModule } from '../azure/azure-nest-storage.module';
 import { EnvModule } from '../env/env.module';
 import { EnvService } from '../env/services/env.service';
-import { AzureModule } from './azure.module';
 import { MediaController } from './controllers/media.controller';
 import { MediaService } from './services/media.service';
 
