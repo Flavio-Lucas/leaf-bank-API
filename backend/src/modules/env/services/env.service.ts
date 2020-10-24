@@ -5,7 +5,6 @@ import * as envalid from 'envalid';
 import { CleanEnv, ValidatorSpec } from 'envalid';
 
 import { implementOptionalInterface } from '../../../utils/interface';
-import { IDotEnv } from '../models/dotenv';
 
 //#endregion
 
@@ -84,10 +83,6 @@ export class EnvService extends implementOptionalInterface<Partial<Readonly<IDot
       SWAGGER_TITLE: envalid.str({ default: 'Base' }),
       SWAGGER_VERSION: envalid.str({ default: '1.0' }),
       SWAGGER_BASE_PATH: envalid.str({ default: '' }),
-      GOOGLE_CLIENT_ID: envalid.str({ default: '' }),
-      GOOGLE_CLIENT_SECRET: envalid.str({ default: '' }),
-      FACEBOOK_CLIENT_ID: envalid.str({ default: '' }),
-      FACEBOOK_CLIENT_SECRET: envalid.str({ default: '' }),
       SWAGGER_ENABLED: envalid.bool({ default: false }),
       SENTRY_DNS: envalid.str({ default: '' }),
       FACENS_API_ENDPOINT: envalid.str({ default: '' }),
@@ -102,6 +97,7 @@ export class EnvService extends implementOptionalInterface<Partial<Readonly<IDot
       EMAIL_TRANSPORT: envalid.str({ default: '' }),
       EMAIL_FROM: envalid.str({ default: '' }),
       PASSWORD_RESET_WEBSITE: envalid.str({ default: '' }),
+      MAX_UPLOAD_FILE_SIZE: envalid.num({ default: 1024 * 1024 * 30 }),
     };
 
     const env = envalid.cleanEnv<IDotEnv>(process.env, rule, { dotEnvPath: dotEnvName, strict: true });
