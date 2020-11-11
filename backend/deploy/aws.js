@@ -49,7 +49,7 @@ async function runDeploy() {
 
   console.log('Restaurando ambiente...');
   // Instalar novamente as dependencias
-  execSync('npm i');
+  execSync('npm ci');
 }
 
 runDeploy();
