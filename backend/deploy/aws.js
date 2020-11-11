@@ -21,6 +21,7 @@ const awsArtifacts = [
 async function runDeploy() {
   // Remover antigos artefatos da build
   await new Promise(resolve => rimraf('./deploy/deploy.zip', resolve));
+  await new Promise(resolve => rimraf('./dist', resolve));
 
   console.log('Instalando dependências...');
   // Realiza o build da API
