@@ -12,14 +12,14 @@ import { ReportingObserver } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 
-import { initializeTransactionalContext, patchTypeORMRepositoryWithBaseRepository } from 'typeorm-transactional-cls-hooked';
-
-import { Request, Response } from 'express';
+import { Express, Request, Response } from 'express';
 import * as rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
 
-import { pathLogger } from './middlewares/pathLogger.middleware';
+import { initializeTransactionalContext, patchTypeORMRepositoryWithBaseRepository } from 'typeorm-transactional-cls-hooked';
+
 import { SentryFilter } from './filters/sentryFilter';
+import { pathLogger } from './middlewares/pathLogger.middleware';
 import { envConfig } from './modules/env/env.module';
 import { EnvService } from './modules/env/services/env.service';
 
@@ -182,7 +182,9 @@ function setupFilters(app: INestApplication, config: EnvService) {
       new Sentry.Integrations.Modules(),
       new Sentry.Integrations.FunctionToString(),
       new Sentry.Integrations.LinkedErrors(),
-      new Tracing.Integrations.Express({ app }),
+      new Sentry.Integrations.OnUncaughtException(),
+      new Sentry.Integrations.OnUnhandledRejection(),
+      new Tracing.Integrations.Express({ app: app.getHttpAdapter() as unknown as Express }),
       new ReportingObserver(),
     ],
     tracesSampleRate: 1.0,

@@ -24,6 +24,7 @@ if (env.SENTRY_DNS) {
   expressApp.use(SentryNode.Handlers.requestHandler());
   expressApp.use(SentryNode.Handlers.tracingHandler());
   expressApp.use(SentryNode.Handlers.errorHandler());
+  expressApp.use(SentryServerless.Handlers.requestHandler({ flushTimeout: 2000 }));
 
   SentryServerless.init({
     dsn: env.SENTRY_DNS,
@@ -32,6 +33,8 @@ if (env.SENTRY_DNS) {
       new SentryNode.Integrations.Console(),
       new SentryNode.Integrations.Modules(),
       new SentryNode.Integrations.FunctionToString(),
+      new SentryNode.Integrations.OnUncaughtException(),
+      new SentryNode.Integrations.OnUnhandledRejection(),
       new SentryTracing.Integrations.Express({ app: expressApp }),
       new SentryIntegrations.ReportingObserver(),
     ],
@@ -89,4 +92,4 @@ const awsHandler = async (event, context) => {
   return awsServerless.proxy(cachedServer, event, context, 'PROMISE').promise;
 };
 
-exports.handler = SentryServerless.AWSLambda.wrapHandler(awsHandler);
+exports.handler = awsHandler;
