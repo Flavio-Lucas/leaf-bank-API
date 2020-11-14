@@ -113,6 +113,11 @@ export class UserService extends BaseCrudService<UserEntity> {
     if (isAdminUser(requestUser) && isValid(payload.roles))
       entity.roles = payload.roles;
 
+    const alreadyHasUser = await UserEntity.hasUserWithEmail(payload.email, entityId);
+
+    if (alreadyHasUser)
+      throw new BadRequestException('Já existe um usuário cadastrado com esse e-mail.');
+
     if (entityId === requestUser.id)
       return await entity.save();
 

@@ -5,14 +5,14 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { Exclude } from 'class-transformer';
 
-import {Column, Entity, OneToMany, TableInheritance} from 'typeorm';
+import { Column, Entity, Not, OneToMany, TableInheritance } from 'typeorm';
 
 import { BaseEntity } from '../../../common/base-entity';
 import { ToProxy } from '../../../common/to-proxy';
 import { TypeOrmValueTypes } from '../../../models/enums/type-orm-value.types';
 import { getCleanedEmail } from '../../../utils/xss';
+import { UserPasswordResetEntity } from '../../user-password-reset/entities/user-password-reset.entity';
 import { UserProxy } from '../models/user.proxy';
-import {UserPasswordResetEntity} from "../../user-password-reset/entities/user-password-reset.entity";
 
 //#endregion
 
@@ -20,7 +20,7 @@ import {UserPasswordResetEntity} from "../../user-password-reset/entities/user-p
  * A classe que representa a entidade que lida com os usuários
  */
 @Entity('users')
-@TableInheritance({ column: { type: "varchar", name: "type" } })
+@TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class UserEntity extends BaseEntity implements ToProxy<UserProxy> {
 
   //#region Constructor
@@ -103,11 +103,12 @@ export class UserEntity extends BaseEntity implements ToProxy<UserProxy> {
    * Método que diz se já existe um usuário com aquele e-mail especifico
    *
    * @param email O e-mail usado para procurar o usuário
+   * @param ignoreUserId Diz para ignorar um usuário em específico
    */
-  public static async hasUserWithEmail(email: string): Promise<boolean> {
+  public static async hasUserWithEmail(email: string, ignoreUserId: number = -1): Promise<boolean> {
     email = getCleanedEmail(email);
 
-    return await this.count({ where: { email } }).then(count => count > 0);
+    return await this.count({ where: { email, id: Not(ignoreUserId) } }).then(count => count > 0);
   }
 
   //#endregion
