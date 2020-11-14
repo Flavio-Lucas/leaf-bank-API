@@ -4,11 +4,7 @@ import { BadRequestException, Injectable, NotFoundException, UnauthorizedExcepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { CrudRequest } from '@nestjsx/crud';
 
-import * as bcryptjs from 'bcryptjs';
-
 import { Repository } from 'typeorm';
-
-import { v4 } from 'uuid';
 
 import { BaseCrudService } from '../../../common/base-crud.service';
 import { isAdminUser, isValid } from '../../../utils/functions';
@@ -141,6 +137,7 @@ export class UserService extends BaseCrudService<UserEntity> {
     return new UserEntity({
       ...isValid(id) && { id },
       ...isValid(payload.email) && { email: payload.email },
+      ...payload instanceof UpdateUserPayload && isValid(payload.isActive) && { isActive: payload.isActive },
       ...payload instanceof CreateUserPayload && isValid(payload.password) && { password: payload.password },
     });
   }

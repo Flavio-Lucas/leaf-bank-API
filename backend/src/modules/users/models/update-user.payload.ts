@@ -4,6 +4,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { IsEmail, IsOptional, IsString } from 'class-validator';
 
+import { BaseCrudUpdatePayload } from '../../../common/base-crud-update.payload';
 import { DefaultValidationMessages } from '../../../models/enums/default-validation-messages';
 
 //#endregion
@@ -11,7 +12,7 @@ import { DefaultValidationMessages } from '../../../models/enums/default-validat
 /**
  * As informações enviadas para atualizar um usuário
  */
-export class UpdateUserPayload {
+export class UpdateUserPayload extends BaseCrudUpdatePayload {
 
   /**
    * O e-mail do usuário
