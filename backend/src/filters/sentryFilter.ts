@@ -47,11 +47,16 @@ export class SentryFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     let status = 500;
-    let exceptionResponse;
+    let exceptionResponse: HttpException | unknown;
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
-      exceptionResponse = exception.getResponse();
+
+      if (status === 401 && exception.message.includes('Unauthorized')) {
+        exceptionResponse = { message: 'Você não tem autorização para realizar essa ação.' };
+      } else {
+        exceptionResponse = exception.getResponse();
+      }
     } else {
       exceptionResponse = { exception };
     }
@@ -63,7 +68,7 @@ export class SentryFilter implements ExceptionFilter {
     });
 
     Sentry.setTags({
-      statusCode: String(status),
+      'statusCode': String(status),
       'X-Amzn-Trace-Id': request.headers['X-Amzn-Trace-Id'] as string,
     });
 
@@ -72,7 +77,7 @@ export class SentryFilter implements ExceptionFilter {
 
       await Sentry.flush(2000);
     }
-    
+
     if (!this.env.isProduction) {
       if (!('toJSON' in Error.prototype))
         Object.defineProperty(Error.prototype, 'toJSON', {

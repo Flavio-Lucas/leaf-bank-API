@@ -1,6 +1,6 @@
 //#region  Imports
 
-import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as Sentry from '@sentry/node';
 
@@ -102,20 +102,12 @@ export class AuthService {
     const jwtExpiresIn = jwtPayload.exp;
 
     if (now > jwtExpiresIn)
-      throw new UnauthorizedException({
-        error: HttpStatus.UNAUTHORIZED,
-        message: 'O token de autenticação está expirado.',
-        shouldLogout: true,
-      });
+      throw new UnauthorizedException('O token de autenticação está expirado.');
 
     const user = await UserEntity.findById<UserEntity>(jwtPayload.id).catch(() => null);
 
     if (user === null)
-      throw new UnauthorizedException({
-        error: HttpStatus.UNAUTHORIZED,
-        message: 'Você não tem mais permissão para realizar essa ação, seu usuário foi desativado ou removido.',
-        shouldLogout: true,
-      });
+      throw new UnauthorizedException('Você não tem mais permissão para realizar essa ação, seu usuário foi desativado ou removido.');
 
     Sentry.setUser({ id: user.id.toString(), email: user.email });
 
@@ -138,20 +130,12 @@ export class AuthService {
     const jwtExpiresIn = jwtPayload.exp;
 
     if (now > jwtExpiresIn)
-      throw new UnauthorizedException({
-        error: HttpStatus.UNAUTHORIZED,
-        message: 'O token de autenticação está expirado.',
-        shouldLogout: true,
-      });
+      throw new UnauthorizedException('O token de autenticação está expirado.');
 
     const user: UserEntity = await UserEntity.findById(jwtPayload.refreshId).catch(() => null);
 
     if (user === null)
-      throw new UnauthorizedException({
-        error: HttpStatus.UNAUTHORIZED,
-        message: 'Você não tem mais permissão para realizar essa ação, seu usuário foi desativado ou removido.',
-        shouldLogout: true,
-      });
+      throw new UnauthorizedException('Você não tem mais permissão para realizar essa ação, seu usuário foi desativado ou removido.');
 
     Sentry.setUser({ id: user.id.toString(), email: user.email });
 
