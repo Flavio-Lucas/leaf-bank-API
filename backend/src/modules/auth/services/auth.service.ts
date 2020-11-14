@@ -7,8 +7,8 @@ import * as Sentry from '@sentry/node';
 import * as bcryptjs from 'bcryptjs';
 
 import { TokenProxy } from '../../../models/proxys/token.proxy';
-import { UserEntity } from '../../users/entities/user.entity';
 import { EnvService } from '../../env/services/env.service';
+import { UserEntity } from '../../users/entities/user.entity';
 import { UserService } from '../../users/services/user.service';
 import { IJwtPayload } from '../models/jwt.payload';
 import { LoginPayload } from '../models/login.payload';
@@ -108,7 +108,14 @@ export class AuthService {
         shouldLogout: true,
       });
 
-    const user = await UserEntity.findById<UserEntity>(jwtPayload.id);
+    const user = await UserEntity.findById<UserEntity>(jwtPayload.id).catch(() => null);
+
+    if (user === null)
+      throw new UnauthorizedException({
+        error: HttpStatus.UNAUTHORIZED,
+        message: 'Você não tem mais permissão para realizar essa ação, seu usuário foi desativado ou removido.',
+        shouldLogout: true,
+      });
 
     Sentry.setUser({ id: user.id.toString(), email: user.email });
 
@@ -137,7 +144,14 @@ export class AuthService {
         shouldLogout: true,
       });
 
-    const user: UserEntity = await UserEntity.findById(jwtPayload.refreshId);
+    const user: UserEntity = await UserEntity.findById(jwtPayload.refreshId).catch(() => null);
+
+    if (user === null)
+      throw new UnauthorizedException({
+        error: HttpStatus.UNAUTHORIZED,
+        message: 'Você não tem mais permissão para realizar essa ação, seu usuário foi desativado ou removido.',
+        shouldLogout: true,
+      });
 
     Sentry.setUser({ id: user.id.toString(), email: user.email });
 
