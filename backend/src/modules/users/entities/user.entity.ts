@@ -91,7 +91,7 @@ export class UserEntity extends BaseEntity implements ToProxy<UserProxy> {
 
     email = getCleanedEmail(email);
 
-    const user = await this.findOne({ where: { email, ...whereOptions } });
+    const user = await this.findOne<UserEntity>({ where: { email, ...whereOptions } });
 
     if (!user)
       throw new NotFoundException('O usuário com o e-mail informado não existe ou foi desativado.');
