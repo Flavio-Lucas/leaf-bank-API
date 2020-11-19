@@ -6,7 +6,9 @@ import { ExtractJwt } from 'passport-jwt';
 
 import { EnvService } from '../../env/services/env.service';
 import { UserEntity } from '../../users/entities/user.entity';
+import { IJwtPayload } from '../models/jwt.payload';
 import { AnonymousStrategy } from '../strategies/anonymous.strategy';
+import { AuthService } from './auth.service';
 
 //#endregion
 
@@ -22,6 +24,7 @@ export class AnonymousStrategyService extends PassportStrategy(AnonymousStrategy
    * Construtor padrão
    */
   constructor(
+    private readonly auth: AuthService,
     private readonly env: EnvService,
   ) {
     super({
@@ -38,10 +41,10 @@ export class AnonymousStrategyService extends PassportStrategy(AnonymousStrategy
   /**
    * Método que retorna as informações que devem ser serializadas
    *
-   * @param user As informações do usuário
+   * @param jwt As informações do payload do usuário
    */
-  public async validate(user: UserEntity): Promise<UserEntity> {
-    return await UserEntity.findById(user.id);
+  public async validate(jwt: IJwtPayload): Promise<UserEntity> {
+    return await this.auth.validateUserByPayload(jwt);
   }
 
   //#endregion
