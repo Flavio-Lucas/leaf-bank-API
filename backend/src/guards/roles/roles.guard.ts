@@ -1,6 +1,6 @@
 //#region Imports
 
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 //#endregion
@@ -35,7 +35,7 @@ export class RolesGuard implements CanActivate {
     if (user && user.roles && hasRole())
       return true;
 
-    throw new UnauthorizedException('Você não tem permissão para acessar esses recursos.');
+    throw new ForbiddenException('Você não tem permissão para acessar esses recursos.');
   }
 
   //#endregion
