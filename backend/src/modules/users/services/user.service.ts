@@ -1,8 +1,8 @@
 //#region Imports
 
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CrudRequest } from '@nestjsx/crud';
+import { CrudRequest, GetManyDefaultResponse } from '@nestjsx/crud';
 
 import { Repository } from 'typeorm';
 
@@ -37,6 +37,19 @@ export class UserService extends BaseCrudService<UserEntity> {
   //#endregion
 
   //#region Crud Methods
+
+  /**
+   * Método que retorna uma lista com as entidades
+   *
+   * @param requestUser As informações do usuário da requisição
+   * @param crudRequest As informações da requisição do CRUD
+   */
+  public async listMany(requestUser: UserEntity, crudRequest: CrudRequest): Promise<GetManyDefaultResponse<UserEntity> | UserEntity[]> {
+    if (isAdminUser(requestUser))
+      return await this.getMany(crudRequest);
+
+    throw new ForbiddenException('Você não tem permissão para listar todos os usuários.');
+  }
 
   /**
    * Método que retorna as informações de uma entidade
@@ -79,7 +92,9 @@ export class UserService extends BaseCrudService<UserEntity> {
     if (alreadyHasUser)
       throw new BadRequestException('Já existe um usuário cadastrado com esse e-mail.');
 
-    if (isAdminUser(requestUser) && isValid(payload.roles))
+    const validPermissions: string[] = [RolesEnum.USER];
+
+    if (isAdminUser(requestUser) && isValid(payload.roles) && payload.roles.split('|').every(role => validPermissions.includes(role)))
       entity.roles = payload.roles;
 
     if (!entity.password)
@@ -99,15 +114,17 @@ export class UserService extends BaseCrudService<UserEntity> {
    * @param payload As informações para a atualização da entidade
    */
   public async update(requestUser: UserEntity, entityId: number, payload: UpdateUserPayload): Promise<UserEntity> {
-    const isUserExists = await UserEntity.exists(entityId);
+    const canSeeDeleted = isAdminUser(requestUser);
+    const oldUser = await UserEntity.findById<UserEntity>(entityId, !canSeeDeleted);
 
-    if (!isUserExists)
-      throw new NotFoundException('A entidade procurada não existe.');
+    if (isAdminUser(oldUser) && oldUser.id !== requestUser.id)
+      throw new ForbiddenException('Você não tem permissão de atualizar as informações de outro administrador.');
 
-    const entity = this.getEntityFromPayload(payload, entityId);
+    const userToUpdate = this.getEntityFromPayload(payload, entityId);
+    const validPermissions: string[] = [RolesEnum.USER];
 
-    if (isAdminUser(requestUser) && isValid(payload.roles))
-      entity.roles = payload.roles;
+    if (isAdminUser(requestUser) && isValid(payload.roles) && payload.roles.split('|').every(role => validPermissions.includes(role)))
+      userToUpdate.roles = payload.roles;
 
     const alreadyHasUser = await UserEntity.hasUserWithEmail(payload.email, entityId);
 
@@ -115,10 +132,10 @@ export class UserService extends BaseCrudService<UserEntity> {
       throw new BadRequestException('Já existe um usuário cadastrado com esse e-mail.');
 
     if (entityId === requestUser.id)
-      return await entity.save();
+      return await userToUpdate.save();
 
     if (isAdminUser(requestUser))
-      return await entity.save();
+      return await userToUpdate.save();
 
     throw new UnauthorizedException('Você não tem permissão para realizar essa operação.');
   }

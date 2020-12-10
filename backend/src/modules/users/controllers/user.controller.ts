@@ -2,7 +2,7 @@
 
 import { Body, ClassSerializerInterceptor, Controller, Get, Param, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Crud, CrudRequest, GetManyDefaultResponse, Override, ParsedRequest } from '@nestjsx/crud';
+import { Crud, CrudRequest, Override, ParsedRequest } from '@nestjsx/crud';
 
 import { BaseEntityCrudController } from '../../../common/base-entity-crud.controller';
 import { ProtectTo, UnprotectedRoute } from '../../../decorators/protect/protect.decorator';
@@ -72,13 +72,14 @@ export class UserController extends BaseEntityCrudController<UserEntity, UserSer
   /**
    * Método que retorna várias informações da entidade
    *
+   * @param requestUser As informações do usuário que faz a requisição
    * @param crudRequest As informações da requisição do CRUD
    */
   @ProtectTo(RolesEnum.ADMIN)
   @Override()
   @ApiOkResponse({ type: GetManyDefaultResponseUserProxy })
-  public async getMany(@ParsedRequest() crudRequest: CrudRequest): Promise<GetManyDefaultResponse<UserProxy>> {
-    return await this.base.getManyBase(crudRequest).then(response => mapCrud(response));
+  public async getMany(@User() requestUser: UserEntity, @ParsedRequest() crudRequest: CrudRequest): Promise<GetManyDefaultResponseUserProxy> {
+    return await this.service.listMany(requestUser, crudRequest).then(response => mapCrud(response));
   }
 
   /**
