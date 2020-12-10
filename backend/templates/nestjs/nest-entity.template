@@ -1,6 +1,6 @@
 //#region Imports
 
-import { Entity } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 import { BaseEntity } from '../../../common/base-entity';
 import { ToProxy } from '../../../common/to-proxy';
@@ -25,6 +25,12 @@ export class $Name$Entity extends BaseEntity implements ToProxy<$Name$Proxy> {
 
     Object.assign(this, { ... partial });
   }
+
+  //#endregion
+
+  //#region Public Properties
+
+  $END$
 
   //#endregion
 

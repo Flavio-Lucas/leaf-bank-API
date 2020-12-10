@@ -50,7 +50,7 @@ export class $Entity$Controller extends BaseEntityCrudController<$Entity$Entity,
   @ProtectTo(RolesEnum.ADMIN)
   @Override()
   @ApiOkResponse({ type: GetManyDefaultResponse$Entity$Proxy })
-  public getMany(@User() requestUser: UserEntity, @ParsedRequest() crudRequest: CrudRequest): Promise<GetManyDefaultResponse<$Entity$Proxy>> {
+  public getMany(@User() requestUser: UserEntity, @ParsedRequest() crudRequest: CrudRequest): Promise<GetManyDefaultResponse$Entity$Proxy> {
     return this.service.listMany(requestUser, crudRequest).then(response => mapCrud(response));
   }
 
