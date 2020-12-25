@@ -9,10 +9,10 @@ import { DefaultValidationMessages } from '../../../models/enums/default-validat
 //#endregion
 
 /**
- * A classe que representa o payload enviado para criar $description$
+ * A classe que representa o payload enviado para criar um $Entity$Entity
  */
 export class Create$Entity$Payload extends BaseCrudCreatePayload {
 
-    $END$
+
 
 }

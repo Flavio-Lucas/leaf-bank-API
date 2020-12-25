@@ -7,9 +7,9 @@ import { BaseCrudProxy } from '../../../common/base-crud.proxy';
 //#endregion
 
 /**
- * A classe que representa as informações que são enviadas pela API sobre $Description$
+ * A classe que representa as informações que são enviadas pela API da entidade $Entity$Entity
  */
-export class $Name$Proxy extends BaseCrudProxy {
+export class $Entity$Proxy extends BaseCrudProxy {
 
   //#region Constructor
 
@@ -17,11 +17,9 @@ export class $Name$Proxy extends BaseCrudProxy {
    * Construtor padrão
    */
   constructor(
-    entity: $Name$Entity,
+    entity: $Entity$Entity,
   ) {
     super(entity);
-
-    $END$
   }
 
   //#endregion
@@ -31,12 +29,12 @@ export class $Name$Proxy extends BaseCrudProxy {
 /**
  * A classe que representa o retorno dos proxies quando é chamado a função GetMany
  */
-export class GetManyDefaultResponse$Name$Proxy extends GetManyDefaultResponseProxy {
+export class GetManyDefaultResponse$Entity$Proxy extends GetManyDefaultResponseProxy {
 
   /**
    * A lista de entidades que essa busca retornou
    */
-  @ApiProperty({ type: $Name$Proxy, isArray: true })
-  data: $Name$Proxy[];
+  @ApiProperty({ type: $Entity$Proxy, isArray: true })
+  data: $Entity$Proxy[];
 
 }

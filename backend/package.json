@@ -23,7 +23,9 @@
     "add-migration": "npm run typeorm:cli -- migration:generate -n",
     "revert-migration": "npm run typeorm:cli -- migration:revert",
     "deploy:heroku": "cd .. && git subtree push --prefix backend heroku master",
-    "deploy:aws": "node deploy/aws.js"
+    "deploy:aws": "node deploy/aws.js",
+    "joga10": "ts-node -r tsconfig-paths/register console/index.ts",
+    "joga10:debug": "node --inspect-brk dist/console/index.js"
   },
   "engines": {
     "node": "12.x"
@@ -92,10 +94,18 @@
     "@types/passport-facebook-token": "^0.4.34",
     "@types/passport-jwt": "^3.0.3",
     "@types/passport-local": "^1.0.33",
+    "@types/pluralize": "0.0.29",
+    "@types/prompts": "^2.0.9",
     "@types/sharp": "^0.26.0",
     "@types/supertest": "^2.0.8",
+    "commander": "^6.2.1",
     "jest": "^26.0.1",
+    "nestjs-console": "^4.0.0",
+    "param-case": "^3.0.4",
+    "pascal-case": "^3.1.2",
+    "pluralize": "^8.0.0",
     "prettier": "^2.0.5",
+    "prompts": "^2.4.0",
     "supertest": "^4.0.2",
     "ts-jest": "^26.1.0",
     "ts-loader": "^7.0.5",

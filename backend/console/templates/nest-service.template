@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 //#endregion
 
 /**
- * A classe que representa o serviço que lida com $description$
+ * A classe que representa o serviço que lida a entidade $Entity$Entity
  */
 @Injectable()
 export class $Entity$Service extends BaseCrudService<$Entity$Entity> {
@@ -47,7 +47,7 @@ export class $Entity$Service extends BaseCrudService<$Entity$Entity> {
           isActive: true,
         },
         ...crudRequest.parsed.search.$and,
-      ]
+      ],
     };
 
     return await this.getMany(crudRequest);

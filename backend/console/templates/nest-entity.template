@@ -8,10 +8,10 @@ import { ToProxy } from '../../../common/to-proxy';
 //#endregion
 
 /**
- * A class que representa a entidade que lida com as informações $description$
+ * A class que representa a entidade que representa a tabela $entityName$.
  */
-@Entity('$name$')
-export class $Name$Entity extends BaseEntity implements ToProxy<$Name$Proxy> {
+@Entity('$PluralEntity$')
+export class $Entity$Entity extends BaseEntity implements ToProxy<$Entity$Proxy> {
 
   //#region Constructor
 
@@ -19,7 +19,7 @@ export class $Name$Entity extends BaseEntity implements ToProxy<$Name$Proxy> {
    * Construtor padrão
    */
   constructor(
-    partial: Partial<$Name$Entity> | $Name$Entity,
+    partial: Partial<$Entity$Entity> | $Entity$Entity,
   ) {
     super();
 
@@ -30,7 +30,7 @@ export class $Name$Entity extends BaseEntity implements ToProxy<$Name$Proxy> {
 
   //#region Public Properties
 
-  $END$
+
 
   //#endregion
 
@@ -39,8 +39,8 @@ export class $Name$Entity extends BaseEntity implements ToProxy<$Name$Proxy> {
   /**
    * Método que retorna um proxy da entidade
    */
-  public toProxy(): $Name$Proxy {
-    return new $Name$Proxy(this);
+  public toProxy(): $Entity$Proxy {
+    return new $Entity$Proxy(this);
   }
 
   //#endregion
