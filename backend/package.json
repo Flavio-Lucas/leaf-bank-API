@@ -24,7 +24,7 @@
     "revert-migration": "npm run typeorm:cli -- migration:revert",
     "deploy:heroku": "cd .. && git subtree push --prefix backend heroku master",
     "deploy:aws": "node deploy/aws.js",
-    "joga10": "ts-node -r tsconfig-paths/register console/index.ts",
+    "joga10": "ts-node -r tsconfig-paths/register src/console/index.ts",
     "joga10:debug": "node --inspect-brk dist/console/index.js"
   },
   "engines": {

@@ -204,7 +204,7 @@ export class GenerateService {
     const entity = pascalCase(name);
     const pluralEntity = plural(paramCase(entity));
     const fileName = `${ prefixFilename || '' }${ paramCase(name) }.${ extension }.ts`;
-    const dirPath = join(__dirname, '../../src/modules', name, folder);
+    const dirPath = join(__dirname, '../../modules', name, folder);
     const filePath = join(dirPath, fileName);
 
     spin.start();
