@@ -201,7 +201,7 @@ export class GenerateService {
   private async createTemplate(name: string, folder: string, extension: string, templateName: string, prettyName: string, prefixFilename?: string): Promise<void> {
     const spin = createSpinner();
 
-    const entity = pascalCase(name);
+    const entity = singular(pascalCase(name));
     const pluralEntity = plural(paramCase(entity));
     const singularEntity = singular(paramCase(entity));
     const fileName = `${ prefixFilename || '' }${ singularEntity }.${ extension }.ts`;
