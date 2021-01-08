@@ -1,8 +1,9 @@
 //#region Imports
 
-import {Column, Entity, ManyToOne} from 'typeorm';
-import {BaseEntity} from '../../../common/base-entity';
-import {UserEntity} from '../../users/entities/user.entity';
+import { Column, Entity, ManyToOne } from 'typeorm';
+
+import { BaseEntity } from '../../../common/base-entity';
+import { UserEntity } from '../../users/entities/user.entity';
 
 //#endregion
 
@@ -12,47 +13,48 @@ import {UserEntity} from '../../users/entities/user.entity';
 @Entity('user_password_resets')
 export class UserPasswordResetEntity extends BaseEntity {
 
-    //#region Constructor
+  //#region Constructor
 
-    /**
-     * Construtor padrão
-     */
-    constructor(
-        partial: Partial<UserPasswordResetEntity> | UserPasswordResetEntity,
-    ) {
-        super();
+  /**
+   * Construtor padrão
+   */
+  constructor(
+    partial: Partial<UserPasswordResetEntity> | UserPasswordResetEntity,
+  ) {
+    super();
 
-        Object.assign(this, {...partial});
-    }
+    Object.assign(this, { ...partial });
+  }
 
-    //#endregion
+  //#endregion
 
-    //#region Public Properties
+  //#region Public Properties
 
-    /**
-     * A identificação do usuário
-     */
-    @Column({nullable: false})
-    public userId: number;
+  /**
+   * A identificação do usuário
+   */
+  @Column({ nullable: false })
+  public userId: number;
 
-    /**
-     * As informações do usuário que quer resetar a senha
-     */
-    @ManyToOne(() => UserEntity, user => user.passwordResets)
-    public user: UserEntity;
+  /**
+   * As informações do usuário que quer resetar a senha
+   */
+  @ManyToOne(() => UserEntity)
+  public user: UserEntity;
 
-    /**
-     * O código que será usado para resetar a senha
-     */
-    @Column({nullable: false})
-    public resetPasswordCode: string;
+  /**
+   * O código que será usado para resetar a senha
+   */
+  @Column({ nullable: false })
+  public resetPasswordCode: string;
 
-    /**
-     * Diz até quando esse código deve ficar válido
-     *
-     * @note A data será salva em UNIX
-     */
-    @Column({type: 'bigint', nullable: false})
-    public validUntil: number;
-    //#endregion
+  /**
+   * Diz até quando esse código deve ficar válido
+   *
+   * @note A data será salva em UNIX
+   */
+  @Column({ type: 'bigint', nullable: false })
+  public validUntil: number;
+
+  //#endregion
 }
