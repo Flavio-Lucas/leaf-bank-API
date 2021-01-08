@@ -5,7 +5,7 @@ import { Command, Console, createSpinner } from 'nestjs-console';
 import { paramCase } from 'param-case';
 import { pascalCase } from 'pascal-case';
 import { join } from 'path';
-import { plural } from 'pluralize';
+import { plural, singular } from 'pluralize';
 import { promisify } from 'util';
 
 //#endregion
@@ -203,7 +203,8 @@ export class GenerateService {
 
     const entity = pascalCase(name);
     const pluralEntity = plural(paramCase(entity));
-    const fileName = `${ prefixFilename || '' }${ paramCase(name) }.${ extension }.ts`;
+    const singularEntity = singular(paramCase(entity));
+    const fileName = `${ prefixFilename || '' }${ singularEntity }.${ extension }.ts`;
     const dirPath = join(__dirname, '../../modules', name, folder);
     const filePath = join(dirPath, fileName);
 
