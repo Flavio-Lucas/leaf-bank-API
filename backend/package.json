@@ -25,7 +25,7 @@
     "deploy:heroku": "cd .. && git subtree push --prefix backend heroku master",
     "deploy:aws": "node deploy/aws.js",
     "joga10": "ts-node -r tsconfig-paths/register src/console/index.ts",
-    "joga10:debug": "node --inspect-brk dist/console/index.js"
+    "joga10:debug": "node --inspect-brk dist/src/console/index.js"
   },
   "engines": {
     "node": "12.x"

@@ -1,12 +1,11 @@
 //#region Imports
 
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as bcryptjs from 'bcryptjs';
 
 import { randomBytes } from 'crypto';
 
-import { MoreThan, Repository } from 'typeorm';
+import { MoreThan } from 'typeorm';
 
 import { TypeOrmValueTypes } from '../../../models/enums/type-orm-value.types';
 import { EnvService } from '../../env/services/env.service';
@@ -25,124 +24,122 @@ import { ResetPasswordPayload } from '../models/reset-password.payload';
 @Injectable()
 export class UserPasswordResetService {
 
-    //#region Constructor
+  //#region Constructor
 
-    /**
-     * Construtor padrão
-     */
-    constructor(
-        @InjectRepository(UserPasswordResetEntity)
-        public readonly repository: Repository<UserPasswordResetEntity>,
-        private readonly mailService: MailService,
-        private readonly envService: EnvService,
-    ) { }
+  /**
+   * Construtor padrão
+   */
+  constructor(
+    private readonly mailService: MailService,
+    private readonly envService: EnvService,
+  ) { }
 
-    //#endregion
+  //#endregion
 
-    //#region Crud Methods
+  //#region Crud Methods
 
-    /**
-     * Método que reseta a senha de um usuário pelo e-mail
-     *
-     * @param email O e-mail do usuário que quer resetar a senha
-     */
-    public async forgotPasswordByEmail(email: string): Promise<ForgotPasswordProxy> {
-        if (!email)
-            throw new BadRequestException('O e-mail enviado é inválido.');
+  /**
+   * Método que reseta a senha de um usuário pelo e-mail
+   *
+   * @param email O e-mail do usuário que quer resetar a senha
+   */
+  public async forgotPasswordByEmail(email: string): Promise<ForgotPasswordProxy> {
+    if (!email)
+      throw new BadRequestException('O e-mail enviado é inválido.');
 
-        const user = await UserEntity.findOne({ where: { email, isActive: TypeOrmValueTypes.TRUE } });
+    const user = await UserEntity.findOne({ where: { email, isActive: TypeOrmValueTypes.TRUE } });
 
-        if (!user)
-            throw new UnauthorizedException('Não foi encontrado um usuário com o e-mail fornecido.');
+    if (!user)
+      throw new UnauthorizedException('Não foi encontrado um usuário com o e-mail fornecido.');
 
-        return await this.forgotPasswordForUser(user);
-    }
+    return await this.forgotPasswordForUser(user);
+  }
 
-    /**
-     * Método que reseta a senha de um usuário
-     *
-     * @param resetPasswordCode O código para resetar a senha
-     * @param payload As informações para resetar a senha
-     */
-    public async resetPasswordByCode(resetPasswordCode: string, payload: ResetPasswordPayload): Promise<void> {
-        if (!resetPasswordCode)
-            throw new BadRequestException('O código de resetar a senha é invalido.');
+  /**
+   * Método que reseta a senha de um usuário
+   *
+   * @param resetPasswordCode O código para resetar a senha
+   * @param payload As informações para resetar a senha
+   */
+  public async resetPasswordByCode(resetPasswordCode: string, payload: ResetPasswordPayload): Promise<void> {
+    if (!resetPasswordCode)
+      throw new BadRequestException('O código de resetar a senha é invalido.');
 
-        resetPasswordCode = String(resetPasswordCode).toUpperCase();
+    resetPasswordCode = String(resetPasswordCode).toUpperCase();
 
-        const now = +new Date();
-        const resetPasswordEntity = await UserPasswordResetEntity.findOne({
-            where: {
-                resetPasswordCode,
-                validUntil: MoreThan(now),
-            },
-            order: {
-                createdAt: 'ASC',
-            },
-        });
+    const now = +new Date();
+    const resetPasswordEntity = await UserPasswordResetEntity.findOne({
+      where: {
+        resetPasswordCode,
+        validUntil: MoreThan(now),
+      },
+      order: {
+        createdAt: 'ASC',
+      },
+    });
 
-        if (!resetPasswordEntity || !resetPasswordEntity.isActive)
-            throw new NotFoundException('Não foi encontrado uma tentativa de resetar a senha com esse código, por favor, verifique no seu e-mail se o código informado é válido.');
+    if (!resetPasswordEntity || !resetPasswordEntity.isActive)
+      throw new NotFoundException('Não foi encontrado uma tentativa de resetar a senha com esse código, por favor, verifique no seu e-mail se o código informado é válido.');
 
-        const user = await UserEntity.findById<UserEntity>(resetPasswordEntity.userId);
+    const user = await UserEntity.findById<UserEntity>(resetPasswordEntity.userId);
 
-        const salt = await bcryptjs.genSalt();
+    const salt = await bcryptjs.genSalt();
 
-        user.password = await bcryptjs.hash(payload.newPassword, salt);
-        resetPasswordEntity.isActive = false;
+    user.password = await bcryptjs.hash(payload.newPassword, salt);
+    resetPasswordEntity.isActive = false;
 
-        await user.save();
-        await resetPasswordEntity.save();
-    }
+    await user.save();
+    await resetPasswordEntity.save();
+  }
 
-    //#endregion
+  //#endregion
 
-    //#region Private Methods
+  //#region Private Methods
 
-    /**
-     * Método que reseta a senha de um usuário pelo CPF
-     *
-     * @param user As informações do usuário que quer resetar a senha
-     */
-    public async forgotPasswordForUser(user: UserEntity): Promise<ForgotPasswordProxy> {
-        const resetPasswordCode = randomBytes(4).toString('hex').toUpperCase();
-        const unixDay = 24 * 60 * 60 * 1000;
-        const validUntil = +new Date() + unixDay;
+  /**
+   * Método que reseta a senha de um usuário pelo CPF
+   *
+   * @param user As informações do usuário que quer resetar a senha
+   */
+  public async forgotPasswordForUser(user: UserEntity): Promise<ForgotPasswordProxy> {
+    const resetPasswordCode = randomBytes(4).toString('hex').toUpperCase();
+    const unixDay = 24 * 60 * 60 * 1000;
+    const validUntil = +new Date() + unixDay;
 
-        const resetPasswordEntity = new UserPasswordResetEntity({
-            userId: user.id,
-            resetPasswordCode,
-            validUntil,
-        });
+    const resetPasswordEntity = new UserPasswordResetEntity({
+      userId: user.id,
+      resetPasswordCode,
+      validUntil,
+    });
 
-        await UserPasswordResetEntity.update({
-            isActive: true,
-            userId: user.id,
-        }, {
-            isActive: false,
-        });
-        await resetPasswordEntity.save();
+    await UserPasswordResetEntity.update({
+      isActive: true,
+      userId: user.id,
+    }, {
+      isActive: false,
+    });
+    await resetPasswordEntity.save();
 
-        const subject = '[LIGA] Resetar a senha';
-        const emailTemplateForResetPassword = getEmailTemplateForResetPassword(
-            subject,
-            'Alerta',
-            'Para resetar a sua senha, basta usar o código abaixo e colocar no aplicativo para você poder resetar a sua senha.',
-            resetPasswordEntity.resetPasswordCode,
-        );
-        const sendEmailWithSuccess = await this.mailService.sendEmail({
-            subject,
-            from: this.envService.EMAIL_TRANSPORT,
-            to: user.email,
-            html: emailTemplateForResetPassword,
-        });
+    const subject = '[LIGA] Resetar a senha';
+    const emailTemplateForResetPassword = getEmailTemplateForResetPassword(
+      subject,
+      'Alerta',
+      'Para resetar a sua senha, basta usar o código abaixo e colocar no aplicativo para você poder resetar a sua senha.',
+      resetPasswordEntity.resetPasswordCode,
+    );
+    const sendEmailWithSuccess = await this.mailService.sendEmail({
+      subject,
+      from: this.envService.EMAIL_TRANSPORT,
+      to: user.email,
+      html: emailTemplateForResetPassword,
+    });
 
-        return new ForgotPasswordProxy(
-            !!sendEmailWithSuccess,
-            validUntil,
-        );
-    }
+    return new ForgotPasswordProxy(
+      !!sendEmailWithSuccess,
+      validUntil,
+    );
+  }
 
-    //#endregion
+  //#endregion
 
 }

@@ -5,13 +5,12 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { Exclude } from 'class-transformer';
 
-import { Column, Entity, Not, OneToMany, TableInheritance } from 'typeorm';
+import { Column, Entity, Not } from 'typeorm';
 
 import { BaseEntity } from '../../../common/base-entity';
 import { ToProxy } from '../../../common/to-proxy';
 import { TypeOrmValueTypes } from '../../../models/enums/type-orm-value.types';
 import { getCleanedEmail } from '../../../utils/xss';
-import { UserPasswordResetEntity } from '../../user-password-reset/entities/user-password-reset.entity';
 import { UserProxy } from '../models/user.proxy';
 
 //#endregion
@@ -20,7 +19,6 @@ import { UserProxy } from '../models/user.proxy';
  * A classe que representa a entidade que lida com os usuários
  */
 @Entity('users')
-@TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class UserEntity extends BaseEntity implements ToProxy<UserProxy> {
 
   //#region Constructor
@@ -58,12 +56,6 @@ export class UserEntity extends BaseEntity implements ToProxy<UserProxy> {
   @Exclude()
   @Column({ nullable: false })
   public roles: string;
-
-  /**
-   * A lista de códigos para resetar a senha
-   */
-  @OneToMany(() => UserPasswordResetEntity, u => u.user)
-  public passwordResets?: UserPasswordResetEntity[];
 
   //#endregion
 
