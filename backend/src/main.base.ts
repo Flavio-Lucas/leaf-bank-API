@@ -3,7 +3,7 @@
 
 //#region Imports
 
-import { INestApplication, RequestTimeoutException, ValidationPipe } from '@nestjs/common';
+import { HttpException, INestApplication, RequestTimeoutException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { CrudConfigService } from '@nestjsx/crud';
@@ -153,7 +153,13 @@ function setupMiddleware(app: INestApplication, env: EnvService): void {
   app.use(
     rateLimit({
       windowMs: env.API_RATE_LIMIT_WINDOW_MS, // 1 minute
-      max: env.API_RATE_LIMIT_MAX, // limit each IP to 100 requests per windowMs
+      max: env.API_RATE_LIMIT_MAX, // limit each IP to 100 requests per windowMs,
+      message: {
+        statusCode: 429,
+        timestamp: new Date().toISOString(),
+        message: 'Você fez muitas requisições em um periodo de tempo muito curto, por favor, aguarde uns instantes para você realizar outra requisição.',
+        error: 'TooManyRequest',
+      } as any,
     }),
   );
 }
