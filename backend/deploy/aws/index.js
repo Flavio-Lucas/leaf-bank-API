@@ -6,47 +6,6 @@ exports.handler = void 0;
 const express = require('express');
 const expressApp = express();
 
-const SentryIntegrations = require('@sentry/integrations');
-const SentryServerless = require('@sentry/serverless');
-const SentryNode = require('@sentry/node');
-const SentryTracing = require('@sentry/tracing');
-
-const envalid = require('envalid');
-
-const rule = {
-  NODE_ENV: envalid.str({ default: '' }),
-  SENTRY_DNS: envalid.str({ default: '' }),
-};
-
-const env = envalid.cleanEnv(process.env, rule, { dotEnvPath: '.env', strict: true, });
-
-if (env.SENTRY_DNS) {
-  expressApp.use(SentryNode.Handlers.requestHandler());
-  expressApp.use(SentryNode.Handlers.tracingHandler());
-  expressApp.use(SentryNode.Handlers.errorHandler());
-  expressApp.use(SentryServerless.Handlers.requestHandler({ flushTimeout: 2000 }));
-
-  SentryServerless.init({
-    dsn: env.SENTRY_DNS,
-    integrations: [
-      new SentryNode.Integrations.Http({ tracing: true, breadcrumbs: true }),
-      new SentryNode.Integrations.Console(),
-      new SentryNode.Integrations.Modules(),
-      new SentryNode.Integrations.FunctionToString(),
-      new SentryNode.Integrations.OnUncaughtException(),
-      new SentryNode.Integrations.OnUnhandledRejection(),
-      new SentryTracing.Integrations.Express({ app: expressApp }),
-      new SentryIntegrations.ReportingObserver(),
-    ],
-    tracesSampleRate: 1.0,
-    debug: !env.isProduction,
-    environment: env.NODE_ENV,
-    maxBreadcrumbs: 100,
-    attachStacktrace: true,
-    maxValueLength: 1024,
-  });
-}
-
 const nestjs = require("@nestjs/core");
 
 const platformExpress = require("@nestjs/platform-express");
