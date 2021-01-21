@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { BaseCrudService } from '../../../common/base-crud.service';
 import { isAdminUser, isValid } from '../../../utils/functions';
 import { encryptPassword } from '../../../utils/password';
+import { getCleanedEmail } from '../../../utils/xss';
 import { RolesEnum } from '../../auth/models/roles.enum';
 import { UserEntity } from '../entities/user.entity';
 import { CreateUserPayload } from '../models/create-user.payload';
@@ -153,7 +154,7 @@ export class UserService extends BaseCrudService<UserEntity> {
   private getEntityFromPayload(payload: CreateUserPayload | UpdateUserPayload, id?: number): UserEntity {
     return new UserEntity({
       ...isValid(id) && { id },
-      ...isValid(payload.email) && { email: payload.email },
+      ...isValid(payload.email) && { email: getCleanedEmail(payload.email) },
       ...payload instanceof UpdateUserPayload && isValid(payload.isActive) && { isActive: payload.isActive },
       ...payload instanceof CreateUserPayload && isValid(payload.password) && { password: payload.password },
     });
