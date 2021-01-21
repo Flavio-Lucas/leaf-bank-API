@@ -1,18 +1,14 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.handler = void 0;
 // lambda.ts
 
 const express = require('express');
 const expressApp = express();
 
-const nestjs = require("@nestjs/core");
-
-const platformExpress = require("@nestjs/platform-express");
 const awsServerless = require("aws-serverless-express");
 
-const mainBase = require("./dist/main.base");
-const appModule = require("./dist/app.module");
+const mainBase = require('./dist/main.base');
 
 // NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this
 // is likely due to a compressed response (e.g. gzip) which has not
@@ -25,9 +21,7 @@ let cachedServer;
 // Create the Nest.js server and convert it into an Express.js server
 async function bootstrapServer() {
   if (!cachedServer) {
-    let nestApp = await nestjs.NestFactory.create(appModule.AppModule, new platformExpress.ExpressAdapter(expressApp));
-
-    nestApp = await mainBase.setup(nestApp);
+    const nestApp = await mainBase.createAppForAWS(expressApp);
 
     nestApp.enableCors({
       origin: true,

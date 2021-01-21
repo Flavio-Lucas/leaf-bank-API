@@ -3,8 +3,9 @@
 
 //#region Imports
 
-import { HttpException, INestApplication, RequestTimeoutException, ValidationPipe } from '@nestjs/common';
+import { INestApplication, RequestTimeoutException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { CrudConfigService } from '@nestjsx/crud';
 import { ReportingObserver } from '@sentry/integrations';
@@ -12,10 +13,10 @@ import { ReportingObserver } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 
+import * as express from 'express';
 import { Express, Request, Response } from 'express';
 import * as rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
-
 import { initializeTransactionalContext, patchTypeORMRepositoryWithBaseRepository } from 'typeorm-transactional-cls-hooked';
 
 import { SentryFilter } from './filters/sentryFilter';
@@ -169,16 +170,13 @@ function setupMiddleware(app: INestApplication, env: EnvService): void {
  *
  * @param app A instância da aplicação
  * @param config As configurações da aplicação
+ * @param expressApp A referencia para a aplicação Express
  */
-function setupFilters(app: INestApplication, config: EnvService) {
+function setupSentry(app: INestApplication, config: EnvService, expressApp: Express) {
   app.useGlobalFilters(new SentryFilter(config));
 
   if (!config.SENTRY_DNS || config.isTest)
     return;
-
-  app.use(Sentry.Handlers.requestHandler());
-  app.use(Sentry.Handlers.tracingHandler());
-  app.use(Sentry.Handlers.errorHandler());
 
   Sentry.init({
     dsn: config.SENTRY_DNS,
@@ -190,37 +188,51 @@ function setupFilters(app: INestApplication, config: EnvService) {
       new Sentry.Integrations.LinkedErrors(),
       new Sentry.Integrations.OnUncaughtException(),
       new Sentry.Integrations.OnUnhandledRejection(),
-      new Tracing.Integrations.Express({ app: app.getHttpAdapter() as unknown as Express }),
+      new Tracing.Integrations.Postgres(),
+      new Tracing.Integrations.Express({ app: expressApp }),
       new ReportingObserver(),
     ],
-    tracesSampleRate: 1.0,
+    enabled: true,
+    frameContextLines: 30,
+    normalizeDepth: 10,
     debug: !config.isProduction,
     environment: config.NODE_ENV,
     maxBreadcrumbs: 100,
     attachStacktrace: true,
     maxValueLength: 1024,
+    tracesSampler: () => 1,
   });
 }
 
 //#endregion
 
 export async function createApp(): Promise<INestApplication> {
-  const app = await NestFactory.create(AppModule, {
+  const expressApp = express();
+
+  return createAppForAWS(expressApp);
+}
+
+export async function createAppForAWS(expressApp: Express): Promise<INestApplication> {
+  expressApp.use(Sentry.Handlers.requestHandler());
+  expressApp.use(Sentry.Handlers.tracingHandler());
+  expressApp.use(Sentry.Handlers.errorHandler());
+
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp), {
     logger: ['log', 'verbose', 'debug', 'error', 'warn'],
   });
 
-  await setup(app);
+  await setup(app, expressApp);
 
   return app;
 }
 
-export async function setup(app: INestApplication): Promise<INestApplication> {
+export async function setup(app: INestApplication, expressApp: Express): Promise<INestApplication> {
   const env = await app.get(EnvService);
 
   setupSwagger(app, env);
   setupPipes(app);
   setupMiddleware(app, env);
-  setupFilters(app, env);
+  setupSentry(app, env, expressApp);
 
   app.setGlobalPrefix(env.API_BASE_PATH);
 
