@@ -8,7 +8,7 @@ import { ToProxy } from '../../../common/to-proxy';
 //#endregion
 
 /**
- * A class que representa a entidade que representa a tabela $entityName$.
+ * A class que representa a entidade que representa a tabela $Entity$
  */
 @Entity('$PluralEntity$')
 export class $Entity$Entity extends BaseEntity implements ToProxy<$Entity$Proxy> {
