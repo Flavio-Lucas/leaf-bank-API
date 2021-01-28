@@ -1,6 +1,6 @@
 //#region Imports
 
-import { filterXSS } from 'src/utils/xss';
+import { filterXSS } from 'xss';
 
 //#endregion
 
