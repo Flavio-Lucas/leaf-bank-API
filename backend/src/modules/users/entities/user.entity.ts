@@ -44,6 +44,13 @@ export class UserEntity extends BaseEntity implements ToProxy<UserProxy> {
   public email: string;
 
   /**
+   * O e-mail do usuário
+   */
+  @ApiProperty()
+  @Column({ nullable: false, type: 'float' })
+  public leafs: number;
+
+  /**
    * A senha do usuário
    */
   @ApiProperty()

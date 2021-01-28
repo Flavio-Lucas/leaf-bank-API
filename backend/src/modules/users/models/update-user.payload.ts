@@ -1,9 +1,7 @@
 //#region Imports
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
-
-import { IsEmail, IsOptional, IsString } from 'class-validator';
-
+import { IsEmail, IsNumber, IsOptional, IsString } from 'class-validator';
 import { BaseCrudUpdatePayload } from '../../../common/base-crud-update.payload';
 import { DefaultValidationMessages } from '../../../models/enums/default-validation-messages';
 
@@ -22,6 +20,14 @@ export class UpdateUserPayload extends BaseCrudUpdatePayload {
   @IsString({ message: DefaultValidationMessages.IsString })
   @IsEmail({}, { message: DefaultValidationMessages.IsEmail })
   public email?: string;
+
+  /**
+   * As folhinhas
+   */
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber({}, { message: DefaultValidationMessages.IsNumber })
+  public leafs?: number;
 
   /**
    * As permissões de um usuário
