@@ -14,7 +14,7 @@
     "inlineSourceMap": true,
     "inlineSources": true,
     "outDir": "dist",
-    "baseUrl": "./backend",
+    "baseUrl": "./",
     "sourceRoot": "/",
     "incremental": true,
     "noEmitHelpers": true,

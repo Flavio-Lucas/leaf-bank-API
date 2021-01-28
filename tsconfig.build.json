@@ -4,7 +4,7 @@
     "incremental": false
   },
   "exclude": [
-    "backend/node_modules",
+    "node_modules",
     "test",
     "dist", "**/*spec.ts", "ormconfig.ts"]
 }
