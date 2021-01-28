@@ -68,18 +68,21 @@ export class TestController {
     await this.user.create(admin, await validatePayload(CreateUserPayload, {
       email: 'admin@email.com',
       password: '123456',
+      leafs: 0,
       roles: 'admin',
     }));
 
     await this.user.create(admin, await validatePayload(CreateUserPayload, {
       email: 'liga@email.com',
       password: '123456',
+      leafs: 0,
       roles: 'user',
     }));
 
     await this.user.create(admin, await validatePayload(CreateUserPayload, {
       email: 'fablab@email.com',
       password: '123456',
+      leafs: 0,
       roles: 'user',
     }));
   }
