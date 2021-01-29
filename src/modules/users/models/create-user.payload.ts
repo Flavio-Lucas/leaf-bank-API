@@ -32,6 +32,14 @@ export class CreateUserPayload {
   public password: string;
 
   /**
+   * A senha do usuário
+   */
+  @ApiProperty()
+  @IsDefined({ message: 'É necessário informar o nome.' })
+  @IsString({ message: DefaultValidationMessages.IsString })
+  public name: string;
+
+  /**
    * As folhinas
    */
   @ApiProperty()

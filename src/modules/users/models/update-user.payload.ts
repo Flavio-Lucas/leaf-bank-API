@@ -30,6 +30,14 @@ export class UpdateUserPayload extends BaseCrudUpdatePayload {
   public leafs?: number;
 
   /**
+   * As folhinhas
+   */
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString({ message: DefaultValidationMessages.IsString })
+  public name?: string;
+
+  /**
    * As permissões de um usuário
    */
   @ApiPropertyOptional({ description: 'Only admins can change this property.' })
