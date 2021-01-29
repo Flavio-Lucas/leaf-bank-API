@@ -156,6 +156,8 @@ export class UserService extends BaseCrudService<UserEntity> {
       ...isValid(id) && { id },
       ...isValid(payload.email) && { email: getCleanedEmail(payload.email) },
       ...isValid(payload.leafs) && { leafs: payload.leafs },
+      ...isValid(payload.name) && { name: payload.name },
+      
       ...payload instanceof UpdateUserPayload && isValid(payload.isActive) && { isActive: payload.isActive },
       ...payload instanceof CreateUserPayload && isValid(payload.password) && { password: payload.password },
     });
