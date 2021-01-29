@@ -21,6 +21,8 @@ export class UserProxy extends BaseCrudProxy {
   constructor(user: Partial<UserEntity> | UserEntity) {
     super(user);
 
+    this.name = user.name;
+    this.leafs = user.leafs;
     this.email = user.email;
     this.permissions = user.roles;
   }
@@ -32,6 +34,18 @@ export class UserProxy extends BaseCrudProxy {
    */
   @ApiProperty()
   public email: string;
+
+    /**
+   * O e-mail do usuário
+   */
+  @ApiProperty()
+  public leafs: number;
+
+    /**
+   * O e-mail do usuário
+   */
+  @ApiProperty()
+  public name: string;
 
   /**
    * O e-mail ou RA do usuário
