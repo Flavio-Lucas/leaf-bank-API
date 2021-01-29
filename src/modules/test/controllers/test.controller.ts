@@ -69,6 +69,7 @@ export class TestController {
       email: 'admin@email.com',
       password: '123456',
       leafs: 0,
+      name: 'fulaninho',
       roles: 'admin',
     }));
 
@@ -76,6 +77,7 @@ export class TestController {
       email: 'liga@email.com',
       password: '123456',
       leafs: 0,
+      name: 'fulaninho',
       roles: 'user',
     }));
 
@@ -83,6 +85,7 @@ export class TestController {
       email: 'fablab@email.com',
       password: '123456',
       leafs: 0,
+      name: 'fulaninho',
       roles: 'user',
     }));
   }
