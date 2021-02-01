@@ -3,6 +3,7 @@
 import { Body, ClassSerializerInterceptor, Controller, Post, Request, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiNotFoundResponse, ApiOkResponse, ApiUnauthorizedResponse, ApiTags, ApiForbiddenResponse, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { UnprotectedRoute } from 'src/decorators/protect/protect.decorator';
 
 import { Roles } from '../../../decorators/roles/roles.decorator';
 import { RolesGuard } from '../../../guards/roles/roles.guard';
@@ -45,6 +46,7 @@ export class AuthController {
   @ApiUnauthorizedResponse({ description: 'A senha digitada está incorreta.' })
   @ApiNotFoundResponse({ description: 'Não foi encontrado um usuário com esse e-mail.' })
   @UseGuards(AuthGuard('local'))
+  @UnprotectedRoute()
   @Post('/local')
   public async login(@Request() req: NestJSRequest, @Body() payload: LoginPayload): Promise<TokenProxy> {
     return await this.authService.signIn(req.user);
