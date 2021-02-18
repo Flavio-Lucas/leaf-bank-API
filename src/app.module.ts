@@ -6,6 +6,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { EnvModule } from './modules/env/env.module';
 import { TestModule } from './modules/test/test.module';
 import { UserModule } from './modules/users/users.module';
+import { UserPasswordResetModule } from './modules/user-password-reset/user-password-reset.module';
 
 const testModules = [];
 
@@ -19,6 +20,7 @@ if (process.env.NODE_ENV === 'test')
     AuthModule,
     AuthTokenModule,
     UserModule,
+    UserPasswordResetModule,
     ...testModules,
   ],
   providers: [
